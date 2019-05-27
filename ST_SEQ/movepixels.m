@@ -3,6 +3,8 @@ function Iout=movepixels(I,Tx,Ty)
 % of an 2D image according to x, y translation images 
 % (bilinear interpolated).
 %
+%
+%
 %  J = movepixels(I,Tx,Ty);
 %
 % inputs,
