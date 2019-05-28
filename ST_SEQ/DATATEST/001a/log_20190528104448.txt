@@ -1,0 +1,27 @@
+
+ans =
+
+    '001a'
+
+Monitor running at 60
+
+sizeAdj =
+
+     0
+
+
+thisProbe =
+
+                       4.6
+
+{Undefined function or variable 'getProbeDur'.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('stimDisplayStaircase', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m', 275)" style="font-weight:bold">stimDisplayStaircase</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',275,0)">line 275</a>)
+        sprintf('getProbeDur %d', getProbeDur)
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('presentPredAttStair', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/presentPredAttStair.m', 157)" style="font-weight:bold">presentPredAttStair</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/presentPredAttStair.m',157,0)">line 157</a>)
+        stimDisplayStaircase(p, str);
+} 
+opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',275,0)
+matlab.internal.language.introspective.errorDocCallback('stimDisplayStaircase', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m', 275)
+sca

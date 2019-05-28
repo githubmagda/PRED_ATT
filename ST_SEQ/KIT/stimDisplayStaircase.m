@@ -272,7 +272,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         sizeAdj = thisProbe;
         %getProbeEnd = GetSecs;
         %getProbeDur = getProbeEnd - getProbeStart;
-        sprintf('getProbeDur %d', getProbeDur)      
+        %sprintf('getProbeDur %d', getProbeDur)      
     end
         
 % % %     % call question routine
