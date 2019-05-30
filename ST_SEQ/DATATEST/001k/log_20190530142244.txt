@@ -1,0 +1,122 @@
+
+ans =
+
+    '001k'
+
+Monitor running at 60
+<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',303,1)">303 </a>str;
+str.thisProbe              
+
+ans =
+
+  Columns 1 through 4
+
+                         0                         0                         0                         0
+
+  Columns 5 through 8
+
+                         0                         0                       4.6                       6.8
+
+  Columns 9 through 12
+
+                      8.05                       8.8                      9.25                      9.55
+
+  Columns 13 through 16
+
+                         0                         0                       9.7                       9.4
+
+  Columns 17 through 20
+
+                      9.85                       9.8                      9.75                      9.95
+
+  Columns 21 through 24
+
+                       9.9                      9.95                      9.95                      9.95
+
+  Columns 25 through 28
+
+                      9.95                      9.95                      9.95                      9.95
+
+  Columns 29 through 32
+
+                         0                         0                      9.95                      9.95
+
+  Columns 33 through 36
+
+                      9.95                      9.95                      9.95                      9.95
+
+b= nan(4)
+
+b =
+
+   NaN   NaN   NaN   NaN
+   NaN   NaN   NaN   NaN
+   NaN   NaN   NaN   NaN
+   NaN   NaN   NaN   NaN
+
+str.probeDur
+{Reference to non-existent field 'probeDur'.
+} 
+str.getProbeDur
+
+ans =
+
+  Columns 1 through 4
+
+                         0                         0                         0                         0
+
+  Columns 5 through 8
+
+                         0                         0          0.68125351100025         0.834002116999727
+
+  Columns 9 through 12
+
+         0.726376851999703         0.677452044000347         0.699744186999851         0.682809302999885
+
+  Columns 13 through 16
+
+                         0                         0          0.68973706900033         0.681029540000054
+
+  Columns 17 through 20
+
+         0.744257796000056         0.772472410999399          0.71247697400031          0.69741402300042
+
+  Columns 21 through 24
+
+         0.716456096999536         0.707221788999959         0.711107297000126         0.695746282999608
+
+  Columns 25 through 28
+
+         0.735275256000023         0.876750881999214          0.81261208000069         0.781713394999315
+
+  Columns 29 through 32
+
+                         0                         0         0.730119980999916         0.722535441000218
+
+  Columns 33 through 36
+
+         0.723575517000427         0.774153295999895         0.896958133000226         0.712873100000252
+
+if system_dependent('IsDebugMode')==1, dbquit; end
+sca
+PsychPortAudio('Close');
+KbQueueFlush(); 
+RestrictKeysForKbCheck([]);
+ShowCursor;
+Priority(0);
+
+presentPredAttStair
+PTB-INFO: Using modified PortAudio V19.6.0-devel, revision unknown
+PsychPortAudio initialized. Will use CoreAudio for audio.
+PTB-INFO: New audio device -1 with handle 0 opened as PortAudio stream:
+PTB-INFO: For 2 channels Playback: Audio subsystem is Core Audio, Audio device name is Built-in Output
+PTB-INFO: Real samplerate 44100.000000 Hz. Input latency 0.000000 msecs, Output latency 2.766440 msecs.
+Subject number?
+1
+Subject initials?
+j
+This ID already exists. Please use another id
+Subject number?
+2
+Subject initials?
+f

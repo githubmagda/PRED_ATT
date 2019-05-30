@@ -1,10 +1,11 @@
   
 function[exper] = presentPredAttStair % (could ask for inputs, e.g. debug, useEyelink)
 
+% cd /Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ
 % DESCRIPTION
 % Main script for presentation that gathers paramaters and calls on other scripts to run
 % stimulus series   %matlabrc -  nojvm
-
+     
 % Clear the workspace and the screen
 close all;
 clearvars;
@@ -273,34 +274,47 @@ try
     
 catch
     psychrethrow(psychlasterror);
-    Screen('CloseAll');
+    cleanup;
     
-    if p.useEyelink
-        Eyelink('Closefile');
-        Eyelink('Shutdown');
-    end
+% % % % %     Screen('CloseAll');
+% % % % %     
+% % % % %     PsychPortAudio('Close');
+% % % % %     KbQueueFlush(); 
+% % % % %     RestrictKeysForKbCheck([]);
+% % % % %     ShowCursor;
+% % % % %     Priority(0);
+% % % % %         if p.useEyelink
+% % % % %         Eyelink('Closefile');
+% % % % %         Eyelink('Shutdown');
+% % % % %     end
     
-    PsychPortAudio('Close');
-    KbQueueFlush(); 
-    RestrictKeysForKbCheck([]);
-    ShowCursor;
-    Priority(0);
+end
+cleanup;
+% % % % % Screen('CloseAll');
+% % % % % 
+% % % % % if p.useEyelink
+% % % % %     Eyelink('Closefile');
+% % % % %     Eyelink('Shutdown');
+% % % % % end
+% % % % % 
+% % % % % PsychPortAudio('Close');
+% % % % % KbQueueFlush(); 
+% % % % % RestrictKeysForKbCheck([]);
+% % % % % ShowCursor;
+% % % % % Priority(0);
 end
 
-Screen('CloseAll');
-
+function [] = cleanup
+PsychPortAudio('Close');
+KbQueueFlush();
+RestrictKeysForKbCheck([]);
+ShowCursor;
+Priority(0);
 if p.useEyelink
     Eyelink('Closefile');
     Eyelink('Shutdown');
 end
-
-PsychPortAudio('Close');
-KbQueueFlush(); 
-RestrictKeysForKbCheck([]);
-ShowCursor;
-Priority(0);
 end
-
 
 
 

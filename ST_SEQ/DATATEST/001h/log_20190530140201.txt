@@ -1,0 +1,47 @@
+
+ans =
+
+    '001h'
+
+Monitor running at 60
+final estimates:
+PSE: 10.000000
+DL: 0.006745
+ent: 1.493725
+block
+
+bl_i =
+
+     1
+
+series
+
+sr_i =
+
+     1
+
+
+ans = 
+
+  <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields:
+
+    numCorrect: 0
+
+
+ans = 
+
+  <a href="matlab:helpPopup struct" style="font-weight:bold">struct</a> with fields:
+
+      sr1: [1×1 struct]
+    texts: [1×1 struct]
+
+presentPredAttStair
+PTB-INFO: Using modified PortAudio V19.6.0-devel, revision unknown
+PsychPortAudio initialized. Will use CoreAudio for audio.
+PTB-INFO: New audio device -1 with handle 0 opened as PortAudio stream:
+PTB-INFO: For 2 channels Playback: Audio subsystem is Core Audio, Audio device name is Built-in Output
+PTB-INFO: Real samplerate 44100.000000 Hz. Input latency 0.000000 msecs, Output latency 2.766440 msecs.
+Subject number?
+1
+Subject initials?
+j

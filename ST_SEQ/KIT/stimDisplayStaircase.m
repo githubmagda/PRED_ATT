@@ -1,4 +1,4 @@
-function[p, stair] = stimDisplayStaircase(p, str)
+function [p, stair] = stimDisplayStaircase(p, str)
 
 % This verison of stim Display is only used for staircase. It checks for dot size that is successfully discrimated by subjectscript displays the stimulus making and displaying the 4 quadrant gratings,
 % Inputs include attn series 
@@ -46,10 +46,13 @@ str.dot.frameOffset = zeros( 1, p.series.stimPerSeries );
 str.dot.time = zeros( 1, p.series.stimPerSeries );
 str.time.seriesStart = GetSecs;
 
+str.thisProbe = nan( 1, p.series.stimPerSeries );
+str.probeDur = nan( 1, p.series.stimPerSeries );
+
 % INITIALIZE STAIRCASE (see MinExpEntStairDemo in Testing or Psychtoolbox)
 % stair input
-probeset    = -10 : .05 : 10; % -15:0.5:15;        % set of possible probe values
-meanset     = -10 : .05 : 10 ;% -10:0.2:10;      % sampling of pses, doesn't have to be the same as probe set
+probeset    = .05 : .05 : 10; % -15:0.5:15;        % set of possible probe values
+meanset     = .05 : .05 : 10 ;% -10:0.2:10;      % sampling of pses, doesn't have to be the same as probe set
 slopeset    = [.1:.1:5].^2;%[.5:.1:5].^2;                 % set of slopes, quad scale
 lapse       = 0.05;                         % lapse/mistake rate
 guess       = 0.50;                         % guess rate / minimum correct response rate (for detection expt: 1/num_alternative, 0 for discrimination expt)
@@ -81,9 +84,8 @@ val = probeset( round( length( probeset) /2));   % STAIRCASE: MA set to mode of 
 stair.set_first_value( val);  % STAIRCASE: stair.set_first_value(3);
 %sizeAdj = val; % initial setting
 
-
 [thisProbe, ~, ~]  = stair.get_next_probe(); % ge
-sizeAdj = thisProbe
+sizeAdj = thisProbe;
 
 % END INITIALIZE STAIRCASE 
 
@@ -238,7 +240,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     if  ~isempty(event) % event.Pressed == 1
        
         str.dot.response(f) = 1;
-        if str.dot.series(f) == 1
+        if str.dot.series(f) == 1 % this was a dot
             str.RT(f) = event.Time - str.dot.time(f);
             str.dot.responseCorrect(f) = 1;
             
@@ -260,19 +262,24 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         end
     end
     
-    if str.dot.series(f)
+    if str.dot.series(f) || (f>1 && str.dot.series(f-1))
         responseProbe = 0; % reset default
         if str.dot.responseCorrect(f)
             responseProbe = 1;
         end
         stair.process_resp(responseProbe);
-        %getProbeStart = GetSecs;
+        
+        % test and output time
+        probeStart = GetSecs;
         [thisProbe, ~, ~]  = stair.get_next_probe(); % get next probe to test  [thisProbe, entexp, ind]  = stair.get_next_probe();
         thisProbe
+        probeEnd = GetSecs;
+        probeDur = probeEnd - probeStart;        
+        str.probeDur(f) = probeDur;         %sprintf('getProbeDur %d', getProbeDur)
+        str.thisProbe(f) = thisProbe;
         sizeAdj = thisProbe;
-        %getProbeEnd = GetSecs;
-        %getProbeDur = getProbeEnd - getProbeStart;
-        %sprintf('getProbeDur %d', getProbeDur)      
+        
+        % test and output time
     end
         
 % % %     % call question routine
@@ -335,6 +342,6 @@ str.dot.missedNum = str.dot.totalNum - length( str.dot.hit( str.dot.hit==1));
 % % % calculate quesiton results
 % % str.question.numCorrect = length(find( str.question.responseCorrect == 1));
 % % str.question.ratioCorrect = str.question.numCorrect ./ numel(thisQuestionSet);
-str;
+
 
 end

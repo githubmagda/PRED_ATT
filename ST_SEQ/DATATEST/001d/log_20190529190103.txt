@@ -1,0 +1,29 @@
+
+ans =
+
+    '001d'
+
+Monitor running at 60
+<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',233,1)">233 </a>    [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])
+if system_dependent('IsDebugMode')==1, dbcont; end
+{Subscript indices must either be real positive integers or logicals.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('stimDisplayStaircase', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m', 263)" style="font-weight:bold">stimDisplayStaircase</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',263,0)">line 263</a>)
+    if str.dot.series(f) || str.dot.series(f-1)
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('presentPredAttStair', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/presentPredAttStair.m', 158)" style="font-weight:bold">presentPredAttStair</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/presentPredAttStair.m',158,0)">line 158</a>)
+        stimDisplayStaircase(p, str);
+} 
+stimDisplayStaircase
+{Not enough input arguments.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('stimDisplayStaircase', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m', 8)" style="font-weight:bold">stimDisplayStaircase</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',8,0)">line 8</a>)
+texGrat = p.textures.texGrat;
+} 
+stimDisplayStaircase
+{Not enough input arguments.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('stimDisplayStaircase', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m', 8)" style="font-weight:bold">stimDisplayStaircase</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',8,0)">line 8</a>)
+texGrat = p.textures.texGrat;
+} 
+sca

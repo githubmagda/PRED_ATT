@@ -31,11 +31,7 @@ for i = 1:ntrials
     % r = User_Function(uml.xnext);    
     % where x is the signal strength and r is the response in terms of
     % correctness.
-    
-    
-    
-    
-    
+
     %------------------------------------------------
     
     % for simulated responses

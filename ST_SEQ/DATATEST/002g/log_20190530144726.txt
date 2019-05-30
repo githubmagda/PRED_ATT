@@ -1,0 +1,91 @@
+
+ans =
+
+    '002g'
+
+
+------------------------------------------------------------------------
+       Segmentation violation detected at Thu May 30 14:47:26 2019
+------------------------------------------------------------------------
+
+Configuration:
+  Crash Decoding      : Disabled - No sandbox or build area path
+  Crash Mode          : continue (default)
+  Current Graphics Driver: Intel Inc. Intel HD Graphics 4000 OpenGL Engine Version 2.1 INTEL-12.9.22
+  Current Visual      : Quartz
+  Default Encoding    : ISO-8859-1
+  Deployed            : false
+  Host Name           : Macintosh.local
+  MATLAB Architecture : maci64
+  MATLAB Entitlement ID: 1488598
+  MATLAB Root         : /Applications/MATLAB_R2017a.app
+  MATLAB Version      : 9.2.0.556344 (R2017a)
+  OpenGL              : hardware
+  Operating System    : Darwin 18.6.0 Darwin Kernel Version 18.6.0: Thu Apr 25 23:16:27 PDT 2019; root:xnu-4903.261.4~2/RELEASE_X86_64 x86_64
+  Processor ID        : x86 Family 6 Model 58 Stepping 9, GenuineIntel
+  Virtual Machine     : Java 1.7.0_75-b13 with Oracle Corporation Java HotSpot(TM) 64-Bit Server VM mixed mode
+  Window System       : Quartz
+
+Fault Count: 1
+
+
+Abnormal termination:
+Segmentation violation
+
+Register State (from fault):
+  RAX = 7b254a60c8110093  RBX = 0000600003b397c0
+  RCX = 0000000000000000  RDX = 0000000118774090
+  RSP = 0000000118774090  RBP = 0000000000000000
+  RSI = 0000600003b397c0  RDI = 7b254a60c8110093
+
+   R8 = 0000000000000001   R9 = 0000000000000000
+  R10 = 00007000020cb870  R11 = 00007fff6b405f64
+  R12 = 0000000000000000  R13 = 000000003c09b9c1
+  R14 = 00007000020cb890  R15 = 00007fff462b2e4a
+
+  RIP = 0000000000000000  RFL = 0000000000000000
+
+   CS = 0000000000000000   FS = 000000016f880d21   GS = 00007000020cb8b0
+
+Stack Trace (from fault):
+[  0] 0x00000001109896b4                           bin/maci64/libmwfl.dylib+00034484 _ZN2fl4diag15stacktrace_base7captureERKNS0_14thread_contextEm+00000052
+[  1] 0x000000011098d06a                           bin/maci64/libmwfl.dylib+00049258 _ZN2fl4test17terminate_handledEv+00000810
+[  2] 0x000000011098cad9                           bin/maci64/libmwfl.dylib+00047833 _ZN2fl4diag13terminate_logEPKcPK17__darwin_ucontext+00000185
+[  3] 0x000000011459e591                          bin/maci64/libmwmcr.dylib+00435601 _Z19mnPrintErrorMessageRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE+00002081
+[  4] 0x000000011459dee0                          bin/maci64/libmwmcr.dylib+00433888 _Z19mnPrintErrorMessageRKNSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE+00000368
+[  5] 0x000000011459c8da                          bin/maci64/libmwmcr.dylib+00428250 mnFatalSignalHandler+00000154
+[  6] 0x00007fff72450b5d           /usr/lib/system/libsystem_platform.dylib+00019293 _sigtramp+00000029
+[  7] 0xf698c00070001002                                   <unknown-module>+00000000
+[  8] 0x00007fff462b2e4a /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation+00310858 CFStringCompare+00000024
+[  9] 0x000000016f771a43 /Applications/Psychtoolbox/PsychBasic/Screen.mexmaci64+00014915 getDisplayBitsPerPixel+00000035
+[ 10] 0x000000016f771f45 /Applications/Psychtoolbox/PsychBasic/Screen.mexmaci64+00016197 PsychGetScreenDepth+00000085
+[ 11] 0x000000016f7c07bf /Applications/Psychtoolbox/PsychBasic/Screen.mexmaci64+00337855 SCREENOpenWindow+00000255
+[ 12] 0x000000016f827021 /Applications/Psychtoolbox/PsychBasic/Screen.mexmaci64+00757793 mexFunction+00000913
+[ 13] 0x00000001155ebc4b                            bin/maci64/libmex.dylib+00093259 mexRunMexFile+00000315
+[ 14] 0x00000001155e2bd1                            bin/maci64/libmex.dylib+00056273 _ZN7Mfh_mex30runMexFileWithSignalProtectionEiPP11mxArray_tagiS2_+00000113
+[ 15] 0x00000001155e2d5b                            bin/maci64/libmex.dylib+00056667 _ZN7Mfh_mex13dispatch_fileEiPP11mxArray_tagiS2_+00000203
+[ 16] 0x00000001146b7828                 bin/maci64/libmwm_dispatcher.dylib+00440360 _ZN8Mfh_file16dispatch_fh_implEMS_FviPP11mxArray_tagiS2_EiS2_iS2_+00000840
+[ 17] 0x00000001146b7c43                 bin/maci64/libmwm_dispatcher.dylib+00441411 _ZN8Mfh_file11dispatch_fhEiPP11mxArray_tagiS2_+00000035
+[ 18] 0x0000000115fd520b                        bin/maci64/libmwm_lxe.dylib+09708043 _ZN9MathWorks3lxe17LxeDispatcherImpl12apply_handleEPNS0_29DispatcherFunctionHandleTokenEmPNS0_6xvalueEmPKS4_+00000891
+[ 19] 0x00000001160483de                        bin/maci64/libmwm_lxe.dylib+10179550 _ZN9MathWorks3lxe38cpp_primitive_template_fn_with_contextIXadL_ZNS0_12apply_handleEPvNS_2ts4TypeEPKvS2_S2_EEEEbS2_S4_S6_S2_S2_+00000014
+[ 20] 0x000000011581a614                        bin/maci64/libmwm_lxe.dylib+01603092 _ZN9MathWorks3lxe13IrInterpreter17ApplyCppPrimitiveEPN2ir4termES4_RKNS_2ts4TypeES8_+00000404
+[ 21] 0x0000000115819a10                        bin/maci64/libmwm_lxe.dylib+01600016 _ZN9MathWorks3lxe13IrInterpreter31process_application_of_constantEPN2ir4termE+00001216
+[ 22] 0x0000000115818081                        bin/maci64/libmwm_lxe.dylib+01593473 _ZN9MathWorks3lxe13IrInterpreter13applyConstantEPN2ir4termE+00000081
+[ 23] 0x00000001158140fc                        bin/maci64/libmwm_lxe.dylib+01577212 _ZN9MathWorks3lxe12IRTreeWalker9applyTermEPN2ir4termE+00000092
+[ 24] 0x00000001158144f3                        bin/maci64/libmwm_lxe.dylib+01578227 _ZN9MathWorks3lxe12IRTreeWalker11getNextIRPCENS0_9irpc_typeE+00000563
+[ 25] 0x0000000115817e27                        bin/maci64/libmwm_lxe.dylib+01592871 _ZN9MathWorks3lxe13IrInterpreter9tree_walkERKNS0_9irpc_typeES4_+00000215
+[ 26] 0x0000000115817d0b                        bin/maci64/libmwm_lxe.dylib+01592587 _ZN9MathWorks3lxe13IrInterpreter9InterpretEv+00000091
+[ 27] 0x000000011593c674                        bin/maci64/libmwm_lxe.dylib+02791028 _ZN9MathWorks3lxe15ExecutionDriver9ThreadRunEv+00005604
+[ 28] 0x00000001159425ec                        bin/maci64/libmwm_lxe.dylib+02815468 _ZN9MathWorks3lxe12IrEngineImpl5ApplyERKN2ir4termEPvS6_+00000300
+[ 29] 0x0000000115eab05f                        bin/maci64/libmwm_lxe.dylib+08487007 _ZN9MathWorks3lxe17IrEngineDecorator5ApplyERKN2ir4termEPvS6_+00000159
+[ 30] 0x0000000115e6b31f                        bin/maci64/libmwm_lxe.dylib+08225567 _ZN9MathWorks3lxe9Evaluator15ApplyStatementsERKN2ir4termERNS0_18IEvaluationContextE+00000415
+[ 31] 0x0000000115e6e936                        bin/maci64/libmwm_lxe.dylib+08239414 _ZN9MathWorks3lxe9Evaluator17EvalStatementImplEPKcRNS0_18IEvaluationContextE+00000278
+[ 32] 0x0000000115e6ea28                        bin/maci64/libmwm_lxe.dylib+08239656 _ZN9MathWorks3lxe9Evaluator13EvalStatementERKNSt3__112basic_stringIDsNS2_11char_traitsIDsEENS2_9allocatorIDsEEEERNS0_18IEvaluationContextE+00000136
+[ 33] 0x0000000115ef532e                        bin/maci64/libmwm_lxe.dylib+08790830 _ZN9MathWorks3lxe9LxeBridge7EvalCmdERKNSt3__112basic_stringIDsNS2_11char_traitsIDsEENS2_9allocatorIDsEEEEb+00000382
+[ 34] 0x0000000115ef51e7                        bin/maci64/libmwm_lxe.dylib+08790503 _ZN9MathWorks3lxe9LxeBridge7EvalCmdERKNSt3__112basic_stringIDsNS2_11char_traitsIDsEENS2_9allocatorIDsEEEEb+00000055
+[ 35] 0x00000001156516dd                       bin/maci64/libmwbridge.dylib+00071389 _Z28evalCommandWithLongjmpSafetyRKNSt3__112basic_stringIDsNS_11char_traitsIDsEENS_9allocatorIDsEEEE+00000093
+[ 36] 0x0000000115651e4d                       bin/maci64/libmwbridge.dylib+00073293 _Z8mnParserv+00001165
+[ 37] 0x00000001145593b3                          bin/maci64/libmwmcr.dylib+00152499 _ZN3mcr7runtime26InterpreterThreadSingleton4Impl30mnParser_on_interpreter_threadEP11mcrInstance+00000035
+[ 38] 0x000000011455bc91                          bin/maci64/libmwmcr.dylib+00162961 _ZN3mcr7runtime26InterpreterThreadSingleton4Impl22TypedInvocationRequestIvE29doNotRethrowMxArrayExceptionsERKN5boost8functionIFvvEEE+00000033
+[ 39] 0x000000011455c72e                          bin/maci64/libmwmcr.dylib+00165678 _ZN5boost13packaged_taskIvEC2INS_3_bi6bind_tIvPFvRKNS_8functionIFvvEEEENS3_5list1INS3_5valueIS7_EEEEEEEEOT_NS_10disable_ifINS_7is_sameINS_5decayISH_E4typeES1_EEPNS1_5dummyEE4typeE+00001038
+[ 40] 0x0000000114559863                        

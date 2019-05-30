@@ -1,0 +1,385 @@
+
+ans =
+
+    '003h'
+
+Monitor running at 60
+
+thisProbe =
+
+                      7.35
+
+
+thisProbe =
+
+                       7.1
+
+
+thisProbe =
+
+                       8.1
+
+
+thisProbe =
+
+                      8.15
+
+
+thisProbe =
+
+                       7.9
+
+
+thisProbe =
+
+                      7.95
+
+
+thisProbe =
+
+                      8.85
+
+
+thisProbe =
+
+                      8.95
+
+
+thisProbe =
+
+                       7.4
+
+
+thisProbe =
+
+                      6.85
+
+
+thisProbe =
+
+                      6.85
+
+
+thisProbe =
+
+                       7.8
+
+
+thisProbe =
+
+                       9.4
+
+
+thisProbe =
+
+                      9.45
+
+
+thisProbe =
+
+                      7.05
+
+
+thisProbe =
+
+                      8.45
+
+
+thisProbe =
+
+                      7.75
+
+
+thisProbe =
+
+                      5.95
+
+
+thisProbe =
+
+                      9.35
+
+
+thisProbe =
+
+                       9.4
+
+
+thisProbe =
+
+                      7.15
+
+
+thisProbe =
+
+                       7.8
+
+
+thisProbe =
+
+                      9.75
+
+
+thisProbe =
+
+                      9.65
+
+<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',306,1)">306 </a>str;
+sca         
+MinExpEntStairDemo
+1, new sample point: 1.000000
+expect ent: 
+response: 1
+2, new sample point: 0.500000
+expect ent: 8.370385
+response: 1
+3, new sample point: -0.500000
+expect ent: 8.321109
+response: 1
+4, new sample point: -1.500000
+expect ent: 8.246540
+response: 1
+5, new sample point: -2.500000
+expect ent: 8.152375
+response: 1
+6, new sample point: -3.500000
+expect ent: 8.043219
+response: 0
+7, new sample point: 0.500000
+expect ent: 8.229171
+response: 1
+8, new sample point: 0.000000
+expect ent: 8.149793
+response: 1
+9, new sample point: -1.000000
+expect ent: 8.059544
+response: 0
+10, new sample point: 2.000000
+expect ent: 8.235965
+response: 1
+11, new sample point: 1.500000
+expect ent: 8.180965
+response: 1
+12, new sample point: 2.000000
+expect ent: 8.174406
+response: 1
+13, new sample point: 1.500000
+expect ent: 8.024970
+response: 1
+14, new sample point: -1.500000
+expect ent: 8.045808
+response: 1
+15, new sample point: -2.000000
+expect ent: 7.970263
+response: 1
+16, new sample point: -1.500000
+expect ent: 7.980194
+response: 1
+17, new sample point: -1.500000
+expect ent: 7.980194
+response: 0
+18, new sample point: 2.000000
+expect ent: 8.010548
+response: 0
+19, new sample point: 4.000000
+expect ent: 8.180963
+response: 1
+20, new sample point: 1.500000
+expect ent: 8.105111
+response: 1
+21, new sample point: 3.000000
+expect ent: 8.116184
+response: 1
+22, new sample point: 3.000000
+expect ent: 8.079680
+response: 1
+23, new sample point: -3.000000
+expect ent: 7.924988
+response: 0
+24, new sample point: 1.000000
+expect ent: 7.924492
+response: 1
+25, new sample point: -1.500000
+expect ent: 7.480764
+response: 0
+26, new sample point: 2.000000
+expect ent: 7.879921
+response: 1
+27, new sample point: 2.000000
+expect ent: 7.852826
+response: 1
+28, new sample point: 2.500000
+expect ent: 7.749461
+response: 1
+29, new sample point: 1.000000
+expect ent: 7.416009
+response: 1
+30, new sample point: 1.500000
+expect ent: 7.746644
+response: 1
+31, new sample point: -2.000000
+expect ent: 7.553414
+response: 0
+32, new sample point: -0.500000
+expect ent: 6.368637
+response: 1
+33, new sample point: 1.000000
+expect ent: 7.104127
+response: 1
+34, new sample point: 1.000000
+expect ent: 7.162968
+response: 1
+35, new sample point: 0.500000
+expect ent: 7.115728
+response: 1
+36, new sample point: 0.500000
+expect ent: 7.004178
+response: 1
+37, new sample point: -2.000000
+expect ent: 7.219648
+response: 0
+38, new sample point: 0.000000
+expect ent: 6.452425
+response: 0
+39, new sample point: 1.500000
+expect ent: 6.920153
+response: 1
+40, new sample point: 1.000000
+expect ent: 6.550210
+response: 0
+final estimates:
+PSE: -0.200000
+DL: 0.674490
+ent: 7.081508
+MinExpEntStairDemo
+1, new sample point: 1.000000
+expect ent: 
+r(1): 0
+2, new sample point: 4.500000
+expect ent: 8.236606
+r(2): 1
+3, new sample point: 4.500000
+expect ent: 8.282802
+r(3): 1
+4, new sample point: 3.500000
+expect ent: 8.300080
+r(4): 1
+5, new sample point: 2.500000
+expect ent: 8.304599
+r(5): 0
+6, new sample point: 5.500000
+expect ent: 8.138376
+r(6): 1
+7, new sample point: 5.000000
+expect ent: 8.129394
+r(7): 1
+8, new sample point: 5.000000
+expect ent: 8.103415
+r(8): 1
+9, new sample point: 2.000000
+expect ent: 8.061030
+r(9): 0
+10, new sample point: 5.500000
+expect ent: 7.755529
+r(10): 1
+11, new sample point: 5.000000
+expect ent: 7.658976
+r(11): 1
+12, new sample point: 5.000000
+expect ent: 7.646262
+r(12): 1
+13, new sample point: 4.000000
+expect ent: 7.536122
+r(13): 1
+14, new sample point: 4.000000
+expect ent: 7.459188
+r(14): 1
+15, new sample point: 4.000000
+expect ent: 7.366695
+r(15): 1
+16, new sample point: 2.000000
+expect ent: 7.251605
+r(16): 0
+17, new sample point: 4.500000
+expect ent: 6.866233
+r(17): 1
+18, new sample point: 4.000000
+expect ent: 6.679674
+r(18): 1
+19, new sample point: 3.000000
+expect ent: 6.846792
+r(19): 1
+20, new sample point: 3.500000
+expect ent: 6.550552
+r(20): 1
+21, new sample point: 3.500000
+expect ent: 6.393242
+r(21): 1
+22, new sample point: 1.500000
+expect ent: 6.643996
+r(22): 0
+23, new sample point: 3.000000
+expect ent: 5.932611
+r(23): 1
+24, new sample point: 3.000000
+expect ent: 5.640788
+r(24): 1
+25, new sample point: 3.000000
+expect ent: 5.548912
+r(25): 1
+26, new sample point: 2.000000
+expect ent: 5.958444
+r(26): 0
+27, new sample point: 2.500000
+expect ent: 5.699271
+r(27): 0
+28, new sample point: 3.500000
+expect ent: 5.119853
+r(28): 1
+29, new sample point: 3.000000
+expect ent: 4.978699
+r(29): 1
+30, new sample point: 3.000000
+expect ent: 5.121622
+r(30): 1
+31, new sample point: 3.000000
+expect ent: 4.517527
+r(31): 1
+32, new sample point: 3.000000
+expect ent: 4.608922
+r(32): 1
+33, new sample point: 3.000000
+expect ent: 4.500422
+r(33): 1
+34, new sample point: 3.000000
+expect ent: 4.062851
+r(34): 1
+35, new sample point: 2.500000
+expect ent: 4.367408
+r(35): 0
+36, new sample point: 3.000000
+expect ent: 3.663642
+r(36): 1
+37, new sample point: 3.000000
+expect ent: 3.859373
+r(37): 1
+38, new sample point: 3.000000
+expect ent: 3.743141
+r(38): 1
+39, new sample point: 3.000000
+expect ent: 3.744359
+r(39): 1
+40, new sample point: 2.500000
+expect ent: 3.899353
+r(40): 0
+final estimates:
+PSE: 2.600000
+DL: 0.168622
+ent: 2.819534
+1.13/39
+
+ans =
+
+         0.028974358974359
+
+sca
