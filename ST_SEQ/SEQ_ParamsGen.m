@@ -4,8 +4,8 @@ function [p] = SEQ_ParamsGen(p)
 % Parameters related to PTB windows are set in SEQ_PARAMs_scr
 
 % TRIAL SPECS
-p.blockNumber = 1; % CHECK - do we need blocks?
-p.seriesNumber = 1;
+p.blockNumber = 0; % CHECK - do we need blocks?
+p.seriesNumber = 0;
 p.seriesPerBlock = 1;
 p.seriesPerEdf = 1; % how often data is output to edf file; safer to output each series in case participant quits
 

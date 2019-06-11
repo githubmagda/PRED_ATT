@@ -46,26 +46,23 @@ p.scr.textType = 'Helvetica';
 p.scr.textColor = p.scr.white;
 
 %%% SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries = 60;
+p.series.stimPerSeries = 40;
 p.series.seqBasicSet = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRpts = 10;
 p.series.chunkLength = 3;
 
 % MOVIE SPECS
-p.scr.stimDur = round2flips(p, .5); %How long each stimulus/trial is on screen
+p.scr.stimDurationSecs = round2flips(p, .5); %How long each stimulus/trial is on screen
 p.scr.framesHz = 60;
-p.scr.framesPerMovie = round(p.scr.stimDur * p.scr.framesHz); 
+p.scr.framesPerMovie = round(p.scr.stimDurationSecs * p.scr.framesHz); 
 p.scr.frameDur = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 
 %%% TEXTURES
 % timing of predictive texture in frame numbers 
-p.scr.predScreenDur = round2flips(p, .05);    % duration of predictive flash in 
+p.scr.predScreenDur = 7; % duration of predictive flash in stimDisplay.m ; by #s screen refreshes??
 
 % SERIES: ATTENTION DOTS
-p.series.dotProb = .02;     % DEFAULT .03 = percent of dots per series
-p.scr.dotOnset = p.scr.predScreenDur + round2flips(p, .1);        % from start of trial
-p.scr.dotDur = round2flips(p, .2);
-p.scr.dotJitter = round2flips(p, .01);
+p.series.dotProb = .02;% DEFAULT .03 = percent of dots per series
 % % p.series.dotNumAv = floor( p.series.stimPerSeries * p.series.dotProb);
 % % p.series.dotZeroPadding = 5;
 % % % variation around catchTrialNum allowed
@@ -190,3 +187,4 @@ p.maxPoliceErrorTime = round2flips (p, 0.01); % secs adjusted to refresh rates
 % % % p.waitAfterPolice = 500;   % Extra ITI after policing stops trial, to cool down
   
 % % %% STAIRCASE VARIABLES
+

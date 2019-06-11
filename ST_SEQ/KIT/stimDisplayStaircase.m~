@@ -158,7 +158,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     % % %         % reset parameters tested in ff loop
     
     % DRAW TEXTURES PLAIN VANILLA
-    Screen('DrawTexture', p.scr.window, texGrat(1), [], [], []); % flash off
+    Screen('DrawTexture', p.scr.window, texGrat(f), [], [], []); % flash off
     % Draw fixation gaussian
     Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
     % Draw the cue fixation cross
@@ -199,7 +199,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         WaitSecs( p.scr.dotOnset - .5 * p.scr.flipInterval) 
         
         % DRAW TEXTURES DOT ON
-        Screen('DrawTexture', p.scr.window, texGrat(1), [], [], []); % flash off
+        Screen('DrawTexture', p.scr.window, texGrat(f), [], [], []); % flash off
         % Draw fixation gaussian
         Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
         % Draw the cue fixation cross
@@ -219,7 +219,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         WaitSecs( p.scr.dotOnset + ( p.scr.dotJitter * ( randi( 30,1) * .01)) - .5*p.scr.flipInterval);
         
         % Take dot offscreen and reflip
-        Screen('DrawTexture', p.scr.window, texGrat(1), [], [], []); % flash off
+        Screen('DrawTexture', p.scr.window, texGrat(f), [], [], []); % flash off
         %% DRAW fixation gaussian
         Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
         % Draw the cue fixation cross
@@ -293,11 +293,11 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     end
     
     % PROBE ADJUST check for response on etiher trial f-1 OR f-2
-    if f >= firstDotPos && str.dot.series( f-1) == 1 % check for correct/no response on trial n-1
+    if f >= firstDotPos && str.dot.series( f-1) % check for correct/no response on trial n-1
         
         ktrial = ktrial + 1; % update staircase probe counter
         
-        if str.dot.responseCorrect( f-1) == 1
+        if str.dot.responseCorrect( f-1)
             r = 1;  % get response for staircase routine
         else
             r = 0; % reset default

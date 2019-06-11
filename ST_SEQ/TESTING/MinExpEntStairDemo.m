@@ -21,7 +21,7 @@ qpause  = false;    % pause after every iteration? (press any key to continue)
 qplot   = false;    % plot information about each trial? (this pauses as well, regardless of whether you specified qpause as true)
 
 % model observer parameters 
-qusemodel = false; %true;   % use model observer to get responses? Or, if false, input responses by hand (0/1)
+qusemodel = true;   % use model observer to get responses? Or, if false, input responses by hand (0/1)
 truepse = 0;        % inflection point (50% if guess rate is 0)
 truedl  = 1; %4;    % (75%-25% point)/2 if guess rate is 0. In general, take the position of the halfway points between the inflection point and the upper and lower asymptotes, then its the distance between them
 

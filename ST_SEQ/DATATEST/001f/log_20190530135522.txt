@@ -1,8 +1,0 @@
-
-ans =
-
-    '001f'
-
-Monitor running at 60
-<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/stimDisplayStaircase.m',64,1)">64  </a>stair = MinExpEntStair('v2'); 
-if system_dependent('IsDebugMode')==1, dbstep; end
