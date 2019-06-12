@@ -81,7 +81,7 @@ p.scr.dotDur = round2flips(p, .2);
 p.scr.dotJitter = round2flips(p, .01);
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
-p.scr.dotRadiusDeg = .10; 
+p.scr.dotRadiusDeg = .15; 
 p.scr.dotRadiusPix = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
 % masks
 p.scr.maskBorder = 20;                  % so as to make the gradient mask for dot presentation smaller than gradient 
@@ -159,11 +159,10 @@ p.scr.attn4 = [ b b b b b b b hilite; b b b b b b b remove; b b b b b b b remove
 
 % ALTERNATIVE CROSS WITH 2 LEGS ONLY
 %     % rgb specs for 4 attention conditions with 2 legs pointing to quadrants clockwise from top-left
-%     attn1 = [base hilite base base ; base remove base base ; base remove base base];% alphT alphO alphT alphT]; % upper-left
-%     attn2 = [base base base hilite ; base base base remove ; base base base remove];% alphT alphT alphT alphO]; % upper-right
-%     attn3 = [hilite base base base ; remove base base base; remove base base base];% alphO alphT alphT alphT]; % lower-right
-%     attn4 = [base base hilite base ; base base remove base ; base base remove base];% alphT alphT alphO alphT];
-
+% p.scr.attn1 = [base hilite base base ; base remove base base ; base remove base base];% alphT alphO alphT alphT]; % upper-left
+% p.scr.attn2 = [base base base hilite ; base base base remove ; base base base remove];% alphT alphT alphT alphO]; % upper-right
+% p.scr.attn3 = [hilite base base base ; remove base base base; remove base base base];% alphO alphT alphT alphT]; % lower-right
+% p.scr.attn4 = [base base hilite base ; base base remove base ; base base remove base];% alphT alphT alphO alphT];
 
 % TEXT TIMING using frameRate
 p.scr.waitText = round(p.waitText ./p.scr.flipInterval) * p.scr.flipInterval; %% time for instruction delay

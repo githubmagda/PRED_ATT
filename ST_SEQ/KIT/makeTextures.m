@@ -56,7 +56,7 @@ p.textures.texGratFlash = texGratFlash;
 p.textures.texGratLocalizer = texGratLocalizer;
 
 %% TEST GRATING
-% for cc = 1:1 % p.scr.framesPerMovie
+% for cc = 1:1 % movie : p.scr.framesPerMovie
 %     if mod(cc,2) == 0
 %         Screen( 'DrawTexture',p.scr.window, texGrat(cc) )
 %     else

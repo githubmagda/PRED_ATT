@@ -1,23 +1,23 @@
  function[] = taskFeedback(p, sr)
 %% Report back on detection performance
 
-text=['You got ', num2str(sr.hitNum), ' out of ', num2str(sr.totalDots),'\n\n'];
+text=['You got ', num2str(sr.dot.hitNum), ' out of ', num2str(sr.dot.totalNum),'\n\n'];
 
-if sr.falseAlarmNum > 1
-    text=[text,'And clicked ', num2str(sr.falseAlarmNum), ' times, when there was no dot!','\n\n'];
+if sr.dot.FANum > 1
+    text=[text,'And clicked ', num2str(sr.dot.FANum), ' times, when there was no dot!','\n\n'];
 end
 
-if  sr.hitRate >= .80 && sr.falseAlarmNum < 5   
+if  sr.dot.hitRate >= .80 && sr.dot.FANum < 5   
     
     imNum = 1;
     text=[text,'Great work - keep it up!','\n\n\n\n\n\n'];
     
-elseif sr.hitRate >= .60 && sr.falseAlarmNum < 5
+elseif sr.dot.hitRate >= .60 && sr.dot.FANum < 5
     
     imNum = 2;
     text=[text,'Pretty good - but still room for improvement!','\n\n\n\n\n\n'];
     
-elseif sr.hitRate <= .60 || sr.falseAlarmNum >= 5
+elseif sr.dot.hitRate <= .60 || sr.dot.FANum >= 5
     
     imNum = 3;
     text=[text,'Better luck next round!','\n\n\n\n\n\n'];

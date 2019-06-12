@@ -36,7 +36,7 @@ RestrictKeysForKbCheck([p.activeKeys]);
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug = 1;
-p.localizer = 0                                           ;
+p.localizer = 0;
 p.staircase = 1; % these could be staircase and/or localizers (or could be separate programs)
 
 % GET EYELINK DETAILS

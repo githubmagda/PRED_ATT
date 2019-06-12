@@ -1,6 +1,7 @@
 function [p, str] = stimDisplayStaircase(p, str)
 
-% This verison of stim Display is only used for staircase. It checks for dot intensity that is successfully discrimated by subjectscript displays the stimulus making and displaying the 4 quadrant gratings,
+% This verison of stim Display is only used for staircase. It checks for dot size that is successfully discrimated by subjectscript displays the stimulus making and displaying the 4 quadrant gratings,
+% Inputs include attn series
 
 % PRESENT STIMULI
 % main textures (basic=1 and flash-white-mask=2)
@@ -247,7 +248,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         end       
     end
     
-    if str.dot.responseCorrect(f) == 1 || ( ~isempty(event) && isnan(str.dot.responseCorrect(f)) && str.dot.responseCorrect(f-1) == 1)    %%f > 1 && ~tr.beep && ~( str.dot.series(f) == 1 || (f>1 && str.seriesDot(f-1) == 1))
+    if str.dot.responseCorrect(f) == 1 || ( ~isempty(event) && isnan(str.dot.responseCorrect(f))    && str.dot.responseCorrect(f-1) == 1)    %%f > 1 && ~tr.beep && ~( str.dot.series(f) == 1 || (f>1 && str.seriesDot(f-1) == 1))
         % play positive beep
         PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
         PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
@@ -309,11 +310,9 @@ str.time.seriesEnd = GetSecs;
 str.time.seriesDuration = str.time.seriesEnd - str.time.seriesStart;
 
 % STAIRCASE: RESULTS
-[str.PSEfinal, str.DLfinal, str.loglikfinal]  = stair.get_PSE_DL();
+[PSEfinal,DLfinal,loglikfinal]  = stair.get_PSE_DL();
 finalent                        = sum(-exp(loglikfinal(:)).*loglikfinal(:));
 fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',PSEfinal,DLfinal,finalent);
-
-str.dotIntFactor = str.PSEfinal % scales dot intensity in main experiment
 
 % CALCULATE HITS, misses, FAs for report
 str.dot.totalNum = numel( str.dot.series( str.dot.series==1));

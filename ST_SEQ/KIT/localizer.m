@@ -35,6 +35,7 @@ if p.useEyelink
     messageText = strcat('LOCALIZER_SERIES_START_', num2str(lr.number) );
     Eyelink('message', messageText)
 end
+
 lr.time.seriesStart = GetSecs;
 
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
@@ -72,12 +73,16 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     % FLIP
     [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0); % [] [displayTime] [don't clear]
-
-    
-     WaitSecs(waitTime);
     
     if p.useEyelink
         Eyelink('GetQueuedData?') % [samples, events, drained] = Eyelink('GetQueuedData'[, eye])
+    end
+    
+    % time check
+    timePassed = GetSecs - trialStart;
+    while ( timePassed < (p.scr.stimDur - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
+        timePassed = GetSecs - trialStart ;
+        WaitSecs(p.scr.flipInterval);
     end
     
     % SEND EYETRACKER MESSAGE

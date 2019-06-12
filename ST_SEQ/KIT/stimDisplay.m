@@ -1,4 +1,4 @@
-function[p, sr] = stimDisplayMov(p, sr)
+function[p, sr] = stimDisplay(p, sr)
 
 % This script displays the stimulus making and displaying the 4 quadrant gratings,
 % the predictive per-quadrant white-screen flashes and ocassional attentional dot
