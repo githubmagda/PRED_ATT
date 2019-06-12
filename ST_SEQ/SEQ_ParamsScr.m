@@ -51,42 +51,51 @@ p.series.seqBasicSet = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRpts = 10;
 p.series.chunkLength = 3;
 
-% MOVIE SPECS
+% STIM / MOVIE SPECS 
 p.scr.stimDur = round2flips(p, .5); %How long each stimulus/trial is on screen
 p.scr.framesHz = 60;
 p.scr.framesPerMovie = round(p.scr.stimDur * p.scr.framesHz); 
 p.scr.frameDur = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 
-%%% TEXTURES
-% timing of predictive texture in frame numbers 
-p.scr.predScreenDur = round2flips(p, .05);    % duration of predictive flash in 
-
-% SERIES: ATTENTION DOTS
-p.series.dotProb = .02;     % DEFAULT .03 = percent of dots per series
-p.scr.dotOnset = p.scr.predScreenDur + round2flips(p, .1);        % from start of trial
-p.scr.dotDur = round2flips(p, .2);
-p.scr.dotJitter = round2flips(p, .01);
-% % p.series.dotNumAv = floor( p.series.stimPerSeries * p.series.dotProb);
-% % p.series.dotZeroPadding = 5;
-% % % variation around catchTrialNum allowed
-% % p.series.dotNumRange = [ p.series.dotNumAv-1 : p.series.dotNumAv+1 ]; % range of possible catch trials per series ( selected in makeCatchSeries.m )
-% % % probability of dots in staircase procedure
-p.series.dotProbStaircase = .3; % for 
-
-
-% SERIES QUESTION
-p.series.questionProb = .02;
-p.series.questionNum = floor( p.series.stimPerSeries * p.series.questionProb);
-
-% GRATINGS (for QUADRANTS)
+% TEXTURES GRATINGS (for QUADRANTS)
 % calculate grating radius - based on degrees or on quadrant size 
 p.scr.gratRadiusDeg = 3; % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
 p.scr.gratRadiusPix = round( p.scr.gratRadiusDeg * p.scr.pixPerDeg ); 
 
+% timing of predictive texture in frame numbers 
+p.scr.predScreenDur = round2flips(p, .05);    % duration of predictive flash in 
+
 % calculate distance of grating center from screen center based on degrees or quadrant size 
-p.scr.gratPosDeg = 7; %p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
+p.scr.gratPosDeg = 7; % p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
 p.scr.gratPosPix = round( p.scr.gratPosDeg * p.scr.pixPerDeg ); % deg2pix(p, p.scr.quadGratPosDeg); 
 p.scr.gratSidePix = sqrt(p.scr.gratPosPix^2/2);
+
+% ATTENTIONAL DOT & CUE ATTRIBUTES
+% probability of dots in staircase procedure
+p.series.dotProbStaircase = .3;  
+% main series dot specs
+p.scr.cueValidPerc = .80;
+p.series.dotProb = .02;                 % DEFAULT .03 = percent of dots per series
+p.scr.dotOnset = p.scr.predScreenDur + round2flips(p, .1);        % from start of trial
+p.scr.dotDur = round2flips(p, .2);
+p.scr.dotJitter = round2flips(p, .01);
+
+% ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
+p.scr.dotRadiusDeg = .10; 
+p.scr.dotRadiusPix = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
+% masks
+p.scr.maskBorder = 20;                  % so as to make the gradient mask for dot presentation smaller than gradient 
+p.scr.outerDotMaskRadius = p.scr.gratPosPix - p.scr.maskBorder;     % hypot( p.scr.quadDim/2-10, p.scr.quadDimY/2-10 ); % CHECK - base on visual angle?
+p.scr.innerDotMaskRadius = p.scr.gratPosPix - p.scr.gratRadiusPix + p.scr.maskBorder;   % hypot( p.scr.quadDim/2 - p.scr.quadGratRad, p.scr.quadDim/2 - p.scr.quadGratRad);
+
+% % p.series.dotNumAv = floor( p.series.stimPerSeries * p.series.dotProb);
+% % p.series.dotZeroPadding = 5;
+% % % variation around catchTrialNum allowed
+% % p.series.dotNumRange = [ p.series.dotNumAv-1 : p.series.dotNumAv+1 ]; % range of possible catch trials per series ( selected in makeCatchSeries.m )
+
+% SERIES QUESTION
+p.series.questionProb = .02;
+p.series.questionNum = floor( p.series.stimPerSeries * p.series.questionProb);
 
 % FIXATION GAUSSIAN
 p.scr.fixRadiusDeg = 0.3; % Thaler, 2013 recommend radius : .6 or 1.5 degrees
@@ -96,16 +105,15 @@ p.scr.fixRadiusInnerDeg = .08; % ror inner fixation dot
 p.scr.fixRadiusInner =  round( p.scr.fixRadiusInnerDeg * p.scr.pixPerDeg );    % deg2pix(p, p.scr.fixRadiusInnerDeg);
 
 %%% FIXATION CROSS
-% cross coordinates
 p.scr.fixCrossX = round( p.scr.fixRadius ./ sqrt(2) ); 
 p.scr.fixCrossY = p.scr.fixCrossX; % equal size
 p.scr.fixCrossDiagonal = 1; % if you want fixation cross to be an 'x' rather than a '+'
 p.scr.fixCrossLineWidthPix = 7; % range (0.125000 to 7.000000)
 p.scr.fixCrossColor = p.scr.white;
-p.scr.fixColorChange = [255, 0, 0]; % for e.g. red warning signal
+p.scr.fixCrossColorChange = [255, 0, 0]; % for e.g. red warning signal, check DrawTexture commands
 
 %%% length of 4 arms used for  cross
-ext = 2.0; % stretches arms (for use with Gaussian dispersion)
+ext = 2.0; % stretches arms (to compensate for Gaussian dispersion)
 extColor = 1.2; % less stretch on colored arm
 xCoords = [0, -p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, -p.scr.fixCrossX];
 yCoords = [0, -p.scr.fixCrossY, 0, -p.scr.fixCrossY, 0, p.scr.fixCrossY, 0, p.scr.fixCrossY];
@@ -156,16 +164,6 @@ p.scr.attn4 = [ b b b b b b b hilite; b b b b b b b remove; b b b b b b b remove
 %     attn3 = [hilite base base base ; remove base base base; remove base base base];% alphO alphT alphT alphT]; % lower-right
 %     attn4 = [base base hilite base ; base base remove base ; base base remove base];% alphT alphT alphO alphT];
 
-% ATTENTIONAL DOT & CUE ATTRIBUTES
-p.scr.cueValidPerc = .80;
-p.dotFrameDur = 20; % must be less than (ff)./ 2 where ff is # of frames in movie
-p.scr.dotRadiusDeg = .10; 
-p.scr.dotRadiusPix = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
-
-% ATTENTION-DOT MASKS
-p.scr.maskBorder = 20; % so as to make the gradient mask for dot presentation smaller than gradient 
-p.scr.outerDotMaskRadius = p.scr.gratPosPix - p.scr.maskBorder; % hypot( p.scr.quadDim/2-10, p.scr.quadDimY/2-10 ); % CHECK - base on visual angle?
-p.scr.innerDotMaskRadius = p.scr.gratPosPix - p.scr.gratRadiusPix + p.scr.maskBorder;   % hypot( p.scr.quadDim/2 - p.scr.quadGratRad, p.scr.quadDim/2 - p.scr.quadGratRad);
 
 % TEXT TIMING using frameRate
 p.scr.waitText = round(p.waitText ./p.scr.flipInterval) * p.scr.flipInterval; %% time for instruction delay

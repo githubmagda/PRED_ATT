@@ -1,4 +1,4 @@
-                               
+                                                 
 function[exper] = presentPredAttStair % (could ask for inputs, e.g. debug, useEyelink)
 
 % cd /Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ
@@ -94,7 +94,7 @@ try
 % % % % % %     save('exper', 'exper');
 % % % % % %     cd ..
 % % % % % %     cd ..
-        
+                
     % make TEXTURES for stimDisplay
     [p] =   makeTextures(p);
     sr = []; % initialize structure for series

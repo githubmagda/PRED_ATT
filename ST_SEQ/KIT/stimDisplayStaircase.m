@@ -13,7 +13,7 @@ gaus_fix_tex = p.textures.gaus_fix_tex; % fixation gaussian
 % DRAW PRE-SERIES FIXATION GUASSIAN
 
 % Draw gaussian
-Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white) % [p.scr.fixColorChange]
+Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white) % 
 
 % Draw cue fixation cross with red arm pointing to attentional quadrant
 Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
@@ -51,11 +51,11 @@ str.time.seriesStart = GetSecs;
 
 % INITIALIZE STAIRCASE (see MinExpEntStairDemo in Testing or Psychtoolbox)
 % stair input
-probeset    = -10 : .05 : 10; % -15:0.5:15;        % set of possible probe values
-meanset     = -10 : .05 : 10 ;% -10:0.2:10;      % sampling of pses, doesn't have to be the same as probe set
-slopeset    = [.1:.1:5].^2;%[.5:.1:5].^2;                 % set of slopes, quad scale
-lapse       = 0.05;                         % lapse/mistake rate
-guess       = 0.50;                         % guess rate / minimum correct response rate (for detection expt: 1/num_alternative, 0 for discrimination expt)
+probeset    = 1 : 1 : 20; % -15:0.5:15;         % set of possible probe values
+meanset     = 1 : 1 : 20 ;% -10:0.2:10;         % sampling of pses, doesn't have to be the same as probe set
+slopeset    = [.1:.1:5].^2;%[.5:.1:5].^2;       % set of slopes, quad scale
+lapse       = 0.05;                             % lapse/mistake rate
+guess       = 0.50;                             % guess rate / minimum correct response rate (for detection expt: 1/num_alternative, 0 for discrimination expt)
 
 % STAIRCASE: general settings
 ntrial  = length( str.dot.series( str.dot.series == 1));
@@ -181,20 +181,9 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     % DRAW DOT
     if str.dot.series(f)        
-        
-% %         while timePassed < (trialStart + p.scr.dotOnset) %wait p.scr.dotOnset seconds
-% %             timePassed = GetSecs - trialStart;
-% %             WaitSecs(.001)
-% %         end        
+               
         str.thisProbe(f) = thisProbe;
-        % % %             if frameNumber == str.dot.frameOnset(f) %
-        % % %                 dotOnset = GetSecs;
-        % % %                 str.dot.time(f) = dotOnset;
-        % % %                 str.thisProbe(f) = thisProbe;
-        % % %             end
-        
-        % % %             if frameNumber >= str.dot.frameOnset(f) && frameNumber <= str.dot.frameOffset(f)
-        
+
         % leave plain texture on screen until dot
         WaitSecs( p.scr.dotOnset - .5 * p.scr.flipInterval) 
         
@@ -207,8 +196,11 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         % Draw smaller center dot
         Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
         % Draw attention dot
-        Screen('DrawTexture', p.scr.window, gaus_attn_tex, [], [ dotXStart-sizeAdj, dotYStart-sizeAdj, dotXEnd+sizeAdj, dotYEnd+sizeAdj ],[],[],[],p.scr.fixColorChange); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
-        
+        % adjust intensity
+        Screen('DrawTexture', p.scr.window, gaus_attn_tex(thisProbe), [], [ dotXStart, dotYStart, dotXEnd, dotYEnd ],[],[],[],p.scr.fixCrossColorChange); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
+        % adjust size - set sizeAdj to thisProbe
+        %Screen('DrawTexture', p.scr.window, gaus_attn_tex(thisProbe), [], [ dotXStart-sizeAdj, dotYStart-sizeAdj, dotXEnd+sizeAdj, dotYEnd+sizeAdj ],[],[],[],p.scr.fixCrossColor); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
+
         % FLIP
         [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
         if p.useEyelink
@@ -218,7 +210,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         thisDotOnset = GetSecs;       
         WaitSecs( p.scr.dotOnset + ( p.scr.dotJitter * ( randi( 30,1) * .01)) - .5*p.scr.flipInterval);
         
-        % Take dot offscreen and reflip
+        % DRAW TEXTURES DOT OFF
         Screen('DrawTexture', p.scr.window, texGrat(1), [], [], []); % flash off
         %% DRAW fixation gaussian
         Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
@@ -229,14 +221,12 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         
         % time check
         timePassed = GetSecs - trialStart;  
-        timePassed
         while ( timePassed < (p.scr.stimDur - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
             timePassed = GetSecs - trialStart ;
             WaitSecs(p.scr.flipInterval);
         end
         
-    else
-        % no dot - regular timing
+    else % NO DOT - regular timing
         WaitSecs(p.scr.stimDur - .5*p.scr.flipInterval)
     end
     
@@ -245,22 +235,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         messageText = strcat(['SERIES',num2str(str.number), '_TRIAL',num2str(str.number),'_DotOff',]);
         Eyelink('message',messageText);
     end
-    
-    % % record frame times to trial level
-    % str.time.frameEnd(f, ff) = GetSecs;
-    % str.time.frameDur(f, ff) = str.time.frameEnd(f, ff) - str.time.frameStart(f, ff);
-    
-% %     time2Now = GetSecs - trial
-% %     % subtract time for computations from frame duration or trial start
-% %     if ff > 1
-% %         time2now = str.time.trialStart(f);
-% %     else
-% %         time2now = str.time.frameStart(f, ff);
-% %     end
-% %     waitTime = p.scr.frameDur - time2now - .9*p.scr.flipInterval; %% CHECK
-% %     WaitSecs(waitTime);
-    
-    % % %     end % end of frame ff-loop
 
     [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])
     
@@ -327,10 +301,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     str.time.trialEnd(f) = GetSecs;
     str.time.trialDur(f) = str.time.trialEnd(f) - str.time.trialStart(f);
     
-    % % name/number trial and add to series structure
-    % strName = sprintf('str%d',f);
-    % str.(strName) = str;
-    
 end  % end of trial f-loop
 str;
 
@@ -349,19 +319,16 @@ str.time.seriesDuration = str.time.seriesEnd - str.time.seriesStart;
 finalent                        = sum(-exp(loglikfinal(:)).*loglikfinal(:));
 fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',PSEfinal,DLfinal,finalent);
 
-% % % % CALCULATE HITS and FAs for report
-% % % v1 = int8( and( str.dot.series == 1, str.dot.response == 1));
-% % % v2 = [int8( and( str.dot.series(1:end-1) == 1, str.dot.response(2:end) == 1)), 0]; % participant got dot on following frame
-% % % 
-% % % % hit rate
-% % % str.dot.hit = int8( (v1 + v2) > 0 );
-% % % str.dot.hitNum = numel( str.dot.hit (str.dot.hit == 1));
-% % % str.dot.totalNum = numel( str.dot.series( str.dot.series == 1 ) );
-% % % if numel( str.dot.hit (str.dot.hit ==1)) > 0
-% % %     str.dot.hitRate = numel(str.dot.hit (str.dot.hit ==1)) / str.dot.totalNum;
-% % % else
-% % %     str.dot.hitRate = 0;
-% % % end
+% % % % CALCULATE HITS, misses, FAs for report
+
+% hit number/rate
+str.dot.hit = numel(str.dot.responseCorrect(str.dot.responseCorrect ==1)); %int8( (v1 + v2) > 0 );
+str.dot.totalNum = numel( str.dot.series( str.dot.series == 1 ) );
+if str.dot.hit > 0
+str.dot.hitRate = numel(str.dot.hit (str.dot.hit ==1)) / str.dot.totalNum;
+else
+str.dot.hitRate = 0;
+end
 % % % % calculate misses (response on dot or subsequent trial are hits)
 % % % v3 = [v1(1),v2(1:end-1)];
 % % % str.dot.falseAlarm = int8 ( and(str.dot.response == 1, int8(v1+v3) == 0) ); % this can't be counted as a hit CHECK

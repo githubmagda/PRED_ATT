@@ -1,7 +1,8 @@
 function [p] = makeTextures(p)
+
 % This script makes the textures to be used in stimDisplay.m.
-% Textures include the main textures for the four quadrant gratings (inward spiraling)
-% and gratings with flash, the attentional dot and the fixation gaussian.
+% Textures include the main textures for the four quadrant gratings (inward spiraling in makeTexturesMov.m)
+% and gratings for the flash,  attentional dot guassian and  fixation gaussian.
 
 % calculate distance x,y from center using Pythag: c=p.scr.gratPosPix : a= sqrt( p.scr.gratPosPix / 2 )
 p.scr.gratPixSide = round( sqrt( p.scr.gratPosPix^2 / 2) );
@@ -32,30 +33,30 @@ p.scr.mQuadDim = size(mQuad,1);
 mQuad( p.scr.mQuadDim+1 - p.scr.rectGrating(3) : p.scr.mQuadDim, p.scr.mQuadDim+1 - p.scr.rectGrating(4) : p.scr.mQuadDim )= m;
 
 % construct 2x2 grating using flip.m
-m2 = [mQuad,flip(mQuad,2)]; %  top elements
-m2x2 = [m2;flip(m2,1)]; % all elements
+m2 = [mQuad, flip(mQuad,2)]; %  top elements
+m2x2 = [m2; flip(m2,1)]; % all elements
 
-% construct 2x2 grating with only one grating for LOCALIZER
-mQuadBlank = zeros(p.scr.basicSquare./2, p.scr.basicSquare./2); % CHECK zeros(p.scr.pixelsX./2, p.scr.pixelsY./2);
-m2x2Localizer = [mQuad,mQuadBlank;mQuadBlank,mQuadBlank]; %  one quad element
+% construct 2x2 grating with only 1 out of 4 gratings for LOCALIZER
+mQuadBlank = zeros( p.scr.basicSquare./2, p.scr.basicSquare./2); % CHECK zeros(p.scr.pixelsX./2, p.scr.pixelsY./2);
+m2x2Localizer = [ mQuad, mQuadBlank ; mQuadBlank, mQuadBlank]; %  one quad element
 
 % adapt for 2x2 grating with flash
 m2x2Flash = m2x2;
 m2x2Flash( size(mQuad)+1 - p.scr.rectGrating(3) : size(mQuad), size(mQuad)+1 - p.scr.rectGrating(4) : size(mQuad) ) = mFlash;
 
-% TEXTURES - adjust m2x2 values for 0:1 (black:white) scale
+% MAKE TEXTURES - adjust m2x2 values for 0:1 (black:white) scale  
 texGrat(1) = Screen( 'MakeTexture', p.scr.window, (m2x2+1)/2 ); % set all numbers to 0:1 range
 texGratFlash(1) = Screen( 'MakeTexture', p.scr.window, (m2x2Flash+1)/2 );
 texGratLocalizer(1) = Screen( 'MakeTexture', p.scr.window, (m2x2Localizer+1)/2 );
 %%end
 
-% save 2x2 gratings
+% SAVE TEXTURES 2x2 gratings
 p.textures.texGrat = texGrat;
 p.textures.texGratFlash = texGratFlash;
 p.textures.texGratLocalizer = texGratLocalizer;
 
 %% TEST GRATING
-% for cc = 1:p.scr.framesPerMovie
+% for cc = 1:1 % p.scr.framesPerMovie
 %     if mod(cc,2) == 0
 %         Screen( 'DrawTexture',p.scr.window, texGrat(cc) )
 %     else
@@ -104,8 +105,8 @@ szDot = p.scr.dotGridRadiusPix; % shorthand
 lenDot = length(-szDot:szDot);
 
 % set opacity and intensity of attentional dot
-p.scr.intDot = .05; % 0 to 1; %% CHECK - should be set by staircase
-color = 1.0;  %
+p.scr.intDot = .05; % TO BE SET BY STAIRCASE
+color = 1.0;  % 1 equals white; p.scr.fixColorChange (set in SEQ_ParamsScr = [1 0 0] = red;
 
 for i = 1:20
 % create gaussian
@@ -113,13 +114,14 @@ alph = exp(-( dotX.^2 / (2* (p.scr.dotRadiusPix) .^2) ) - ( dotY.^2 / (2* (p.scr
 gaus = cat(3, color .* ones(lenDot,lenDot,3), alph);   % default: gaus = ones(101,101,1) creates white box
 
 % make TEXTURE
-gaus_attn_tex = Screen('MakeTexture', p.scr.window, gaus);
+gaus_attn_tex(i) = Screen('MakeTexture', p.scr.window, gaus);
 p.textures.gaus_attn_tex = gaus_attn_tex;
 
 % TEST
-%Screen('DrawTexture',p.scr.window, gaus_attn_tex);
-Screen('DrawTexture',p.scr.window, gaus_attn_tex,[],[],[],[],[],p.scr.fixColorChange)
-Screen('Flip', p.scr.window);
+%Screen('DrawTexture',p.scr.window, gaus_attn_tex(i));
+%%color version
+%Screen('DrawTexture',p.scr.window, gaus_attn_tex,[],[],[],[],[],p.scr.fixColorChange)
+%Screen('Flip', p.scr.window);
 % end test
 end
 
@@ -177,7 +179,6 @@ p.scr.rowDotSet4 = row4;
 p.scr.colDotSet4 =  col4 + adjustScrPosX;
 
 % END ATTENTION
-
 
 end
 
