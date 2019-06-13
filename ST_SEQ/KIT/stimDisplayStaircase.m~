@@ -1,7 +1,6 @@
 function [p, str] = stimDisplayStaircase(p, str)
 
-% This verison of stim Display is only used for staircase. It checks for dot size that is successfully discrimated by subjectscript displays the stimulus making and displaying the 4 quadrant gratings,
-% Inputs include attn series
+% This verison of stim Display is only used for staircase. It checks for dot intensity that is successfully discrimated by subjectscript displays the stimulus making and displaying the 4 quadrant gratings,
 
 % PRESENT STIMULI
 % main textures (basic=1 and flash-white-mask=2)
@@ -96,18 +95,14 @@ if p.useEyelink
     Eyelink('message', messageText)
 end
 
+KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
+KbQueueStart();   %% KbQueueStart([deviceIndex])
+
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     % get times
     trialStart = GetSecs;
     str.time.trialStart(f) = trialStart;
-    
-    % reset keyboard queues
-    KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
-    KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1]) 
-    KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
-    KbQueueStart();   %% KbQueueStart([deviceIndex])
-    event = [];
     
     % SEND MESSAGE to EYETRACKER .edf file
     if p.useEyelink
@@ -234,21 +229,27 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
 
      [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])
      
-     if  ~isempty(event) && event.Keycode == KbName('space') %f >= 2 && ~isempty(event) % event.Pressed == 1
+     if  f>1 && ~isempty(event) && event.Keycode == KbName('space') %f >= 2 && ~isempty(event) % event.Pressed == 1
         
         str.dot.response(f) = 1;
+        
         if str.dot.series(f)    % this trial had a dot
             str.dot.responseCorrect(f) = 1;
             str.RT(f) = event.Time - thisDotOnset;
-        elseif str.dot.series(f-1)  % previous trial had a dot
+        elseif str.dot.series(f-1)   % previous trial had a dot
             str.dot.responseCorrect(f-1) = 1;
             str.RT(f) = event.Time - thisDotOnset;
         else
             str.dot.responseFA(f) = 1;
-        end       
-    end
-    
-    if str.dot.responseCorrect(f) == 1 || ( ~isempty(event) && isnan(str.dot.responseCorrect(f))    && str.dot.responseCorrect(f-1) == 1)    %%f > 1 && ~tr.beep && ~( str.dot.series(f) == 1 || (f>1 && str.seriesDot(f-1) == 1))
+        end
+
+                    KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
+            KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
+            KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
+            KbQueueStart();   %% KbQueueStart([deviceIndex])
+     end
+     
+    if str.dot.responseCorrect(f) == 1 || ( ~isempty(event) && isnan(str.dot.responseCorrect(f)) && str.dot.responseCorrect(f-1) == 1)    %%f > 1 && ~tr.beep && ~( str.dot.series(f) == 1 || (f>1 && str.seriesDot(f-1) == 1))
         % play positive beep
         PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
         PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
@@ -310,9 +311,11 @@ str.time.seriesEnd = GetSecs;
 str.time.seriesDuration = str.time.seriesEnd - str.time.seriesStart;
 
 % STAIRCASE: RESULTS
-[PSEfinal,DLfinal,loglikfinal]  = stair.get_PSE_DL();
+[str.PSEfinal, DLfinal, loglikfinal]  = stair.get_PSE_DL();
 finalent                        = sum(-exp(loglikfinal(:)).*loglikfinal(:));
-fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',PSEfinal,DLfinal,finalent);
+fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',str.PSEfinal,DLfinal,finalent);
+
+str.dotIntFactor = str.PSEfinal; % scales dot intensity in main experiment
 
 % CALCULATE HITS, misses, FAs for report
 str.dot.totalNum = numel( str.dot.series( str.dot.series==1));

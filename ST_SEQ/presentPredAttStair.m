@@ -271,6 +271,7 @@ try
 % % % % %     
 % % % % %     PsychPortAudio('Close');
 % % % % %     KbQueueFlush(); 
+% % % % %    KbQueueRelease([deviceIndex])
 % % % % %     RestrictKeysForKbCheck([]);
 % % % % %     ShowCursor;
 % % % % %     Priority(0);
@@ -289,7 +290,8 @@ cleanup;
 % % % % % end
 % % % % % 
 % % % % % PsychPortAudio('Close');
-% % % % % KbQueueFlush(); 
+% % % % % KbQueueFlush();
+% % % % %    KbQueueRelease([deviceIndex])         
 % % % % % RestrictKeysForKbCheck([]);
 % % % % % ShowCursor;
 % % % % % Priority(0);
@@ -298,7 +300,7 @@ end
 function [] = cleanup
 PsychPortAudio('Close');
 KbQueueFlush();
-RestrictKeysForKbCheck([]);
+           
 ShowCursor;
 Priority(0);
 if p.useEyelink
