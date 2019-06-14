@@ -2,19 +2,18 @@ function [p, str] = stimDisplayStaircase(p, str)
 
 % This verison of stim Display is only used for staircase. It checks for dot intensity that is successfully discrimated by subjectscript displays the stimulus making and displaying the 4 quadrant gratings,
 
-% PRESENT STIMULI
-% main textures (basic=1 and flash-white-mask=2)
-texGrat = p.textures.texGrat;
-% texGratFlash = p.textures.texGratFlash; % texture with predictive element
-gaus_attn_tex = p.textures.gaus_attn_tex; % attentional dot
-gaus_fix_tex = p.textures.gaus_fix_tex; % fixation gaussian
+% TEXTURES 
+texGrat = p.textures.texGrat;               % main texture
+% texGratFlash = p.textures.texGratFlash;   % texture with predictive element
+gaus_attn_tex = p.textures.gaus_attn_tex;   % attentional dot
+gaus_fix_tex = p.textures.gaus_fix_tex;     % fixation gaussian
 
-% DRAW PRE-SERIES FIXATION GUASSIAN
+% DRAW PRE-SERIES FIXATION GUASSIAN - NO attentional cue
 
 % Draw gaussian
 Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white) % 
 
-% Draw cue fixation cross with red arm pointing to attentional quadrant
+% Draw cue fixation cross (NO attentional pointer 'p.scr.attn0'
 Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
 
 % Draw smaller center dot
@@ -32,21 +31,25 @@ else
     WaitSecs(p.preSeriesFixTime); % just show cross to center gaze
 end
 
-% DISPLAY SEQUENCE CHECK-ERASE???
+% DISPLAY SEQUENCE
 % initialize timing and response vectors
-str.time.trialStart = nan( 1, p.series.stimPerSeries );
-str.time.trialEnd = nan( 1, p.series.stimPerSeries );
-str.dot.response = nan( 1, p.series.stimPerSeries );
-str.dot.responseCorrect = nan( 1, p.series.stimPerSeries );
-str.dot.responseFA = nan( 1, p.series.stimPerSeries );
-str.dot.responsekeyCode = nan( 1, p.series.stimPerSeries );
-str.dot.RT = nan( 1, p.series.stimPerSeries ); % time for correct; NaN for incorrect
-str.dot.posX = nan( 1, p.series.stimPerSeries );
-str.dot.posY = nan( 1, p.series.stimPerSeries );
-str.time.dotOnset = nan( 1, p.series.stimPerSeries );
-str.time.dotOffset = nan( 1, p.series.stimPerSeries );
+str.time.trialStart     = nan( 1, p.series.stimPerSeries );         % trial start and end times
+str.time.trialEnd       = nan( 1, p.series.stimPerSeries );
+str.time.dotOn          = nan( 1, p.series.stimPerSeries ); 
+str.time.dotOff         = nan( 1, p.series.stimPerSeries ); 
 
-str.time.seriesStart = GetSecs;
+str.dot.posX            = nan( 1, p.series.stimPerSeries );         % dot position and timing 
+str.dot.posY            = nan( 1, p.series.stimPerSeries );
+str.time.dotOnset       = nan( 1, p.series.stimPerSeries );
+str.time.dotOffset      = nan( 1, p.series.stimPerSeries );
+
+str.dot.response        = nan( 1, p.series.stimPerSeries );         % response-to-dot variables
+str.dot.responseCorrect = nan( 1, p.series.stimPerSeries );
+str.dot.FA              = nan( 1, p.series.stimPerSeries );
+str.dot.responsekeyCode = nan( 1, p.series.stimPerSeries );
+str.dot.RT              = nan( 1, p.series.stimPerSeries ); 
+str.dot.quad            = nan( 1, p.series.stimPerSeries );
+
 
 % INITIALIZE STAIRCASE (see MinExpEntStairDemo in Testing or Psychtoolbox)
 % stair input
@@ -83,24 +86,27 @@ first_value = probeset( round( length( probeset) /2));   % STAIRCASE: MA set to 
 stair.set_first_value( first_value);  % STAIRCASE: stair.set_first_value(3);
 
 ktrial = 0; % set counter for dot probes
-sizeAdj = first_value; % initial setting
 firstDotPos = find(str.dot.series,1);
 [thisProbe, ~, ~]  = stair.get_next_probe();
 
 % END INITIALIZE STAIRCASE
 
-% SEND MESSAGE to EYETRACKER .edf file
+% START KEYBOARD QUEUES
+KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
+KbQueueStart();   %% KbQueueStart([deviceIndex])
+
+% SERIES START MESSAGES
+% send message to EYETRACKER .edf file
 if p.useEyelink
     messageText = strcat('STAIRCASE_START', num2str(str.number));
     Eyelink('message', messageText)
 end
 
-KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
-KbQueueStart();   %% KbQueueStart([deviceIndex])
+str.time.seriesStart = GetSecs;
 
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
-    % get times
+    % get trial times
     trialStart = GetSecs;
     str.time.trialStart(f) = trialStart;
     
@@ -113,7 +119,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     if str.dot.series(f) == 1
         
         % DOT POSITION
-        dotQuad = randi(4,1); % 1 in 10 probability
+        dotQuad = randi(4,1);           % random quad selection
         str.dot.quad(f) = dotQuad;
         
         switch dotQuad %  x y coordinates for dot in specified quadrants 1:4
@@ -137,10 +143,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         str.dot.posX(f) = colDotSet( pos);
         str.dot.posY(f) = rowDotSet( pos);
         
-        % DOT onset is in range [end of flash + 3: #Frames/2] ; dot offset set by p.dotFrameDur
-        % %         str.dot.frameOnset(f) = randi([ p.scr.predScreenDur + 3, round(p.scr.framesPerMovie/2)], 1);
-        % %         str.dot.frameOffset(f) = str.dot.frameOnset(f) + p.dotFrameDur; % must be less than numFrames./2
-        
         % dimensions of dot CHANGES BASED ON STAIRCASE
         dotXStart = str.dot.posX(f) - round( p.scr.dotGridRadiusPix ); % set to size of gaussian grid
         dotXEnd = str.dot.posX(f) + round( p.scr.dotGridRadiusPix );
@@ -159,16 +161,15 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         
     % FLIP
     [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
-     
-    % % %         % routine for if eyes wander away change center dot and attn pointer to red
-    % % %         if p.useEyelink && fr.outOfBounds
-    % % %
-    % % %             Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-    % % %             Screen('FillOval', p.scr.window, p.scr.fixColorChange, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
-    % % %             % send message to .edf file
-    % % %             messageText = ['gazeOutOfBounds_', 'Series',num2str(str.number), 'Cue', thisCue, 'Pred', thisPred, 'dotTime?',str.seriesDot(f)];
-    % % %             Eyelink('message',messageText);
-    % % %         end
+    % routine for if eyes wander away change center dot and attn pointer to red
+    if p.useEyelink && fr.outOfBounds
+        
+        Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+        Screen('FillOval', p.scr.window, p.scr.fixColorChange, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+        % send message to .edf file
+        messageText = ['gazeOutOfBounds_', 'Series',num2str(str.number), 'Cue', thisCue, 'Pred', thisPred, 'dotTime?',str.seriesDot(f)];
+        Eyelink('message',messageText);
+    end
     
     % DRAW DOT
     if str.dot.series(f)        
@@ -194,12 +195,14 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
 
         % FLIP
         [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
+        p.time.dotOff = GetSecs;
+        
         if p.useEyelink
-            messageText = strcat(['DotOn_PosX: ',dotXStart,'-',dotXEnd, '_PosY: ',dotYStart, '-', dotYEnd]);
+            messageText = strcat(['DotOn_Quad_',dotQuad,'_PosX: ',dotXStart,'-',dotXEnd, '_PosY: ',dotYStart, '-', dotYEnd]);
             Eyelink('message',messageText);
         end    
-        thisDotOnset = GetSecs;       
-        WaitSecs( p.scr.dotOnset + ( p.scr.dotJitter * ( randi( 30,1) * .01)) - .5*p.scr.flipInterval);
+        timePassed = GetSecs - startTrial;        
+        WaitSecs( p.scr.flashDur + p.scr. postFlashTime + ( p.scr.dotJitter * ( randi( 20,1) * .01)) - .5*p.scr.flipInterval);
         
         % DRAW TEXTURES DOT OFF
         Screen('DrawTexture', p.scr.window, texGrat(1), [], [], []); % flash off
@@ -210,22 +213,28 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         % Draw smaller center dot
         Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
         
-        % time check
-        timePassed = GetSecs - trialStart;  
-        while ( timePassed < (p.scr.stimDur - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
-            timePassed = GetSecs - trialStart ;
-            WaitSecs(p.scr.flipInterval);
-        end
         
-    else % NO DOT - regular timing
-        WaitSecs(p.scr.stimDur - .5*p.scr.flipInterval)
-    end
-    
-    % SEND EYETRACKER MESSAGE
+        
+        
+            % SEND EYETRACKER MESSAGE
     if p.useEyelink
-        messageText = strcat(['SERIES',num2str(str.number), '_TRIAL',num2str(str.number),'_DotOff',]);
+        messageText = strcat(['SERIES',num2str(str.number), '_TRIAL',num2str(str.number),'_DotOFF',]);
         Eyelink('message',messageText);
     end
+        % time check
+        timePassed = GetSecs - trialStart;  
+        WaitSecs( p.scr.flipInterval - timePassed - .5*p.scr.flipInterval);
+%         while ( timePassed < (p.scr.stimDur - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
+%             timePassed = GetSecs - trialStart ;
+%             WaitSecs(p.scr.flipInterval);
+%         end
+        
+    else % NO DOT - regular timing
+        timePassed = GetSecs - trialStart; 
+        WaitSecs(p.scr.stimDur -  - timePassed - .5*p.scr.flipInterval)
+    end
+    
+
 
      [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])
      
@@ -236,31 +245,32 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         if str.dot.series(f)    % this trial had a dot
             str.dot.responseCorrect(f) = 1;
             str.RT(f) = event.Time - thisDotOnset;
+            % play positive beep
+            PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
+            PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+            PsychPortAudio('Stop', p.aud.handle, 1);
+            
         elseif str.dot.series(f-1)   % previous trial had a dot
             str.dot.responseCorrect(f-1) = 1;
             str.RT(f) = event.Time - thisDotOnset;
+            % play positive beep
+            PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
+            PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+            PsychPortAudio('Stop', p.aud.handle, 1);
         else
-            str.dot.responseFA(f) = 1;
+            str.dot.FA(f) = 1;
+            % play negative beep
+            PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepWarn);
+            PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+            PsychPortAudio('Stop', p.aud.handle, 1);           
         end
         
+        % clear old queue and start next one
         KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
         KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
         KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
         KbQueueStart();   %% KbQueueStart([deviceIndex])
      end
-     
-    if str.dot.responseCorrect(f) == 1 || ( isnan(str.dot.responseCorrect(f)) && str.dot.responseCorrect(f-1) == 1)    %%f > 1 && ~tr.beep && ~( str.dot.series(f) == 1 || (f>1 && str.seriesDot(f-1) == 1))
-        % play positive beep
-        PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
-        PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-        PsychPortAudio('Stop', p.aud.handle, 1);
-        
-    elseif f>=2 && str.dot.series( f-1) == 1 % participant has not responded until dot(f = 1)
-        % play negative beep
-        PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepWarn);
-        PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-        PsychPortAudio('Stop', p.aud.handle, 1);
-    end
     
     % PROBE ADJUST check for response on etiher trial f-1 OR f-2
     if f >= firstDotPos && str.dot.series( f-1) == 1 % check for correct/no response on trial n-1
@@ -285,8 +295,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         fprintf('%d, new sample point: %f\nexpect ent: %f\n', ...
             ktrial,thisProbe,entexp(ind));
     end % probe and response 'if clause'
-    
-    
+        
     % SEND EYETRACKER MESSAGE
     if p.useEyelink
         messageText = strcat('SERIES_%d',str.number, 'TRIALEND_%d', f);
@@ -311,17 +320,17 @@ str.time.seriesEnd = GetSecs;
 str.time.seriesDuration = str.time.seriesEnd - str.time.seriesStart;
 
 % STAIRCASE: RESULTS
-[str.PSEfinal, DLfinal, loglikfinal]  = stair.get_PSE_DL();
+[str.PSEfinal, str.DLfinal, loglikfinal]  = stair.get_PSE_DL();
 finalent                        = sum(-exp(loglikfinal(:)).*loglikfinal(:));
-fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',str.PSEfinal,DLfinal,finalent);
+fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',str.PSEfinal,str.DLfinal,finalent);
 
 str.dotIntFactor = str.PSEfinal; % scales dot intensity in main experiment
 
 % CALCULATE HITS, misses, FAs for report
 str.dot.totalNum = numel( str.dot.series( str.dot.series==1));
 str.dot.hitNum = numel(str.dot.responseCorrect(str.dot.responseCorrect ==1)); %int8( (v1 + v2) > 0 );
-str.dot.FANum = numel(str.dot.responseFA(str.dot.responseFA ==1)); 
-str.dot.missedNum = str.dot.totalNum - str.dot.hitNum;
+str.dot.FANum = numel(str.dot.FA(str.dot.FA ==1)); 
+str.dot.missedNum2 = str.dot.totalNum - str.dot.hitNum;
 
 if str.dot.hitNum > 0
     str.dot.hitRate = str.dot.hitNum / str.dot.totalNum;

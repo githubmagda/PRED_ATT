@@ -46,7 +46,7 @@ p.scr.textType = 'Helvetica';
 p.scr.textColor = p.scr.white;
 
 %%% SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries = 60;
+p.series.stimPerSeries = 120;
 p.series.seqBasicSet = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRpts = 10;
 p.series.chunkLength = 3;
@@ -75,10 +75,10 @@ p.scr.gratSidePix = sqrt(p.scr.gratPosPix^2/2);
 p.series.dotProbStaircase = .3;  
 % main series dot specs
 p.scr.cueValidPerc = .80;
-p.series.dotProb = .02;                 % DEFAULT .03 = percent of dots per series
-p.scr.dotOnset = p.scr.predScreenDur + round2flips(p, .1);        % from start of trial
-p.scr.dotDur = round2flips(p, .2);
-p.scr.dotJitter = round2flips(p, .01);
+p.series.dotProb = .02;                         % DEFAULT .03 = percent of dots per series
+p.scr.postFlashTime = round2flips(p, .1);       % from start of trial
+p.scr.dotDur = round2flips(p, .15);
+p.scr.dotJitter = round2flips(p, .01);         % is multiplied by factor of 1:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
 p.scr.dotRadiusDeg = .15; 

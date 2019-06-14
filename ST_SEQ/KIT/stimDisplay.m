@@ -5,57 +5,52 @@ function[p, sr] = stimDisplay(p, sr)
 % Inputs include the predictive and attn series included in series
 % structure
 
-% PRESENT STIMULI
-% main textures (basic=1 and flash-white-mask=2)
-
-texGrat = p.textures.texGrat;
-texGratFlash = p.textures.texGratFlash; % texture with predictive element
-gaus_attn_tex = p.textures.gaus_attn_tex; % attentional dot
-gaus_fix_tex = p.textures.gaus_fix_tex; % fixation gaussian
+% TEXTURES 
+texGrat = p.textures.texGrat;               % main texture
+texGratFlash = p.textures.texGratFlash;     % texture with predictive element
+gaus_attn_tex = p.textures.gaus_attn_tex;   % attentional dot
+gaus_fix_tex = p.textures.gaus_fix_tex;     % fixation gaussian
 
 % determine x/y positions for red circle for question 
-p.circleXPosLeft = p.scr.centerX - ceil(p.scr.rectGrating(3)/2);   % - p.scr.gratPosPix/2; % size of quad minus 1/2 grating box minus
-p.circleXPosRight = p.scr.centerX + ceil(p.scr.rectGrating(3)/2);  % - p.scr.gratPosPix/2; % size of quad minus 1/2 grating box minus
-p.circleYPosTop = p.scr.centerY - ceil(p.scr.rectGrating(4)/2);    % - p.scr.gratPosPix/2;
-p.circleYPosBottom = p.scr.centerY + ceil(p.scr.rectGrating(4)/2); % - p.scr.gratPosPix/2;
+p.circleXPosLeft = p.scr.centerX - ceil( p.scr.rectGrating(3)/2);   % - p.scr.gratPosPix/2; % size of quad minus 1/2 grating box minus
+p.circleXPosRight = p.scr.centerX + ceil( p.scr.rectGrating(3)/2);  % - p.scr.gratPosPix/2; % size of quad minus 1/2 grating box minus
+p.circleYPosTop = p.scr.centerY - ceil( p.scr.rectGrating(4)/2);    % - p.scr.gratPosPix/2;
+p.circleYPosBottom = p.scr.centerY + ceil( p.scr.rectGrating(4)/2); % - p.scr.gratPosPix/2;
 
-% Before animation loop show fixation cross attentional cue
+% Before animation loop show attentional-fixation cross indicates attn quadrant
 % thisCue determines attentional pointer and probabilistic placement of attentional dot
-pos = randi( length( p.series.seqBasicSet));
-thisCue = p.series.seqBasicSet( pos); %% Or make block level series?
-
-% save to series structure
+pos = randi( length( p.series.seqBasicSet));        % 
+thisCue = p.series.seqBasicSet( pos);               % choose attn quadrant / cue
 sr.thisCue = thisCue;  % save to series level
 
 % used to calculate dot position below
 setOther = p.series.seqBasicSet; % set of possible cue and dot quadrants
 setOther( setOther==thisCue) = [];  % remaining options when cue is invalid
 
-% initialize
+% initialize question - where will next flash appear?
 sr.question.numCorrect = 0;
-sr.question
 
 switch thisCue
     case 1
-        attn = p.scr.attn1; % selects the fixation cue (arm of cross)
-        fixCoords = p.scr.fixCoords1; % quad and length of fixation cue arms
-        circleXPos = p.circleXPosLeft;  % position of red circle in quad
-        circleYPos = p.circleYPosTop;
+        attn = p.scr.attn1;             % selects the fixation cue (arm of cross)
+        fixCoords = p.scr.fixCoords1;   % quad and length of fixation cue arms
+%         circleXPos = p.circleXPosLeft;  % position of red circle in quad
+%         circleYPos = p.circleYPosTop;
     case 2
         attn = p.scr.attn2;
         fixCoords = p.scr.fixCoords2;
-        circleXPos = p.circleXPosRight;
-        circleYPos = p.circleYPosTop;
+%         circleXPos = p.circleXPosRight;
+%         circleYPos = p.circleYPosTop;
     case 3
         attn = p.scr.attn3;
         fixCoords = p.scr.fixCoords3;
-        circleXPos = p.circleXPosRight;
-        circleYPos = p.circleYPosBottom;
+%         circleXPos = p.circleXPosRight;
+%         circleYPos = p.circleYPosBottom;
     case 4
         attn = p.scr.attn4;
         fixCoords = p.scr.fixCoords4;
-        circleXPos = p.circleXPosLeft;
-        circleYPos = p.circleYPosBottom;
+%         circleXPos = p.circleXPosLeft;
+%         circleYPos = p.circleYPosBottom;
 end
 
 % DRAW PRE-SERIES FIXATION GUASSIAN w/ ATTENTION CUE
@@ -65,59 +60,69 @@ Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white) % [p
 Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, attn, [ p.scr.centerX, p.scr.centerY ], 2);
 % Draw smaller center dot
 Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2*p.scr.fixRadiusInner  );
-%Screen('FrameOval', p.scr.window, [255,0,0], [circleXPos-p.scr.gratPosPix/2, circleYPos-p.scr.gratPosPix/2, circleXPos+p.scr.gratPosPix/2, circleYPos+p.scr.gratPosPix/2], 2,[]);
 
 % FLIP
 Screen('Flip', p.scr.window);
+
+% END PRE-SERIES FIXATION
 
 % START POLICING FIXATION
 if p.useEyelink == 1
     monitorFixation(p, sr);
 else
-    WaitSecs(p.preSeriesFixTime); % just show cross with cue ofr
+    WaitSecs(p.preSeriesFixTime); % show attentional cross with cue
 end
+% END POLICING FIXATION
 
-% DISPLAY SEQUENCE CHECK-ERASE???
+% DISPLAY SEQUENCE 
 % initialize timing and response vectors
-sr.time.trialStart = zeros( 1, p.series.stimPerSeries );
-sr.time.trialEnd = zeros( 1, p.series.stimPerSeries);
+sr.time.trialStart      = nan( 1, p.series.stimPerSeries );
+sr.time.trialEnd        = nan( 1, p.series.stimPerSeries);
+sr.time.trialFlashOn    = nan( 1, p.series.stimPerSeries);
+sr.time.trialFlashOff   = nan( 1, p.series.stimPerSeries);
+sr.time.trialDotOn      = nan( 1, p.series.stimPerSeries);
+sr.time.trialDotOff     = nan( 1, p.series.stimPerSeries);
 
-sr.time.frameStart = zeros ( p.series.stimPerSeries, p.scr.framesPerMovie);  
-sr.time.frameEnd = zeros ( p.series.stimPerSeries, p.scr.framesPerMovie);
-sr.time.frameDur = zeros ( p.series.stimPerSeries, p.scr.framesPerMovie);
+str.dot.posX            = nan( 1, p.series.stimPerSeries );                % dot position and timing 
+str.dot.posY            = nan( 1, p.series.stimPerSeries );
+str.time.dotOnset       = nan( 1, p.series.stimPerSeries );
+str.time.dotOffset      = nan( 1, p.series.stimPerSeries );
 
-sr.dot.response = zeros( 1, p.series.stimPerSeries );
-sr.dot.responseCorrect = zeros( 1, p.series.stimPerSeries );
-sr.dot.responsekeyCode = zeros( 1, p.series.stimPerSeries );
-sr.dot.RT = zeros( 1, p.series.stimPerSeries ); % time for correct; NaN for incorrect
-sr.dot.posX = zeros( 1, p.series.stimPerSeries );
-sr.dot.posY = zeros( 1, p.series.stimPerSeries );
-sr.dot.frameOnset = zeros( 1, p.series.stimPerSeries );
-sr.dot.frameOffset = zeros( 1, p.series.stimPerSeries );
-sr.dot.time = zeros( 1, p.series.stimPerSeries );
-sr.time.seriesStart = GetSecs;
-sr.question.responseQuad = zeros( 1, p.series.stimPerSeries );
-sr.question.responseCorrect = zeros( 1, p.series.stimPerSeries );
-sr.question.RT = zeros( 1, p.series.stimPerSeries );
-sr.question.chunkNum = zeros( 1, p.series.stimPerSeries );
-sr.question.elementNum = zeros( 1, p.series.stimPerSeries );
+sr.dot.response         = nan( 1, p.series.stimPerSeries );             % dot response
+sr.dot.responseCorrect  = nan( 1, p.series.stimPerSeries );
+sr.dot.FA               = nan( 1, p.series.stimPerSeries );
+sr.dot.responsekeyCode  = nan( 1, p.series.stimPerSeries );
+sr.dot.RT               = nan( 1, p.series.stimPerSeries ); 
+sr.dot.quad             = nan( 1, p.series.stimPerSeries );
 
-% select trials for question % not a dot or subsequent trial 
+sr.question.responseQuad = nan( 1, p.series.stimPerSeries );
+sr.question.responseCorrect = nan( 1, p.series.stimPerSeries );
+sr.question.RT = nan( 1, p.series.stimPerSeries );
+sr.question.chunkNum = nan( 1, p.series.stimPerSeries );
+sr.question.elementNum = nan( 1, p.series.stimPerSeries );
+
+% SELECT QUESTION TRIALS % N.B. not trial with dot or subsequent trial 
 dot = find( sr.dot.series == 1);
-questionSet = find( sr.pred.trackerByElement > 0); % number of elements already viewed OR %1: p.series.stimPerSeries; %
+questionSet = find( sr.pred.trackerByElement > 0);  % number of elements in sequence already viewed 
 questionSet = Shuffle( setdiff(questionSet,dot));
 thisQuestionSet = questionSet( 1:p.series.questionNum);
-sr.question.trialNumbers = thisQuestionSet; % record subSet
+sr.question.trialNumbers = thisQuestionSet;         % record subSet
 
+% START KEYBOARD QUEUES
+KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
+KbQueueStart();   %% KbQueueStart([deviceIndex])
+
+% SERIES START MESSAGES
 % SEND MESSAGE to EYETRACKER .edf file
 if p.useEyelink
     messageText = strcat('SERIES_START', num2str(sr.number),'AttnQUAD_%d', num2str(thisCue) );
     Eyelink('message', messageText)
 end
+sr.time.seriesStart = GetSecs;
 
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
-    % get times
+    % get trial times
     trialStart = GetSecs;
     sr.time.trialStart(f) = trialStart;
     
@@ -127,27 +132,26 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         Eyelink('Message', messageText);
     end
     
-    thisPred = sr.pred.series(f); %  where will flash appear
-    thisRotation = ( thisPred-1 ) * 90; % rotation to put flash in correct quadrant
+    % predictive FLASH
+    thisPred = sr.pred.series(f);           %  quadrant where flash will appear
+    thisRotation = ( thisPred-1 ) * 90;     % rotation factor to put flash in correct quadrant
     
     if sr.dot.series(f) == 1
         
-        % DOT POSITION - VALID?
-        selEl = randi(10,1); % 1 in 10 probability
+        % DOT POSITION - is  dot in attentional quad 'VALID'?
+        selEl = randi(10,1);                    % 1 in 10 probability
 
-        if selEl <= ( p.scr.cueValidPerc*10)  % e.g. xx% likelihood
+        if selEl <= ( p.scr.cueValidPerc*10)    % e.g. xx% likelihood
             sr.dot.valid(f) = 1;
-            dotQuad = thisCue;          
+            dotQuad = thisCue;
         else
             sr.dot.Valid(f) = 0;
-            % select next random position (not including cued position)
-            ShuffleSet = Shuffle(setOther);
-            dotQuad = ShuffleSet(1); % random allocation to any other quad
-            % display('invalidDotPos',num2str(dotQuad))
+            ShuffleSet = Shuffle(setOther);     % select next random position (not including cued position)
+            dotQuad = ShuffleSet(1);            % random allocation to any other quad
         end
         sr.dot.quad(f) = dotQuad;
         
-        switch dotQuad %  x y coordinates for dot in specified quadrants 1:4
+        switch dotQuad                          % xy coordinates for dot in specified quadrants 1:4
             case 1
                 rowDotSet = p.scr.rowDotSet1;
                 colDotSet = p.scr.colDotSet1; % defines set of possible dot locations
@@ -176,88 +180,117 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         dotXStart = sr.dot.posX(f) - round( p.scr.dotGridRadiusPix ); % set to size of gaussian grid
         dotXEnd = sr.dot.posX(f) + round( p.scr.dotGridRadiusPix );
         dotYStart = sr.dot.posY(f) - round( p.scr.dotGridRadiusPix );
-        dotYEnd = sr.dot.posY(f) + round( p.scr.dotGridRadiusPix );
-        
+        dotYEnd = sr.dot.posY(f) + round( p.scr.dotGridRadiusPix );        
     end
     
-    % KB CHECK initialize queues
-    KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
-    KbQueueStart();             %% KbQueueStart([deviceIndex])
+    
+    % DRAW TEXTURES % FLASH ON
+    Screen('DrawTexture', p.scr.window, texGratFlash(1), [], [], thisRotation); % flash on  [rotate] = angle in degrees
+    
+    % DRAW fixation gaussian
+    Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
+    % Draw the cue fixation cross
+    Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+    % Draw smaller center dot
+    Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+    %Screen('DrawTexture',p.scr.window, gaus_fix_texSmall,[],[],[],[],[],[p.scr.white]) % [p.scr.fixColorChange]
+    
+    % FLIP
+    [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
+    p.time.trialFlashOn(f) = flip;
+    
+    % SEND EYETRACKER MESSAGE
+    if p.useEyelink
+        messageText = strcat(['SERIES',num2str(sr.number), 'TRIAL',num2str(f),'Cue', thisCue, 'FlashQuadON', thisPred]);      
+        Eyelink('message', messageText);
+    end
+    
+    timePassed = WaitSecs - trialStart;
+    WaitSecs( p.scr.predScreenDur - timePassed - .5*p.scr.flipInterval);
+    
+    % routine for if eyes wander away change center dot and attn pointer to red
+    if p.useEyelink && fr.outOfBounds
+        Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, attn, [ p.scr.centerX, p.scr.centerY ], 2);
+        Screen('FillOval', p.scr.window, p.scr.fixColorChange, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+        % send message to .edf file
+        messageText = ['gazeOutOfBounds_', 'Series',num2str(sr.number), 'Cue', thisCue, 'Pred', thisPred, 'dotTime?',sr.seriesDot(f)];
+        Eyelink('message',messageText);
+    end
+    
+    % DRAW TEXTURES % FLASH OFF
+    Screen('DrawTexture', p.scr.window, texGrat(1), [], [], thisRotation); % flash on  [rotate] = angle in degrees
+    %% DRAW fixation gaussian
+    Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
+    % Draw the cue fixation cross
+    Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+    % Draw smaller center dot
+    Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+    
+    % FLIP
+    [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
+    p.time.trialFlashOff(f)
+    
+    % SEND EYETRACKER MESSAGE
+    if p.useEyelink
+       messageText = strcat(['SERIES',num2str(sr.number), 'TRIAL',num2str(f),'Cue', thisCue, 'FlashQuadOFF', thisPred]);
+        Eyelink('message', messageText);
+    end
+    timePassed = WaitSecs - p.scr.trialFlashOn(f);
+    WaitSecs( p.scr.predScreenDur + p.scr.postFlashTime - timePassed - .5*p.scr.flipInterval);
+    
+    % DRAW TEXTURES % DOT ON
+    Screen('DrawTexture', p.scr.window, texGrat(1), [], [], thisRotation); % flash on  [rotate] = angle in degrees
+    %% DRAW fixation gaussian
+    Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
+    % Draw the cue fixation cross
+    Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+    % Draw smaller center spot
+    Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+    % attention DOT
+    Screen('DrawTexture', p.scr.window, gaus_attn_tex(thisProbe), [], [ dotXStart, dotYStart, dotXEnd, dotYEnd ],[],[],[],p.scr.fixCrossColorChange); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
+    
+    % FLIP
+    [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
+    p.time.dotOn(f) = flip;
+    
+    if p.useEyelink
+        messageText = strcat(['DotOn_PosX: ',dotXStart,'-',dotXEnd, '_PosY: ',dotYStart, '-', dotYEnd]);
+        Eyelink('message',messageText);
+    end
+    
+    timePassed = WaitSecs - p.scr.trialFlashOn(f);
+    WaitSecs( p.scr.dotDur + ( p.scr.dotJitter*( randi( 30,1) * .01)) - - timePassed - .5*p.scr.flipInterval);
      
-    for ff = 1 : p.scr.framesPerMovie
-        
-        frameNumber = ff;
-        frameStart = GetSecs;
-        sr.time.frameStart(f,ff) = frameStart;
-        % reset parameters tested in ff loop
-        
-        if ff <= p.scr.predScreenDur % show flash
-            
-            Screen('DrawTexture', p.scr.window, texGratFlash(ff), [], [], thisRotation); % flash on  [rotate] = angle in degrees
-            
-            % SEND EYETRACKER MESSAGE
-            if p.useEyelink
-                messageText = strcat('Series_',num2str(sr.number), 'FlashQuadONset', num2str(thisPred) );
-                Eyelink('message', messageText);
-            end
-            
-        else % turn off flash
-            
-            Screen('DrawTexture', p.scr.window, texGrat(ff), [], [], []); % flash off
-            
-            % SEND EYETRACKER MESSAGE
-            if p.useEyelink
-                messageText = strcat('Series_',num2str(sr.number), 'FlashQuadOFFset', num2str(thisPred) );
-                Eyelink('message', messageText);
-            end
-        end
-        
-        %% DRAW fixation gaussian
-        Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
-        % Draw the cue fixation cross
-        Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-        % Draw smaller center dot
-        Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
-        %Screen('DrawTexture',p.scr.window, gaus_fix_texSmall,[],[],[],[],[],[p.scr.white]) % [p.scr.fixColorChange]
-        
-        % routine for if eyes wander away change center dot and attn pointer to red
-        if p.useEyelink && fr.outOfBounds
-            Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, attn, [ p.scr.centerX, p.scr.centerY ], 2);
-            Screen('FillOval', p.scr.window, p.scr.fixColorChange, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
-            % send message to .edf file
-            messageText = ['gazeOutOfBounds_', 'Series',num2str(sr.number), 'Cue', thisCue, 'Pred', thisPred, 'dotTime?',sr.seriesDot(f)];
-            Eyelink('message',messageText);
-        end
-        
-        % DRAW DOT
-        if sr.dot.series(f) == 1
-            if frameNumber >= sr.dot.frameOnset(f) && frameNumber <= sr.dot.frameOffset(f)
-                Screen('DrawTexture', p.scr.window, gaus_attn_tex, [], [ dotXStart, dotYStart, dotXEnd, dotYEnd ],[],[],[],p.scr.fixColorChange); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
-                
-                if p.useEyelink
-                    messageText = strcat(['FRAME',num2str(frameNumber),'dotPos',dotXStart, dotYStart, dotXEnd, dotYEnd]);
-                    Eyelink('message',messageText);
-                end
-            end
-        end
-        
-        % FLIP
-        [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 ); 
-        if frameNumber == sr.dot.frameOnset(f)
-            sr.dot.time(f) = flip;
-        end
-        
-        % SEND EYETRACKER MESSAGE
-        if p.useEyelink
-            messageText = strcat(['SERIES',num2str(sr.number), 'TRIAL',num2str(tr.number),'FRAME',num2str(frameNumber),'Cue', thisCue, 'Pred', thisPred, 'dotTime',]);
-            Eyelink('message',messageText);
-        end
-        
-        % record times to trial level
-        sr.time.frameEnd( f, ff) = GetSecs;
-        sr.time.frameDur( f, ff) = sr.time.frameEnd( f, ff) - sr.time.frameStart( f, ff);
-        waitTime = p.scr.frameDur - sr.time.frameDur(f, ff) - .9*p.scr.flipInterval; %%\ CHECK
-        WaitSecs(waitTime);
+    % DRAW TEXTURES % DOT OFF
+    Screen('DrawTexture', p.scr.window, texGrat(1), [], [], thisRotation); % flash on  [rotate] = angle in degrees
+    %% DRAW fixation gaussian
+    Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
+    % Draw the cue fixation cross
+    Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+    % Draw smaller center spot
+    Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+    % attention DOT
+    Screen('DrawTexture', p.scr.window, gaus_attn_tex(thisProbe), [], [ dotXStart, dotYStart, dotXEnd, dotYEnd ],[],[],[],p.scr.fixCrossColorChange); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
+   
+    % FLIP
+    [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
+    p.time.DotOff(f) = flip;
+    
+    % SEND EYETRACKER MESSAGE
+    if p.useEyelink
+        messageText = strcat('Series_',num2str(sr.number), 'FlashQuadOFF', num2str(thisPred) );
+        Eyelink('message', messageText);
+    end
+    timePassed = GetSecs - trialStart;
+    WaitSecs( p.scr.stimDur - timePassed - .5*p.scr.flipInterval);
+    
+    % SEND EYETRACKER MESSAGE
+    if p.useEyelink
+        messageText = strcat(['SERIES',num2str(sr.number), 'TRIAL',num2str(f),'Cue', thisCue, 'Pred', thisPred, 'dotTime',]);
+        Eyelink('message',messageText);
+    end
+
+    WaitSecs(waitTime);
         
     end % end of frame ff-loop
     

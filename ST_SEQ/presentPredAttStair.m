@@ -14,7 +14,7 @@ rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTA
 
 % Force GetSecs and WaitSecs into memory to avoid latency later on:
 GetSecs;         
-WaitSecs(0.1);
+WaitSecs(0.1);                                           
 
 % SET PATHS - PSYCHTOOLBOX AND KIT (subscripts)
 p.main_path = pwd; % get current path
@@ -27,7 +27,7 @@ end
                    
 PsychDefaultSetup(2);   % set to: (0) calls AssertOpenGL (1) also calls KbName('UnifyKeyNames') (2) also calls Screen('ColorRange', window, 1, [], 1); immediately after and whenever PsychImaging('OpenWindow',...) is called
 [p] = audioOpen(p);     % set audio preferences %Snd('Open'); % open the sound channel
-
+                            
 KbName('UnifyKeyNames');
 % specify key names of interest in the study N.B. PsychDefaultSetup(1+) already sets up KbName('UnifyKeyNames') using PsychDefaultSetup(1 or 2);
 p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape'),]; % CHECK
@@ -36,7 +36,7 @@ RestrictKeysForKbCheck([p.activeKeys]);
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug = 1;
-p.localizer = 0                                           ;
+p.localizer = 1;                                           ;
 p.staircase = 1; % these could be staircase and/or localizers (or could be separate programs)
 
 % GET EYELINK DETAILS
