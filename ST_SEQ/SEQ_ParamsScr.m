@@ -62,8 +62,8 @@ p.scr.frameDur = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 p.scr.gratRadiusDeg = 3; % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
 p.scr.gratRadiusPix = round( p.scr.gratRadiusDeg * p.scr.pixPerDeg ); 
 
-% timing of predictive texture in frame numbers 
-p.scr.predScreenDur = round2flips(p, .05);    % duration of predictive flash in 
+% timing of predictive texture in ms  
+p.scr.flashDur = round2flips(p, .05);    % duration of predictive flash in 
 
 % calculate distance of grating center from screen center based on degrees or quadrant size 
 p.scr.gratPosDeg = 7; % p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
@@ -76,7 +76,7 @@ p.series.dotProbStaircase = .3;
 % main series dot specs
 p.scr.cueValidPerc = .80;
 p.series.dotProb = .02;                         % DEFAULT .03 = percent of dots per series
-p.scr.postFlashTime = round2flips(p, .1);       % from start of trial
+p.scr.postFlashDur = round2flips(p, .1);       % from start of trial
 p.scr.dotDur = round2flips(p, .15);
 p.scr.dotJitter = round2flips(p, .01);         % is multiplied by factor of 1:
 

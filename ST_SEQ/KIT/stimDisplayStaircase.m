@@ -9,13 +9,10 @@ gaus_attn_tex = p.textures.gaus_attn_tex;   % attentional dot
 gaus_fix_tex = p.textures.gaus_fix_tex;     % fixation gaussian
 
 % DRAW PRE-SERIES FIXATION GUASSIAN - NO attentional cue
-
 % Draw gaussian
 Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white) % 
-
 % Draw cue fixation cross (NO attentional pointer 'p.scr.attn0'
 Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-
 % Draw smaller center dot
 Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2*p.scr.fixRadiusInner  );
 %Screen('FrameOval', p.scr.window, [255,0,0], [circleXPos-p.scr.gratPosPix/2, circleYPos-p.scr.gratPosPix/2, circleXPos+p.scr.gratPosPix/2, circleYPos+p.scr.gratPosPix/2], 2,[]);
@@ -23,6 +20,12 @@ Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInne
 % FLIP
 Screen('Flip', p.scr.window);
 % END DRAW PRE-SERIES FIXATION GUASSIAN
+
+% SEND MESSAGE to EYETRACKER .edf file                                           
+if p.useEyelink                                                                                                                                   117
+    messageText = strcat( 'STAIRCASE_PRE-SERIES FIXATION', num2str(str.number)); 
+    Eyelink( 'Message', messageTest);
+end
 
 % START POLICING FIXATION
 if p.useEyelink == 1
@@ -40,8 +43,6 @@ str.time.dotOff         = nan( 1, p.series.stimPerSeries );
 
 str.dot.posX            = nan( 1, p.series.stimPerSeries );         % dot position and timing 
 str.dot.posY            = nan( 1, p.series.stimPerSeries );
-str.time.dotOnset       = nan( 1, p.series.stimPerSeries );
-str.time.dotOffset      = nan( 1, p.series.stimPerSeries );
 
 str.dot.response        = nan( 1, p.series.stimPerSeries );         % response-to-dot variables
 str.dot.responseCorrect = nan( 1, p.series.stimPerSeries );
@@ -75,7 +76,7 @@ stair.set_use_lookup_table(true);
 % before stair.init
 %stair('set_psychometric_func','logistic');
 
-% STAIRCASE: init stair
+% STAIRCASE: initialize
 stair.init( probeset, meanset, slopeset, lapse, guess);
 
 % option: use a subset of all data for choosing the next probe
@@ -88,33 +89,23 @@ stair.set_first_value( first_value);  % STAIRCASE: stair.set_first_value(3);
 ktrial = 0; % set counter for dot probes
 firstDotPos = find(str.dot.series,1);
 [thisProbe, ~, ~]  = stair.get_next_probe();
-
 % END INITIALIZE STAIRCASE
 
 % START KEYBOARD QUEUES
 KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
 KbQueueStart();   %% KbQueueStart([deviceIndex])
 
+
 % SERIES START MESSAGES
+str.time.seriesStart = GetSecs;
 % send message to EYETRACKER .edf file
 if p.useEyelink
     messageText = strcat('STAIRCASE_START', num2str(str.number));
     Eyelink('message', messageText)
 end
 
-str.time.seriesStart = GetSecs;
-
+% TRIAL LOOP
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
-    
-    % get trial times
-    trialStart = GetSecs;
-    str.time.trialStart(f) = trialStart;
-    
-    % SEND MESSAGE to EYETRACKER .edf file
-    if p.useEyelink
-        messageText = strcat( 'SERIES',num2str( str.number),'TRIAL_START', num2str(f));
-        Eyelink( 'Message', messageText);
-    end
     
     if str.dot.series(f) == 1
         
@@ -161,6 +152,17 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         
     % FLIP
     [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
+    
+    % get trial times
+    trialStart = flip;
+    str.time.trialStart(f) = trialStart;
+    
+    % SEND MESSAGE to EYETRACKER .edf file
+    if p.useEyelink
+        messageText = strcat( 'SERIES',num2str( str.number),'TRIAL_START', num2str(f));
+        Eyelink( 'Message', messageText);
+    end
+        
     % routine for if eyes wander away change center dot and attn pointer to red
     if p.useEyelink && fr.outOfBounds
         
@@ -180,29 +182,29 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         WaitSecs( p.scr.dotOnset - .5 * p.scr.flipInterval) 
         
         % DRAW TEXTURES DOT ON
-        Screen('DrawTexture', p.scr.window, texGrat(1), [], [], []); % flash off
+        Screen( 'DrawTexture', p.scr.window, texGrat(1), [], [], []); 
         % Draw fixation gaussian
-        Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
+        Screen( 'DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
         % Draw the cue fixation cross
-        Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+        Screen( 'DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
         % Draw smaller center dot
-        Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+        Screen( 'FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
         % Draw attention dot
         % adjust intensity
-        Screen('DrawTexture', p.scr.window, gaus_attn_tex(thisProbe), [], [ dotXStart, dotYStart, dotXEnd, dotYEnd ],[],[],[],p.scr.fixCrossColorChange); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
+        Screen( 'DrawTexture', p.scr.window, gaus_attn_tex(thisProbe), [], [ dotXStart, dotYStart, dotXEnd, dotYEnd ],[],[],[],p.scr.fixCrossColorChange); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
         % adjust size - set sizeAdj to thisProbe
         %Screen('DrawTexture', p.scr.window, gaus_attn_tex(thisProbe), [], [ dotXStart-sizeAdj, dotYStart-sizeAdj, dotXEnd+sizeAdj, dotYEnd+sizeAdj ],[],[],[],p.scr.fixCrossColor); %  61 61 [0,0,101,101] or sizeMain/2  % attentional dot % [0 0 101 101], position of rect in large w [50 50 151 151] % dimensions of dot
 
         % FLIP
-        [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0 );
+        [vbl, stim, flip, ~,~] = Screen( 'Flip', p.scr.window, 0, 0 );
         p.time.dotOff = GetSecs;
         
         if p.useEyelink
-            messageText = strcat(['DotOn_Quad_',dotQuad,'_PosX: ',dotXStart,'-',dotXEnd, '_PosY: ',dotYStart, '-', dotYEnd]);
+            messageText = strcat( ['DotOn_Quad_',dotQuad,'_PosX: ',dotXStart,'-',dotXEnd, '_PosY: ',dotYStart, '-', dotYEnd]);
             Eyelink('message',messageText);
         end    
         timePassed = GetSecs - startTrial;        
-        WaitSecs( p.scr.flashDur + p.scr. postFlashTime + ( p.scr.dotJitter * ( randi( 20,1) * .01)) - .5*p.scr.flipInterval);
+        WaitSecs( p.scr.flashDur + p.scr. postFlashTime + ( p.scr.dotJitter * ( randi( 20,1) * .01)) - timePassed - .5*p.scr.flipInterval);
         
         % DRAW TEXTURES DOT OFF
         Screen('DrawTexture', p.scr.window, texGrat(1), [], [], []); % flash off
@@ -213,14 +215,12 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         % Draw smaller center dot
         Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
         
+        % SEND EYETRACKER MESSAGE
+        if p.useEyelink
+            messageText = strcat(['SERIES',num2str(str.number), '_TRIAL',num2str(str.number),'_DotOFF',]);
+            Eyelink('message',messageText);
+        end
         
-        
-        
-            % SEND EYETRACKER MESSAGE
-    if p.useEyelink
-        messageText = strcat(['SERIES',num2str(str.number), '_TRIAL',num2str(str.number),'_DotOFF',]);
-        Eyelink('message',messageText);
-    end
         % time check
         timePassed = GetSecs - trialStart;  
         WaitSecs( p.scr.flipInterval - timePassed - .5*p.scr.flipInterval);
@@ -233,9 +233,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         timePassed = GetSecs - trialStart; 
         WaitSecs(p.scr.stimDur -  - timePassed - .5*p.scr.flipInterval)
     end
-    
-
-
      [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])
      
      if  f>1 && ~isempty(event) && event.Keycode == KbName('space') %f >= 2 && ~isempty(event) % event.Pressed == 1
@@ -309,15 +306,17 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
 end  % end of trial f-loop
 str;
 
+% record series times
+str.time.seriesEnd = GetSecs;
+str.time.seriesDuration = str.time.seriesEnd - str.time.seriesStart;
+
 % SEND EYETRACKER MESSAGE
 if p.useEyelink
     messageText = strcat('SeriesEND_%d',str.number);
     Eyelink('message', messageText)
 end
 
-% record series times
-str.time.seriesEnd = GetSecs;
-str.time.seriesDuration = str.time.seriesEnd - str.time.seriesStart;
+
 
 % STAIRCASE: RESULTS
 [str.PSEfinal, str.DLfinal, loglikfinal]  = stair.get_PSE_DL();

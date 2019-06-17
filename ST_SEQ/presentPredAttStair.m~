@@ -153,7 +153,7 @@ try
         dotProb = p.series.dotProbStaircase;
         [ seriesDot] = makeDotSeries(p, dotProb); %% SUB-SCRIPT        
         str.dot.series = seriesDot;
-        [ p, str] = stimDisplay(p, str, 'staircase');
+         [ p, str] = stimDisplay(p, str, 'staircase');
     end
     
     %  DON'T DELETE if commented out !!!!
