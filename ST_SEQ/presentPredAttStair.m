@@ -1,4 +1,4 @@
-                                                 
+                                                   
 function[exper] = presentPredAttStair % (could ask for inputs, e.g. debug, useEyelink)
 
 % cd /Users/magdaaltman/D ocuments/0_MEG/PRED_ATT/ST_SEQ
@@ -36,7 +36,7 @@ RestrictKeysForKbCheck([p.activeKeys]);
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug = 1;
-p.localizer = 0;                                           ;
+p.localizer = 0;                                           
 p.staircase = 1; % these could be staircase and/or localizers (or could be separate programs)
 
 % GET EYELINK DETAILS
@@ -109,7 +109,7 @@ try
         
         % show the Main experiment text
         makeTexts(exper, p, 'localizer', 0);  % makeTexts(exper, p, 'localizer', 0);
-        doKbCheck(p)  %% SUB-SCRIPT
+          doKbCheck(p)  %% SUB-SCRIPT
         
         % EYETRACKING
         if p.useEyelink == 1
@@ -140,8 +140,8 @@ try
         % if  EYETRACKING previous series, stop now, save and move file to subject folder
         if p.useEyelink
             if statusRecord == 0
-                p = EL_stopRecord(p, sr);
-                p = EL_closeFile(p, sr);                               
+                p = EL_stopRecord(                                p, sr);
+                p = EL_closeFile( p, sr);                               
             end
         end
         screenBlank(p);            
@@ -149,11 +149,13 @@ try
     %% end LOCALIZER
     
     if p.staircase
-        str = [];
+        str  = [];
+        str.number = 1;
         dotProb = p.series.dotProbStaircase;
-        [ seriesDot] = makeDotSeries(p, dotProb); %% SUB-SCRIPT        
+        [ seriesDot] = makeDotSeries( p, dotProb); %% SUB-SCRIPT        
         str.dot.series = seriesDot;
-        [ p, str] = stimDisplay(p, str, 'staircase');
+        [ p, str] = stimDisplay( p, str, 'staircase');
+        exper.str = str;
     end
     
     %  DON'T DELETE if commented out !!!!
@@ -189,8 +191,7 @@ try
             sr.dot.series = seriesDot;
             
             %%% DON'T DELETE
-            if sr_i == 1
-                
+            if sr_i == 1                                 
                 %% show the Main experiment text
                 makeTexts(exper, p, 'main', sr);
                 doKbCheck(p)  %% SUB-SCRIPT
@@ -223,7 +224,7 @@ try
             end
             
             %% RUN NEXT SERIES
-            [p, sr] = stimDisplay(p, sr);
+            [p, sr] = stimDisplay( p, sr, 'regularSeries');
             
             %% name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);
@@ -263,7 +264,7 @@ try
     %%DrawFormattedText(p.scr.window, text2show, 'center','center', p.scr.textColor); %%, p.scr.textType);
     WaitSecs(2); % CHECK for real experiment
     
- catch
+                                       catch
     psychrethrow(psychlasterror);
     cleanup;
     

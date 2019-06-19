@@ -76,8 +76,8 @@ p.series.dotProbStaircase = .3;
 % main series dot specs
 p.scr.cueValidPerc = .80;
 p.series.dotProb = .02;                         % DEFAULT .03 = percent of dots per series
-p.scr.postFlashDur = round2flips(p, .1);       % from start of trial
-p.scr.dotDur = round2flips(p, .15);
+p.scr.postFlashDur = round2flips(p, .05);       % from start of trial
+p.scr.dotDur = round2flips(p, .10);
 p.scr.dotJitter = round2flips(p, .01);         % is multiplied by factor of 1:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)

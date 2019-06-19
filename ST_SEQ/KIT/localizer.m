@@ -52,8 +52,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     end
         
     % DRAW GRATING TEXTURE
-    Screen('DrawTexture', p.scr.window, texGrat(1), [], [], thisRotation); % Screen('DrawTextures', windowPointer, texturePointer(s) [, sourceRect(s)] [, destinationRect(s)] [, rotationAngle(s)] [, filterMode(s)] [, globalAlpha(s)] [, modulateColor(s)] [, textureShader] [, specialFlags] [, auxParameters]);
-    
+    Screen('DrawTexture', p.scr.window, texGrat(1), [], [], thisRotation); % Screen('DrawTextures', windowPointer, texturePointer(s) [, sourceRect(s)] [, destinationRect(s)] [, rotationAngle(s)] [, filterMode(s)] [, globalAlpha(s)] [, modulateColor(s)] [, textureShader] [, specialFlags] [, auxParameters]);    
     % DRAW FIXATION gaussian
     Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
     % Draw the cue fixation cross
@@ -80,10 +79,11 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     % time check
     timePassed = GetSecs - trialStart;
-    while ( timePassed < (p.scr.stimDur - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
-        timePassed = GetSecs - trialStart ;
-        WaitSecs(p.scr.flipInterval);
-    end
+    WaitSecs(p.scr.stimDur -timePassed -0.5*p.scr.flipInterval);
+%     while ( timePassed < (p.scr.stimDur - timePassed - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
+%         timePassed = GetSecs - trialStart ;
+%         WaitSecs(p.scr.flipInterval);
+%     end
     
     % SEND EYETRACKER MESSAGE
     if p.useEyelink
