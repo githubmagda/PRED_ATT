@@ -1,4 +1,4 @@
-function [p] = monitorFixation(p, sr)
+function [p] = monitorFixation(p, series)
 
 % Checks for fixation within specified area set by p.fixPoliceX +/- p.fixPoliceRadius
 % If gaze strays outside of area, beep is given
@@ -12,7 +12,7 @@ function [p] = monitorFixation(p, sr)
 % % % Eyelink('command', 'draw_filled_box %d %d %d %d 5', ... % draw a box @ fixation on eyelink display
 % % % p.Display.width/2-p.fixCircleRadius, p.Display.height/2-p.fixCircleRadius, p.Display.width/2+p.fixCircleRadius, p.Display.height/2+p.fixCircleRadius );
 
-% % % EL_startRecord(sr)
+%%%EL_startRecord(sr)
 
 %% TO DELETE
 % Eyelink('StartRecording', 1, 1, 1, 1);
@@ -20,8 +20,8 @@ function [p] = monitorFixation(p, sr)
 % otherwise you may lose a few msec of data
 % WaitSecs(0.1);
 
-textMessage = strcat(['POLICE_FIXATION_SR', num2str(stair.number)]); %,'AttnQUAD', num2str(sr.thisCue)]);
-Eyelink( 'Message', textMessage);
+message = strcat(['POLICE_FIXATION_SR', num2str(series.number)]);
+Eyelink( 'Message', message);
 
 % This supplies the title at the bottom of the eyetracker display CHECK
 % % message = strcat(['record_status_message "SERIES"', num2str(sr.number)]);
@@ -77,9 +77,9 @@ while timePassed < p.preSeriesFixTime % checks for a new sample
                 thisErrorTime = GetSecs - errorStartTime;
                 
                 if thisErrorTime >= p.maxPoliceErrorTime % give participant a warning - duration = 'p.beepDur'set in SEQ_ParamsScr.m
-                    PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepWarn);
-                    PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                    PsychPortAudio('Stop', p.aud.handle, 1);
+                    Snd('Play', p.audFs); % ('Play',sin(7000:8000));%% CHECK
+                    Snd('Quiet');            
+                    %Beeper( p.audFs, p.globalVolume, p.beepDur ); %  Beeper(frequency, [fVolume], [durationSec]);
                 end
                 
             end

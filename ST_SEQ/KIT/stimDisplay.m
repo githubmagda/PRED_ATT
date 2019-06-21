@@ -86,7 +86,7 @@ Screen('Flip', p.scr.window);
 % SEND MESSAGE to EYETRACKER .edf file
 if p.useEyelink                                                                                                                                   117
     messageText = strcat( 'STAIRCASE_PRE-SERIES FIXATION', num2str(sr.number));
-    Eyelink( 'Message', messageTest);
+    Eyelink( 'Message', messageText);
 end
 
 % START POLICING FIXATION
