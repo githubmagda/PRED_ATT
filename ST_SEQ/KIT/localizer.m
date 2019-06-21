@@ -40,8 +40,8 @@ lr.time.seriesStart = GetSecs;
 
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
-    trialStart = GetSecs;
-    lr.time.trialStart(f) = trialStart;
+    trialSetup = GetSecs;
+    lr.time.trialSetup(f) = trialSetup;
     thisQuad = lr.series(f);
     thisRotation = ( thisQuad-1 ) * 90; % rotation to put flash in correct quadrant
     
@@ -72,13 +72,15 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     % FLIP
     [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0); % [] [displayTime] [don't clear]
+ 
+    lr.time.trialStart = GetSecs;
     
     if p.useEyelink
         Eyelink('GetQueuedData?') % [samples, events, drained] = Eyelink('GetQueuedData'[, eye])
     end
     
     % time check
-    timePassed = GetSecs - trialStart;
+    timePassed = GetSecs - trialSetup;
     WaitSecs(p.scr.stimDur -timePassed -0.5*p.scr.flipInterval);
 %     while ( timePassed < (p.scr.stimDur - timePassed - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
 %         timePassed = GetSecs - trialStart ;
@@ -91,7 +93,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         Eyelink('message', messageText)
     end
     lr.time.trialEnd(f) = GetSecs;
-    lr.time.trialDur(f) = lr.time.trialEnd(f) - lr.time.trialStart(f);
+    lr.time.trialDur(f) = lr.time.trialEnd(f) - lr.time.trialSetup(f);
     
 end  % end of trial f-loop
 

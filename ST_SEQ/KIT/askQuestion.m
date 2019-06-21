@@ -2,6 +2,8 @@
 function [sr] = askQuestion( p, sr, f, useText)
 % runs question routine, (p, sr, useText) useText is optional e.g. for first practice run
 
+question = sr.question;
+
 if useText
     
     textQuestion = [ 'Make a guess:' , '\n\n'];
@@ -83,19 +85,18 @@ while ~found
     if  ~isempty(event) && event.Pressed == 1 % there was a keyPress and this is the downPress
         
         if strcmp( KbName(event.Keycode), 'Return')
-            sr.question.responseQuad(f) = thisQuad;
-            sr.question.responseCorrect(f) = ( thisQuad == sr.pred.series(f+1) );
-            if sr.question.responseCorrect(f) == 1
+            question.responseQuad(f) = thisQuad;
+            question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
+            if question.responseCorrect(f) == 1
                 display('Correct');
             else
                 display('Not correct, Should be:');
-                sr.pred.series(f+1)
-    
+                sr.pred.series(f-(p.series.chunkLength-1))
             end
             
-            sr.question.RT(f) = event.Time - circleTime; % minus stim onset
-            sr.question.chunkNum(f) = sr.pred.trackerByChunk(f);
-            sr.question.elementNum(f) = sr.pred.trackerByElement (f);
+            question.RT(f) = event.Time - circleTime; % minus stim onset
+            question.chunkNum(f) = sr.pred.trackerByChunk(f);
+            question.elementNum(f) = sr.pred.trackerByElement (f);
             found = 1; % get out of loop
             
         elseif strcmp( KbName(event.Keycode), 'space')
@@ -110,9 +111,7 @@ while ~found
         KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
         KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
     end
-% %     % add this question to series 'sr' structure
-% %     questionName = sprintf('question%d', f);
-% %     sr.(questionName) = question;
+
 end
 
 if useText
@@ -126,4 +125,9 @@ if useText
     
     KbPressWait; KbPressWait;
 end
+
+% add this question to series 'sr' structure and send sr back
+questionName = sprintf('question%d', f);
+sr.(questionName) = question;
+
 end % end question function

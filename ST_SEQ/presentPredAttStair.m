@@ -1,20 +1,18 @@
-                                                   
+     
 function[exper] = presentPredAttStair % (could ask for inputs, e.g. debug, useEyelink)
 
-% cd /Users/magdaaltman/D ocuments/0_MEG/PRED_ATT/ST_SEQ
 % DESCRIPTION
-% Main script for presentation that gathers paramaters and calls on other scripts to run
-% stimulus series   %matlabrc -  nojvm
-     
+% Main script for PREDATT presentation - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
+
 % Clear the workspace and the screen
-close all;
 clearvars;
+close all;
 
 rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTANT
 
 % Force GetSecs and WaitSecs into memory to avoid latency later on:
-GetSecs;         
-WaitSecs(0.1);                                           
+GetSecs;
+WaitSecs(0.1);
 
 % SET PATHS - PSYCHTOOLBOX AND KIT (subscripts)
 p.main_path = pwd; % get current path
@@ -24,10 +22,10 @@ if IsOSX
 else
     addpath([p.main_path, '\KIT\']);            % add functions folder PC style
 end
-                   
+
 PsychDefaultSetup(2);   % set to: (0) calls AssertOpenGL (1) also calls KbName('UnifyKeyNames') (2) also calls Screen('ColorRange', window, 1, [], 1); immediately after and whenever PsychImaging('OpenWindow',...) is called
 [p] = audioOpen(p);     % set audio preferences %Snd('Open'); % open the sound channel
-                            
+
 KbName('UnifyKeyNames');
 % specify key names of interest in the study N.B. PsychDefaultSetup(1+) already sets up KbName('UnifyKeyNames') using PsychDefaultSetup(1 or 2);
 p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape'),]; % CHECK
@@ -36,7 +34,7 @@ RestrictKeysForKbCheck([p.activeKeys]);
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug = 1;
-p.localizer = 0;                                           
+p.localizer = 0;
 p.staircase = 1; % these could be staircase and/or localizers (or could be separate programs)
 
 % GET EYELINK DETAILS
@@ -47,29 +45,29 @@ p = SEQ_ParamsGen(p); % set general pre-screen opening parameters;  %% SUB-SCRIP
 % N.B. SEQ_ParamsScr is called after openWindow since it requires
 % window parameters to have been established
 
-% % % % % % %  DON'T DELETE if commented out !!!!
-% % % % % % % Make directory for this subject's data
-% % % % % % p.date = date;
-% % % % % % p.experimentStart = datestr(now,'yymmddHHMMSS');
-% % % % % % 
-% % % % % % if p.debug
-% % % % % %     p.directoryName = 'DATATEST';
-% % % % % %     [p] = makeDirectory(p);  %% SUB-SCRIPT
-% % % % % %     if IsOSX
-% % % % % %         p.subjectPathStr = [p.directoryName,'/', p.subjectFolder];        
-% % % % % %     else
-% % % % % %         p.subjectPathStr = [p.directoryName,'\', p.subjectFolder];
-% % % % % %     end
-% % % % % % else
-% % % % % %     p.directoryName = 'DATA';
-% % % % % %     [p] = makeDirectory(p); %% SUB-SCRIPT
-% % % % % %     if IsOSX
-% % % % % %         p.subjectPathStr = [p.directoryName,'/', p.subjectFolder];
-% % % % % %     else
-% % % % % %         p.subjectPathStr = [p.directoryName,'\', p.subjectFolder];
-% % % % % %     end
-% % % % % % end
-% % % % % % p.subjectFolder
+%  DON'T DELETE if commented out !!!!
+% Make directory for this subject's data
+p.date = date;
+p.experimentStart = datestr(now,'yymmddHHMMSS');
+
+if p.debug
+    p.directoryName = 'DATATEST';
+    [p] = makeDirectory(p);  %% SUB-SCRIPT
+    if IsOSX
+        p.subjectPathStr = [p.directoryName,'/', p.subjectFolder];
+    else
+        p.subjectPathStr = [p.directoryName,'\', p.subjectFolder];
+    end
+else
+    p.directoryName = 'DATA';
+    [p] = makeDirectory(p); %% SUB-SCRIPT
+    if IsOSX
+        p.subjectPathStr = [p.directoryName,'/', p.subjectFolder];
+    else
+        p.subjectPathStr = [p.directoryName,'\', p.subjectFolder];
+    end
+end
+p.subjectFolder
 
 % intiate shell logging
 % % diary([p.main_path, '/', p.subjectPathStr, '_', 'log_', p.experimentStart, '.txt']); % note - a date scaler number is used after the date, it can be converted to date and time by entering it in datestr(...)
@@ -87,14 +85,14 @@ try
     end
     
     % MAIN EXPERIMENT BLOCK LOOP
-% % % % % %     %  experiment level structure (to include all other variables); save to subject folder
-     exper = [];
-% % % % % %     cd(p.directoryName);
-% % % % % %     cd(p.subjectFolder);
-% % % % % %     save('exper', 'exper');
-% % % % % %     cd ..
-% % % % % %     cd ..
-                
+    %  experiment level structure (to include all other variables); save to subject folder
+    exper = [];
+    cd(p.directoryName);
+    cd(p.subjectFolder);
+    save('exper', 'exper');
+    cd ..
+    cd ..
+    
     % make TEXTURES for stimDisplay
     [p] =   makeTextures(p);
     sr = []; % initialize structure for series
@@ -109,7 +107,7 @@ try
         
         % show the Main experiment text
         makeTexts(exper, p, 'localizer', 0);  % makeTexts(exper, p, 'localizer', 0);
-          doKbCheck(p)  %% SUB-SCRIPT
+        doKbCheck(p)  %% SUB-SCRIPT
         
         % EYETRACKING
         if p.useEyelink == 1
@@ -119,15 +117,15 @@ try
             end
             % open .edf file for new series
             thisFileName = strcat( 'Lr', num2str( lr.number));
-            EL_openFile(p, thisFileName, lr.number); % open and name file for this series 
-           
+            EL_openFile(p, thisFileName, lr.number); % open and name file for this series
+            
             % do calibration, save .edf file, (re)start eyetracker
             if lr.number == 1 % choose text to show 'first' or 'subsequent'
                 calText = 'first';
             else
                 calText = 'subsequent';
             end
-            p = EL_calibration(p, calText);   
+            p = EL_calibration(p, calText);
             % Do last check of eye position (driftcorrect does NOT recalibrate)
             EyelinkDoDriftCorrection(p.el);
             statusRecord = EL_startRecord(lr.number); % CHECK
@@ -141,30 +139,39 @@ try
         if p.useEyelink
             if statusRecord == 0
                 p = EL_stopRecord(                                p, sr);
-                p = EL_closeFile( p, sr);                               
+                p = EL_closeFile( p, sr);
             end
         end
-        screenBlank(p);            
+        screenBlank(p);
     end
     %% end LOCALIZER
     
-    if p.staircase
-        str  = [];
-        str.number = 1;
-        dotProb = p.series.dotProbStaircase;
-        [ seriesDot] = makeDotSeries( p, dotProb); %% SUB-SCRIPT        
-        str.dot.series = seriesDot;
-        [ p, str] = stimDisplay( p, str, 'staircase');
-        exper.str = str;
+    if p.staircase                 
+        for str_i = 1: p.staircaseSeriesNum
+            str  = [];
+            str.number = str_i;
+            dotProb = p.series.dotProbStaircase;
+            [ seriesDot] = makeDotSeries( p, dotProb); %% SUB-SCRIPT
+             str.dot.series = seriesDot;
+            [ p, str] = stimDisplay( p, str, 'staircase');
+            % name/number series and add to exp structure
+            strName = sprintf('str%d',str_i);
+            exper.(strName) = str;
+            dotIntFactor(str_i) = str.PSEfinal;
+        end
+        % name/number series and add to exp structure
+        strName = sprintf('str%d',str_i);
+        exper.(strName) = str;
+        p.scr.dotIntFactor = round(mean(str.PSEfinal));
     end
-    
+    p.scr.dotIntFactor= 10;
     %  DON'T DELETE if commented out !!!!
     
     %% show the introductory text screen
     sr = []; %  variable
     makeTexts(exper, p, 'intro', sr);   %% SUB-SCRIPT (exp, p, textName, sr) calls makeTexts.m
     doKbCheck(p)   %% SUB-SCRIPT % get participant to move forward using TWO keystrokes
-      
+    
     %% BLOCK LEVEL
     bl = [];
     
@@ -179,19 +186,19 @@ try
             sr = [];
             sr.number = sr_i;
             
-            % make predictive series           
+            % make predictive series
             [seriesPred, trackerByElement, trackerByChunk] = makePredSeriesReplaceNoRptEven(p); %% SUB-SCRIPT
             sr.pred.series = seriesPred;
             sr.pred.trackerByElement  = trackerByElement;
             sr.pred.trackerByChunk  = trackerByChunk;
-           
+            
             % attentional dot
             dotProb = p.series.dotProb;
-            [seriesDot] = makeDotSeries(p, dotProb); %% SUB-SCRIPT        
+            [seriesDot] = makeDotSeries(p, dotProb); %% SUB-SCRIPT
             sr.dot.series = seriesDot;
             
             %%% DON'T DELETE
-            if sr_i == 1                                 
+            if sr_i == 1
                 %% show the Main experiment text
                 makeTexts(exper, p, 'main', sr);
                 doKbCheck(p)  %% SUB-SCRIPT
@@ -223,10 +230,10 @@ try
                 EL_startRecord()
             end
             
-            %% RUN NEXT SERIES
+            % RUN NEXT SERIES
             [p, sr] = stimDisplay( p, sr, 'regularSeries');
             
-            %% name/number series and add to exp structure
+            % name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);
             exper.(srName) = sr;
             
@@ -240,7 +247,7 @@ try
             screenBlank(p);
             
             %% give task feedback
-            if sr_i < p.seriesNumber 
+            if sr_i < p.seriesNumber
                 taskFeedback(p, sr);
             end
             
@@ -249,7 +256,7 @@ try
         end  % END OF SERIES LOOP
     end % END OF BLOCK LOOP
     
-    if p.useEyelink == 1 %%% STOP RECORDING               
+    if p.useEyelink == 1 %%% STOP RECORDING
         Eyelink('Stoprecording');
         Eyelink('Closefile');
         Eyelink('message','STOP_RECORDING');
@@ -264,50 +271,26 @@ try
     %%DrawFormattedText(p.scr.window, text2show, 'center','center', p.scr.textColor); %%, p.scr.textType);
     WaitSecs(2); % CHECK for real experiment
     
-                                       catch
+catch
     psychrethrow(psychlasterror);
-    cleanup;
-    
-% % % % %     Screen('CloseAll');
-% % % % %     
-% % % % %     PsychPortAudio('Close');
-% % % % %     KbQueueFlush(); 
-% % % % %    KbQueueRelease([deviceIndex])
-% % % % %     RestrictKeysForKbCheck([]);
-% % % % %     ShowCursor;
-% % % % %     Priority(0);
-% % % % %         if p.useEyelink
-% % % % %         Eyelink('Closefile');
-% % % % %         Eyelink('Shutdown');
-% % % % %     end
-    
+    cleanup(p);    
 end
-cleanup;
-% % % % % Screen('CloseAll');
-% % % % % 
-% % % % % if p.useEyelink
-% % % % %     Eyelink('Closefile');
-% % % % %     Eyelink('Shutdown');
-% % % % % end
-% % % % % 
-% % % % % PsychPortAudio('Close');
-% % % % % KbQueueFlush();
-% % % % %    KbQueueRelease([deviceIndex])         
-% % % % % RestrictKeysForKbCheck([]);
-% % % % % ShowCursor;
-% % % % % Priority(0);
+ 
+cleanup(p);
 end
 
-function [] = cleanup
+function [] = cleanup(p)
+Screen('CloseAll');
 PsychPortAudio('Close');
-KbQueueFlush();
-           
+KbQueueRelease();           
+RestrictKeysForKbCheck([]);
 ShowCursor;
 Priority(0);
 if p.useEyelink
+    Eyelink('Stoprecording');
     Eyelink('Closefile');
     Eyelink('Shutdown');
-end
+end              
 end
 
 

@@ -2,7 +2,30 @@ function[p] = SEQ_ParamsScr(p)
 
 % This file contains the post-PTB-window-open experimental parameters
 
-%%% MONITOR SPECS in mm/cm
+% SCREEN COLOURS 
+p.scr.white = WhiteIndex(p.scr.number);
+p.scr.black = BlackIndex(p.scr.number);
+p.scr.grey = mean([ p.scr.white, p.scr.black ]); %p.scr.grey = GreyIndex(p.scr.number);
+p.scr.background = p.scr.grey;
+
+%%% SCREEN TEXT
+p.scr.textType = 'Helvetica';
+p.scr.textColor = p.scr.white;
+
+% TRIAL SPECS
+p.blockNumber = 1; % CHECK - do we need blocks?
+p.seriesNumber = 1;
+p.staircaseSeriesNum = 1;
+p.seriesPerBlock = 1;
+p.seriesPerEdf = 1; % how often data is output to edf file; safer to output each series in case participant quits
+
+% SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
+p.series.stimPerSeries = 60;
+p.series.seqBasicSet = [1,2,3,4]; % get this seq from block{j}.seqSet
+p.series.chunkRpts = 10;
+p.series.chunkLength = 3;
+
+% MONITOR SPECS in mm/cm
 p.scr.monitorDist = 57; % cm
 p.scr.struct = Screen('Version');
 [p.scr.mmX, p.scr.mmY] = Screen('DisplaySize', p.scr.number);  % X and Y size in cm
@@ -16,10 +39,10 @@ p.scr.basicSquare = min(p.scr.pixelsX, p.scr.pixelsY);
 %p.scr.pixelsXY = mean (p.scr.pixelsX, p.scr.pixelsY); %
 [p.scr.centerX, p.scr.centerY] = WindowCenter(p.scr.window);
 
-% % if p.debug % option for scaling to actual screen size
-% %     p.scr.cmX = p.scr.cmX .* p.scr.textScrRatioX ;
-% %     p.scr.cmY = p.scr.cmY .* p.scr.textScrRatioY ;
-% % end
+% if p.debug % option for scaling to actual screen size
+%     p.scr.cmX = p.scr.cmX .* p.scr.textScrRatioX ;
+%     p.scr.cmY = p.scr.cmY .* p.scr.textScrRatioY ;
+% end
 
 %%% MEASUREMENT TRANSFORMS
 % send back both unit measures: p.scr.pixPerDeg & p.scr.degPrPix 
@@ -34,22 +57,6 @@ p.scr.Hz = 1/p.scr.flipInterval;
 if ceil(p.scr.Hz) < 100 % CHECK for optimal HZ
      display(['Monitor running at ',num2str(p.scr.Hz)]) %,' Should be 100 Hz!!'])
 end
-
-%%% SCREEN COLOURS 
-p.scr.white = WhiteIndex(p.scr.number);
-p.scr.black = BlackIndex(p.scr.number);
-p.scr.grey = mean([ p.scr.white, p.scr.black ]); %p.scr.grey = GreyIndex(p.scr.number);
-p.scr.background = p.scr.grey;
-
-%%% SCREEN TEXT
-p.scr.textType = 'Helvetica';
-p.scr.textColor = p.scr.white;
-
-%%% SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries = 120;
-p.series.seqBasicSet = [1,2,3,4]; % get this seq from block{j}.seqSet
-p.series.chunkRpts = 10;
-p.series.chunkLength = 3;
 
 % STIM / MOVIE SPECS 
 p.scr.stimDur = round2flips(p, .5); %How long each stimulus/trial is on screen
@@ -72,16 +79,17 @@ p.scr.gratSidePix = sqrt(p.scr.gratPosPix^2/2);
 
 % ATTENTIONAL DOT & CUE ATTRIBUTES
 % probability of dots in staircase procedure
-p.series.dotProbStaircase = .3;  
+p.series.dotProbStaircase = .25;  
 % main series dot specs
+p.series.dotProb = .02;                     % DEFAULT .03 = percent of dots per series
 p.scr.cueValidPerc = .80;
-p.series.dotProb = .02;                         % DEFAULT .03 = percent of dots per series
-p.scr.postFlashDur = round2flips(p, .05);       % from start of trial
+ p.series.dotMinDist = 3;                   % e.g. every X trial can be a dot                    
+p.scr.postFlashDur = round2flips(p, .05);   % from start of trial
 p.scr.dotDur = round2flips(p, .10);
-p.scr.dotJitter = round2flips(p, .01);         % is multiplied by factor of 1:
+p.scr.dotJitter = round2flips(p, .01);      % is multiplied by factor of 1:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
-p.scr.dotRadiusDeg = .15; 
+p.scr.dotRadiusDeg = .20; 
 p.scr.dotRadiusPix = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
 % masks
 p.scr.maskBorder = 20;                  % so as to make the gradient mask for dot presentation smaller than gradient 
@@ -162,7 +170,7 @@ p.scr.attn4 = [ b b b b b b b hilite; b b b b b b b remove; b b b b b b b remove
 % p.scr.attn1 = [base hilite base base ; base remove base base ; base remove base base];% alphT alphO alphT alphT]; % upper-left
 % p.scr.attn2 = [base base base hilite ; base base base remove ; base base base remove];% alphT alphT alphT alphO]; % upper-right
 % p.scr.attn3 = [hilite base base base ; remove base base base; remove base base base];% alphO alphT alphT alphT]; % lower-right
-% p.scr.attn4 = [base base hilite base ; base base remove base ; base base remove base];% alphT alphT alphO alphT];
+% p.scr.attn4 = [p.scrbase base hilite base ; base base remove base ; base base remove base];% alphT alphT alphO alphT];
 
 % TEXT TIMING using frameRate
 p.scr.waitText = round(p.waitText ./p.scr.flipInterval) * p.scr.flipInterval; %% time for instruction delay

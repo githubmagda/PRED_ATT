@@ -3,12 +3,6 @@ function [p] = SEQ_ParamsGen(p)
 % This file contains the pre PTB window-open experimental parameters
 % Parameters related to PTB windows are set in SEQ_PARAMs_scr
 
-% TRIAL SPECS
-p.blockNumber = 1; % CHECK - do we need blocks?
-p.seriesNumber = 1;
-p.seriesPerBlock = 1;
-p.seriesPerEdf = 1; % how often data is output to edf file; safer to output each series in case participant quits
-
 % WINDOW DIMENSIONS 
 p.scr.testDimensionX = 600; % in pixels
 p.scr.testDimensionY = 600;
@@ -18,7 +12,6 @@ p.scr.testDimensionY = 600;
 p.scr.testDimensions = [0, 0, p.scr.testDimensionX, p.scr.testDimensionY];  %% xTest xTest*.7379 use actual screen ratio from preferences set in prefFunction below
 
 % TEXT  
-p.scr.textType = 'Helvetica';
 if p.debug
     p.scr.textSize = 14;
 else p.scr.textSize = 18;
@@ -33,7 +26,7 @@ p.calibKey = KbName('c');  % Key during breaks to call calibration
 p.validKey = KbName('v');  % Key during breaks to call validation of calibration
 p.quitKey = KbName('q');   % Key during breaks to stop eyetracking
 
-%% time variables  %% CHECK
+% time variables  %% CHECK
 p.waitText = 5.0; % in seconds
 p.waitBlank = 0.3;
    
