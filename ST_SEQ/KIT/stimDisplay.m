@@ -399,7 +399,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             sr.dot.responseCorrect(f) = 1;
             sr.dot.missed(f) = 0;
             sr.RT(f) = event.Time - sr.time.dotOn(f); 
-            checked(f:f2) = 1;
+            checked(f:f+2) = 1;
             
             % play positive beep
             PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
