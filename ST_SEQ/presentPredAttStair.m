@@ -129,7 +129,7 @@ try
             p = EL_calibration(p, calText);
             % Do last check of eye position (driftcorrect does NOT recalibrate)
             EyelinkDoDriftCorrection(p.el);
-            statusRecord = EL_startRecord(lr.number); % CHECK
+            p.statusRecord = EL_startRecord(lr.number); % CHECK
         end
         
         % RUN LOCALIZER
@@ -139,8 +139,8 @@ try
         % if  EYETRACKING previous series, stop now, save and move file to subject folder
         if p.useEyelink
             if statusRecord == 0
-                p = EL_stopRecord(                                p, sr);
-                p = EL_closeFile( p, sr);
+                p = EL_stopRecord(p, lr);
+                p = EL_closeFile( p, lr);
             end
         end
         screenBlank(p);
@@ -225,10 +225,10 @@ try
                 else
                     calText = 'subsequent';
                 end
-                p = EL_calibration(p, 'main');   %% CHECK 'main' vs. 'practice' or 'staircase'
+                p = EL_calibration(p, calText);   %% CHECK 'main' vs. 'practice' or 'staircase'
                 % Do last check of eye position (does NOT recalibrate)
                 EyelinkDoDriftCorrection(p.el);
-                EL_startRecord()
+                p.statusRecord = EL_startRecord(sr.number);
             end
             
             % RUN NEXT SERIES

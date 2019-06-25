@@ -20,8 +20,9 @@ Screen('Flip',p.scr.window);
 doKbCheck(p);
 
 % Run Calibration
-EyelinkDoTrackerSetup(p.el);
-
+result = EyelinkDoTrackerSetup(p.el);
+%result                                                                      
+screenBlank(p)
 end
 
 

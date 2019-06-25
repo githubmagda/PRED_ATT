@@ -1,4 +1,4 @@
-function[p] = EL_openFile(p, thisFileName, thisfileNumber)
+function[p] = EL_openFile(p, thisFileName, thisFileNumber)
 % CREATE FILE IF EDF RECORD WANTED
 
 if ( p.createFile == 1)
@@ -7,7 +7,7 @@ if ( p.createFile == 1)
         edfFileName = 'test.edf';
     else
     edfFileName = strcat( p.subjectFolder, thisFileName,'.edf' ); % name .edf datafile to receive from eyelink
-    p.edfFileNameList{ thisfileNumber} = edfFileName;
+    p.edfFileNameList{ thisFileNumber} = edfFileName;
     end
     % open new file
     p.statusFile = Eyelink('Openfile', edfFileName);

@@ -1,4 +1,4 @@
-function [p] = monitorFixation(p, sr)
+function [p] = monitorFixation(p, sr, thisWaitTime)
 
 % Checks for fixation within specified area set by p.fixPoliceX +/- p.fixPoliceRadius
 % If gaze strays outside of area, beep is given
@@ -34,7 +34,7 @@ thisErrorTime = 0; % error timer, 0= OFF, 1=ON
 timeStart = 0;
 timePassed = 0;
 
-while timePassed < p.preSeriesFixTime % checks for a new sample
+while timePassed < thisWaitTime % checks for a new sample
     
     if Eyelink('newfloatsampleavailable') ~= 1 % checks if new (float) sample is available: returns -1 if none or error, 0 if old, 1 if 'yes' new sample
         WaitSecs(0.001); % if not a new sample, try again in 1 ms

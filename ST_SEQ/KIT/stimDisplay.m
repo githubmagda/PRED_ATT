@@ -91,7 +91,7 @@ end
 
 % START POLICING FIXATION
 if p.useEyelink == 1
-    monitorFixation( p, sr);
+    monitorFixation( p, sr, p.preSeriesFixTime);
 else
     WaitSecs( p.preSeriesFixTime); % cue w/without attentional cross
 end

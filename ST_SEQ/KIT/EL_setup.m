@@ -23,14 +23,14 @@ function[p] = EL_setup(p)
     
     [v vs] = Eyelink('GetTrackerVersion');
     fprintf('Running experiment on a ''%s'' tracker.\n', vs );
-    p.el.eyelinkVersion = vs;
+    p.eyelinkVersion = vs;
     
     %% FILE SETTINGs FOR MAIN EXPERIMENT
     p.createFile = 1; %% means DO create a file... sensibly
     p.edfFileNameList = {}; % initialize cell array to save .edf file names by series
    
-    p.statusFile = 1;
-    
+    p.statusFile = 1;                   % file not yet open
+    p.dummyMode = 0;
 %     %% UPDATE defaults CHECK - HOW TO CHANGE LOCATION OF CALIBRATION DOTS?
 %     p.el.backgroundcolour = p.scr.background;
 %     EyelinkUpdateDefaults(p.el);
@@ -39,5 +39,5 @@ function[p] = EL_setup(p)
     Eyelink('command', 'link_sample_data = LEFT,RIGHT,GAZE,AREA'); % CHECK
 %     Eyelink('command', 'link_event_data = GAZE, GAZERES, HREF, AREA, VELOCITY');
 %     Eyelink('command', 'link_event_filter = LEFT , RIGHT, FIXATION, BLINK, SACCADE, BUTTON');  
-%     
+%     screenBlank(p)
 end  
