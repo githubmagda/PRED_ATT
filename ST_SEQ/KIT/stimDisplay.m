@@ -119,6 +119,7 @@ sr.dot.responsekeyCode  = nan( 1, p.series.stimPerSeries );
 sr.dot.RT               = nan( 1, p.series.stimPerSeries );
 sr.dot.quad             = nan( 1, p.series.stimPerSeries );
 checked                 = zeros( 1, p.series.stimPerSeries );            % check = 1 if no need to check for response on this trial
+
 if regularSeries
     sr.question.responseQuad = nan( 1, p.series.stimPerSeries );
     sr.question.responseCorrect = nan( 1, p.series.stimPerSeries );
@@ -406,19 +407,18 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
             PsychPortAudio('Stop', p.aud.handle, 1);
             
-        elseif ~checked(f-1) && sr.dot.series(f-1)  % previous trial had a dot
+        elseif sr.dot.series(f-1)  % previous trial had a dot
             sr.dot.responseCorrect(f-1) = 1;
             sr.dot.missed(f-1) = 0;
             sr.RT(f-1) = event.Time - sr.time.dotOn(f-1);  
-            checked(f) = 1;
-            checked(f+1) = 1;
+            checked( f: f+1) = 1;
             
             % play positive beep
             PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
             PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
             PsychPortAudio('Stop', p.aud.handle, 1);
             
-        elseif ~checked(f-2) && sr.dot.series(f-2)  % previous trial had a dot
+        elseif sr.dot.series(f-2)  % previous trial had a dot
             sr.dot.responseCorrect(f-2) = 1;
             sr.dot.missed(f-2) = 0;
             sr.RT(f-2) = event.Time - sr.time.dotOn(f-2);
@@ -428,15 +428,14 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
             PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
             PsychPortAudio('Stop', p.aud.handle, 1);
-        end   
-        % false alarm
-        if sr.dot.series(f) && ~any(ssr.dot.responseCorrect(f-2:f))
-            sr.dot.FA(f) = 1;            
+        else
+            sr.dot.FA(f-2) = 1;            
             % play negative beep
             PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepWarn);
             PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
             PsychPortAudio('Stop', p.aud.handle, 1);
-        end
+     
+          end
         
         % clear old queue and start next one
         KbQueueRelease();   %KbQueueFlush([],3); % nflushed = KbQueueFlush([deviceIndex][flushType=1])

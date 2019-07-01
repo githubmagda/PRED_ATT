@@ -1,4 +1,4 @@
-     
+    
 function[exper] = presentPredAttStair % (could ask for inputs, e.g. debug, useEyelink)
 
 % DESCRIPTION
@@ -23,8 +23,7 @@ else
     addpath([p.main_path, '\KIT\']);            % add functions folder PC style
 end
 
-PsychDefaultSetup(2);   % set to: (0) calls AssertOpenGL (1) also calls KbName('UnifyKeyNames') (2) also calls Screen('ColorRange', window, 1, [], 1); immediately after and whenever PsychImaging('OpenWindow',...) is called
-[p] = audioOpen(p);     % set audio preferences %Snd('Open'); % open the sound channel
+PsychDefaultSetup(2);                            % set to: (0) calls AssertOpenGL (1) also calls KbName('UnifyKeyNames') (2) also calls Screen('ColorRange', window, 1, [], 1); immediately after and whenever PsychImaging('OpenWindow',...) is called
 
 KbName('UnifyKeyNames');
 % specify key names of interest in the study N.B. PsychDefaultSetup(1+) already sets up KbName('UnifyKeyNames') using PsychDefaultSetup(1 or 2);
@@ -36,7 +35,7 @@ RestrictKeysForKbCheck([p.activeKeys]);
 p.debug = 1;
 p.testEdf = 1; % eyelink will make file with this same name each tst run
 p.localizer = 0;
-p.staircase = 1; % these could be staircase and/or localizers (or could be separate programs)
+p.staircase = 0; % these could be staircase and/or localizers (or could be separate programs)
 
 % GET EYELINK DETAILS
 [p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used
@@ -71,17 +70,17 @@ end
 p.subjectFolder
 
 % intiate shell logging
-% % diary([p.main_path, '/', p.subjectPathStr, '_', 'log_', p.experimentStart, '.txt']); % note - a date scaler number is used after the date, it can be converted to date and time by entering it in datestr(...)
+diary([p.main_path, '/', p.subjectPathStr, '_', 'log_', p.experimentStart, '.txt']); % note - a date scaler number is used after the date, it can be converted to date and time by entering it in datestr(...)
 
 % TRY - CATCH LOOP (error catch)
 try
     
     % DEFINE PTB screen, screen pointer, window and specs
-    [p] = openWindowKit(p); % gets window number and sets wRect
-    [p] = SEQ_ParamsScr(p); % load window-based parameters
+    [p] = openWindowKit(p);         % gets window number and sets wRect
+    [p] = SEQ_ParamsScr(p);         % load window-based parameters
     
     %% EYELINK SETUP (includes STEPS 2, 3) - CHECK
-    if p.useEyelink    % check if optional use of Eyelink has been specified
+    if p.useEyelink               % check if optional use of Eyelink has been specified
         [p] = EL_setup(p); % script to do setup routine
     end
     
@@ -132,13 +131,19 @@ try
             p.statusRecord = EL_startRecord(lr.number); % CHECK
         end
         
+        % SETUP AUDIO
+        p=audioOpen(p);
+        
         % RUN LOCALIZER
         [p, lr] = localizer(p, lr);
         exper.lr = lr;
         
+        %CLOSE AUDIO
+        PsychPortAudio('Close')
+        
         % if  EYETRACKING previous series, stop now, save and move file to subject folder
         if p.useEyelink
-            if statusRecord == 0
+            if p.statusRecord == 0
                 p = EL_stopRecord(p, lr);
                 p = EL_closeFile( p, lr);
             end
@@ -209,7 +214,7 @@ try
                 doKbCheck(p);  %% SUB-SCRIPT
             end
             
-            %% EYETRACKING
+            % EYETRACKING
             if p.useEyelink == 1
                 % if a file is still open from previous recording, close it
                 if p.el.statusFile == 0
@@ -238,9 +243,9 @@ try
             srName = sprintf('sr%d',sr_i);
             exper.(srName) = sr;
             
-            %% if already eyetracking last series stop, save and move file to subject folder
+            % if already eyetracking last series stop, save and move file to subject folder
             if p.useEyelink
-                if statusRecord == 0
+                if p.statusRecord == 0
                     p = EL_stopRecord(p, sr);
                     p = EL_closeFile(p, sr);
                 end
@@ -268,7 +273,7 @@ try
     
     %% DISPLAY end of experiment
     Screen('TextSize', p.scr.window, p.scr.textSize);
-    [exper, text2show] = makeTexts(exper, p, 'endExperiment', sr);
+    [exper, ~] = makeTexts(exper, p, 'endExperiment', sr);
     %%DrawFormattedText(p.scr.window, text2show, 'center','center', p.scr.textColor); %%, p.scr.textType);
     WaitSecs(2); % CHECK for real experiment
     

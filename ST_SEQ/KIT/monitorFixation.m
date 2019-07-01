@@ -4,8 +4,8 @@ function [p] = monitorFixation(p, sr, thisWaitTime)
 % If gaze strays outside of area, beep is given
 
 %% Initialize
-% Eyelink('Command', 'set_idle_mode');
-% WaitSecs(0.05);
+Eyelink('Command', 'set_idle_mode');
+WaitSecs(0.05);
 
 %% TO DELETE
 % % % Eyelink('command', 'clear_screen 0'); %clear eyelink display
@@ -20,7 +20,7 @@ function [p] = monitorFixation(p, sr, thisWaitTime)
 % otherwise you may lose a few msec of data
 % WaitSecs(0.1);
 
-textMessage = strcat(['POLICE_FIXATION_SR', num2str(stair.number)]); %,'AttnQUAD', num2str(sr.thisCue)]);
+textMessage = strcat(['POLICE_FIXATION_SR', num2str(sr.number)]); %,'AttnQUAD', num2str(sr.thisCue)]);
 Eyelink( 'Message', textMessage);
 
 % This supplies the title at the bottom of the eyetracker display CHECK
@@ -41,8 +41,8 @@ while timePassed < thisWaitTime % checks for a new sample
         
     else
         currentSample = Eyelink('newestfloatsample');
-        %disp('NEW SAMPLE!')
-        %disp(currentSample); % CHECK - only for debugging
+        disp('NEW SAMPLE!')
+        disp(currentSample); % CHECK - only for debugging
         
         % get values of the new sample
         currentX = currentSample.gx(p.policeEye); % gx= the gaze position for X; 1 is the left eye so we are accessing the left eye in the matlab array
@@ -59,7 +59,7 @@ while timePassed < thisWaitTime % checks for a new sample
                 
             else % if the fixation counter has already started
                 currentTime = GetSecs(); % update currentTime and change whether  required fixPoliceTimeRequired was met
-                %display('thisFixTime')
+                display('thisFixTime')
                 thisFixTime = currentTime - fixationStartTime; % update timer               
             end
             
@@ -90,10 +90,10 @@ while timePassed < thisWaitTime % checks for a new sample
         
     end % sample available / unavailable loop   
 
-end % while timePassed < p.preSeriesFixTime loop
+end % 
 
-display(num2str(p.preSeriesFixTime), 'preSeriesFixTime')
-display(num2str(totalFixTime), 'totalFixTime')
+display(num2str( thisWaitTime), 'thisWaitTime')
+display(num2str( totalFixTime), 'totalFixTime')
 
 %% display(num2str(totalErrorTime), 'totalErrorTime')
 end

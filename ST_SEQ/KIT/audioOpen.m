@@ -3,31 +3,31 @@ function [p ] = audioOpen(p)
 % Detailed explanation goes here
 % see PsychPortAudioTimingTest and InitializePsychSound for details
 
-InitializePsychSound(0); % MUST Call. For low latency set to '1' or ([reallyneedlowlatency=0]) ??
+% INITIALIZE
+InitializePsychSound(1); % MUST Call. For low latency set to '1' or ([reallyneedlowlatency=0]) ??
+aud = PsychPortAudio('GetDevices', [], 0);
 
-p.aud.reqlatencyclass = 2; % query: PsychPortAudio('GetDevices', [], 0)
-p.aud.deviceid = 0; % 0 = CoreAudio - low latency
-p.aud.freq = 44100; % for OSX  % Must set this. 48 khz most likely to work, as mandated by HDA spec. Common rates: 96khz, 48khz, 44.1khz.
-p.aud.handle = PsychPortAudio('Open', [], [], p.aud.reqlatencyclass, p.aud.freq, [], [] ); %[, deviceid][, mode][, reqlatencyclass][, freq][, channels][, buffersize][,
+p.aud.reqlatencyclass = 1; % 2 fastest but incompatible with other cards; 1=faster but compatible with other cards; 0=don't carequery: PsychPortAudio('GetDevices', [], 0)
+%p.aud.deviceId = aud.DeviceIndex; % 0 = CoreAudio - low latency
+p.aud.sampleRate = aud.DefaultSampleRate; % 44100; % for OSX  % Must set this. 48 khz most likely to work, as mandated by HDA spec. Common rates: 96khz, 48khz, 44.1khz.
 p.aud.volume = 0.5;
+p.aud.mode = 1;
+p.aud.freq = 10000;
+p.aud.LowOutputLatency = aud.LowOutputLatency;
 
-% Generate sounds: X Hz, 0.X secs, 50% amplitude:
-p.aud.beepHappy(1,:) = p.aud.volume * MakeBeep(10000, 0.01, p.aud.freq); % make matrix with 2 'channels'
-p.aud.beepHappy(2,:) = p.aud.beepHappy(1,:);
+% OPEN
+p.aud.handle = PsychPortAudio('Open', [], [], p.aud.reqlatencyclass, p.aud.freq, [], [] ); %[, deviceid][, mode][, reqlatencyclass][, freq][, channels][, buffersize][,
 
-p.aud.beepWarn(1,:) = p.aud.volume * MakeBeep(1000, 0.01, p.aud.freq);
-p.aud.beepWarn(2,:) = p.aud.beepWarn(1,:);
+% MAKE SOUNDS
+%beep = sin(2*pi*freq*(0:duration*samplingRate-1)/samplingRate);
+p.aud.beepHappy = p.aud.volume * repmat( sin(2*pi * p.aud.freq *(0:p.aud.LowOutputLatency*p.aud.sampleRate-1)/p.aud.sampleRate), 2,1);
+p.aud.beepWarn = p.aud.volume * repmat( sin(2*pi * p.aud.freq./4   *(0:p.aud.LowOutputLatency*p.aud.sampleRate-1)/p.aud.sampleRate), 2,1);
+% % p.aud.beepWarn(1,:) = p.aud.volume * MakeBeep(1000, 0.01, 48);
+% % p.aud.beepWarn(2,:) = p.aud.beepWarn(1,:);
+% % p.aud.beepWarn = repmat([sin(1:.001:1.01)] ,2, 1); %[sin(1:.6:400), sin(1:.7:400), sin(1:.4:400)]; % 
 
-% warning: [sin(1:.6:400), sin(1:.7:400), sin(1:.4:400)]; % [sin(1:.001:1.01)];%
-
-% Fill buffer with data for beep Happy:
+% % Fill BUFFER with data for beep Happy:
 PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepHappy);
-PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-PsychPortAudio('Stop', p.aud.handle, 1);
-% beep Warn
-PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepWarn);
-PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-PsychPortAudio('Stop', p.aud.handle, 1);
 
 % Perform one warmup trial, to get the sound hardware fully up and running,
 % performing whatever lazy initialization only happens at real first use.
@@ -37,8 +37,6 @@ PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('S
 PsychPortAudio('Stop', p.aud.handle, 1);
 
 end
-
-
 
 
 % % pahandle = PsychPortAudio('Open' [, deviceid][, mode][, reqlatencyclass][, freq][, channels][, buffersize][,

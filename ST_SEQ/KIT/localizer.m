@@ -23,7 +23,8 @@ Screen('Flip', p.scr.window);
 
 % START POLICING FIXATION
 if p.useEyelink == 1
-    monitorFixation(p, lr);
+    thisWaitTime = p.preSeriesFixTime;
+    monitorFixation(p, lr, thisWaitTime);
 else
     WaitSecs(p.preSeriesFixTime); % just show cross
 end
@@ -41,8 +42,8 @@ lr.time.seriesStart = GetSecs;
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     trialSetup = GetSecs;
-    lr.time.trialSetup(f) = trialSetup;
-    thisQuad = lr.series(f);
+    lr.time.trialSetup( f) = trialSetup;
+    thisQuad = lr.series( f);
     thisRotation = ( thisQuad-1 ) * 90; % rotation to put flash in correct quadrant
     
     % SEND MESSAGE to EYETRACKER .edf file
@@ -61,31 +62,36 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
     %Screen('DrawTexture',p.scr.window, gaus_fix_texSmall,[],[],[],[],[],[p.scr.white]) % [p.scr.fixColorChange]
     
-    % routine for if eyes wander away change center dot and attn pointer to red
-    if p.useEyelink && fr.outOfBounds
-        Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, attn, [ p.scr.centerX, p.scr.centerY ], 2);
-        Screen('FillOval', p.scr.window, p.scr.fixColorChange, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
-        % send message to .edf file
-        messageText = ['gazeOutOfBounds_', 'Series',num2str( slr.number), 'thisQuad', thisQuad];
-        Eyelink('message',messageText);
-    end
+% %     % routine for if eyes wander away change center dot and attn pointer to red
+% %     if p.useEyelink 
+% %         timePassed =
+% %         thisWaitTime = p.scr.stimDur - 
+% %         monitorFixation(p, lr, thisWaitTime)
+% %         Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+% %         Screen('FillOval', p.scr.window, p.scr.fixColorChange, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
+% %         % send message to .edf file
+% %         messageText = ['gazeOutOfBounds_', 'Series',num2str( slr.number), 'thisQuad', thisQuad];
+% %         Eyelink('message',messageText);
+% %     end
     
     % FLIP
     [vbl, stim, flip, ~,~] = Screen('Flip', p.scr.window, 0, 0); % [] [displayTime] [don't clear]
  
-    lr.time.trialStart = GetSecs;
+    lr.time.trialStart = vbl;
+    timePassed = GetSecs - trialSetup;          % account for time since trial started to keep overall trial time consistent
+    thisWaitTime = (p.scr.stimDur -timePassed -0.5*p.scr.flipInterval);
     
     if p.useEyelink
-        Eyelink('GetQueuedData?') % [samples, events, drained] = Eyelink('GetQueuedData'[, eye])
-    end
-    
-    % time check
-    timePassed = GetSecs - trialSetup;
-    WaitSecs(p.scr.stimDur -timePassed -0.5*p.scr.flipInterval);
-%     while ( timePassed < (p.scr.stimDur - timePassed - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
-%         timePassed = GetSecs - trialStart ;
-%         WaitSecs(p.scr.flipInterval);
+%         Eyelink('GetQueuedData?') % [samples, events, drained] = Eyelink('GetQueuedData'[, eye])
 %     end
+    
+% % %     % time check
+% % %     timePassed = GetSecs - trialSetup;
+% % %     WaitSecs(p.scr.stimDur -timePassed -0.5*p.scr.flipInterval);
+% % % %     while ( timePassed < (p.scr.stimDur - timePassed - .5*p.scr.flipInterval)) %wait p.scr.dotOnset seconds
+% % %         timePassed = GetSecs - trialStart ;
+% % %         WaitSecs(p.scr.flipInterval);
+% % %     end
     
     % SEND EYETRACKER MESSAGE
     if p.useEyelink
