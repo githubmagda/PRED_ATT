@@ -95,7 +95,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         lr.monitor.totalErrorTime(f) = totalErrorTime;
         lr.monitor.totalFixTime( f)  = totalFixTime;
         if thisErrorTime > p.scr.maxPoliceErrorTime
-            display('ERROR');
+            disp('ERROR');
             audioOpen(p)
             PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepWarn);
             PsychPortAudio('Start', p.aud.handle, 1, 0, 1);     % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
@@ -108,7 +108,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         end
         
          % SEND EYETRACKER MESSAGE  
-        messageText = strcat('LOCALIZER_', 'PREFIXATION_END', );
+        messageText = strcat('LOCALIZER_PREFIXATION_END' );
         Eyelink('message', messageText)
     else
         WaitSecs(thisWaitTime);                 % just show cross

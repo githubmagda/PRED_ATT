@@ -1,4 +1,4 @@
-function [thisErrorTime, totalFixTime, totalErrorTime] = monitorFixation(p, sr, thisWaitTime)
+function [thisErrorTime, totalFixTime, totalErrorTime] = monitorFixation(p, thisWaitTime)
 
 % Checks for fixation within specified area set by p.fixMonitorX +/- p.fixMonitorRadius
 % If gaze strays outside of area, beep or visual warning is given
@@ -11,7 +11,7 @@ timePassed = 0;
 
 startTime = GetSecs;
 
-while timePassed < current
+while timePassed < thisWaitTime
     % checks for a new sample
     
     %[samples, events, drained] = Eyelink('GetQueuedData', p.MonitorEye)
@@ -56,9 +56,9 @@ while timePassed < current
                 totalErrorTime = totalErrorTime + thisErrorTime;
                 
                 if thisErrorTime >= p.maxPoliceErrorTime                % give participant a warning - duration = 'p.beepDur'set in SEQ_ParamsScr.m
-
                     break;
-                end               
+                end 
+                
             end            
         end % fixation or error updates
         timePassed = GetSecs - startTime;        
