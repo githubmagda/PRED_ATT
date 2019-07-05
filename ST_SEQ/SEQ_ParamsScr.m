@@ -178,20 +178,20 @@ p.scr.waitBlank = round(p.waitBlank ./ p.scr.flipInterval) * p.scr.flipInterval;
 
 % POLICING 
 p.preSeriesFixTime = round2flips (p, 5.0); 
-p.scr.fixPoliceX = p.scr.centerX; 
-p.scr.fixPoliceY = p.scr.centerY;
-p.scr.fixPoliceAng = 4.0;
-p.scr.fixPoliceRadius = round( p.scr.fixPoliceAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
-p.maxPoliceErrorTime = round2flips (p, 0.01); % secs adjusted to refresh rates
-% % p.maxPoliceErrorTimeMovie = round2flips (p, 0.005); % secs adjusted to refresh rates
+p.scr.fixMonitorX = p.scr.centerX; 
+p.scr.fixMonitorY = p.scr.centerY;
+p.scr.fixMonitorAng = 4.0;
+p.scr.fixMonitorRadius = round( p.scr.fixMonitorAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
+p.scr.maxPoliceErrorTime = round2flips (p, 0.01); % secs adjusted to refresh rates
+% % p.maxMonitorErrorTimeMovie = round2flips (p, 0.005); % secs adjusted to refresh rates
  
-% % % p.fixPoliceSize=angle2pix(p.Display,1.5); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
-% % % p.fixTrialPoliceSize=angle2pix(p.Display,3); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO STOP THE TRIAL
-% % % p.fixPoliceX= p.Display.width/2; %Xcenter
-% % % p.fixPoliceY= p.Display.height/2; %Ycenter
+% % % p.fixMonitorSize=angle2pix(p.Display,1.5); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
+% % % p.fixTrialMonitorSize=angle2pix(p.Display,3); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO STOP THE TRIAL
+% % % p.fixMonitorX= p.Display.width/2; %Xcenter
+% % % p.fixMonitorY= p.Display.height/2; %Ycenter
 % % % p.fixCircleRadius = angle2pix(p.Display, 1); % In Pixels, big circle of fixation point was 10 in the original kermit THIS VALUE SETS THE PURPLE SQUARE ON THE EYELINK COMPUTER.
  
 % % % p.fixViolNum = 3;      % How many frames of violated fixation should we tolerate before breaking trial?
-% % % p.waitAfterPolice = 500;   % Extra ITI after policing stops trial, to cool down
+% % % p.waitAfterMonitor = 500;   % Extra ITI after policing stops trial, to cool down
   
 % % %% STAIRCASE VARIABLES

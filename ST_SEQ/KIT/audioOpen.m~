@@ -33,8 +33,8 @@ p.aud.handle = PsychPortAudio('Open', [], [], p.audio.reqlatencyclass, p.audio.f
 % performing whatever lazy initialization only happens at real first use.
 % This "useless" warmup will allow for lower latency for start of playback
 % during actual use of the audio driver in the real trials:
-% PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-% PsychPortAudio('Stop', p.aud.handle, 1);
+PsychPortAudio('Start', p.aud.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+PsychPortAudio('Stop', p.aud.handle, 1);
 p.audio.audStruct = aud;
 end
 
