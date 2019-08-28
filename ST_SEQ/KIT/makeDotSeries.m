@@ -5,20 +5,21 @@ function [ thisDotSeries ] = makeDotSeries( p, dotProb)
 % dotProb of staircase or main exp series
 
 p.series.dotNumAv = floor( p.series.stimPerSeries * dotProb);
-p.series.dotZeroPadding = 3;
-% variation around catchTrialNum allowed
+
+% small variation around catchTrialNum allowed
 p.series.dotNumRange = [ p.series.dotNumAv-1 : p.series.dotNumAv+1 ]; % range of possible catch trials per series ( selected in makeCatchSeries.m )
 % probability of dots in staircase procedure
 
-dotSeries = zeros( 1, p.series.stimPerSeries - p.series.dotZeroPadding*2); % first and last elements added in last step
+dotSeries = zeros( 1, p.series.stimPerSeries);
+%%dotSeries = zeros( 1, p.series.stimPerSeries - p.series.dotZeroPadding*2); % first and last elements added in last step
 % use random selection from set of possible numbers of catch trials
 pos = randi( length( p.series.dotNumRange));
 numDots = p.series.dotNumRange( pos);
 % use only even elements in order to avoid repetitions
-dotTrials = 2 : p.series.dotMinDist : length( dotSeries); % ensure catch trials are even numbers only to avoid consecutive catches
+dotTrials = ( p.series.dotZeroPadding +1) : p.series.dotMinDist : (length( dotSeries) -(p.series.dotZeroPadding+1)) ; % ensure catch trials are not near neighbors
 dotTrials = Shuffle( dotTrials);        % to ensure spread across series
 dotTrials = dotTrials( 1:numDots);      % trim to numCatch
 dotSeries( dotTrials) = 1;              % add set elements to be the catch trials 
-thisDotSeries = [ repmat(0,1,p.series.dotZeroPadding) , dotSeries, repmat(0,1,p.series.dotZeroPadding)];   
+thisDotSeries = dotSeries;
 end
 

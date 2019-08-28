@@ -5,17 +5,15 @@ function [p, deg] = pix2deg(p, pix)
 % Uses average of X and Y pixels
 
 % CM/PIX 
-p.scr.cmPerPixX = p.scr.cmX ./ p.scr.pixelsX ;   % cm/pix for x-axis
-p.scr.cmPerPixY = p.scr.cmY ./ p.scr.pixelsY ;   % cm/pix for y-axis 
-p.scr.cmPerPixXY =  mean([ p.scr.cmPerPixX, p.scr.cmPerPixY ]);
+p.monitor.cmPerPix = p.monitor.cmX ./p.monitor.pixelX ;   % cm/pix for x-axis
+p.monitor.cmPerPix = p.monitor.cmY ./ p.monitor.pixelY ;
 
 % DEG/PIX
-p.scr.degPerCm = 360/pi * tan( 1 / ( 2*p.scr.monitorDist ));
-p.scr.degPerPix = p.scr.cmPerPixXY .* p.scr.degPerCm; 
+p.monitor.degPerCm = 360 /pi *tan( 1 /( 2 .*p.monitor.distance));
+p.scr.degPerPix = p.monitor.cmPerPix .*p.monitor.degPerCm; 
 deg = pix .* p.scr.degPerPix;
 
 end
 
-% FORMULA (alpha is angle in degrees ; s is size in centimeters)
-% pix2deg: alpha = 360deg/pi*tan(s/(2d))
+% FORMULA (alpha is angle in degrees ; s is size in centimeters; d is distance)
 % pix2deg: alpha = 360deg/pi*tan(s/(2d))  <-> deg2pix: s = 2d*atan((pi*alpha)/360deg)

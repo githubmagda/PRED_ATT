@@ -1,7 +1,7 @@
-function[exper] = presentPredAttStair % (could ask for inputs, e.g. debug, useEyelink)
+function[exper] = presentQuad(p, lr) % (could ask for inputs, e.g. debug, useEyelink)
 
 % DESCRIPTION
-% Main script for PREDATT presentation - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
+% Main script for Predictive Attention presentations - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
 
 % Clear the workspace and the screen
 sca;
@@ -27,21 +27,23 @@ PsychDefaultSetup(2);                            % set to: (0) calls AssertOpenG
 
 KbName('UnifyKeyNames');
 % specify key names of interest in the study N.B. PsychDefaultSetup(1+) already sets up KbName('UnifyKeyNames') using PsychDefaultSetup(1 or 2);
-p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape'),]; % CHECK
+p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape')]; % CHECK
 % restrict the keys for keyboard input to the keys we want
 RestrictKeysForKbCheck([p.activeKeys]);
+quitKey = KbName('Escape');
+contKey = KbName('space');
 
-p = openAudioPort(p);
+%p = openAudioPort(p);  %        % audioOpen(p)
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
-p.debug     = 1;
-p.testEdf   = 1; % eyelink will make file with this same name each tst run
-p.localizer = 1;
-p.staircase = 1; % these could be staircase and/or localizers (or could be separate programs)
-p.proceduralGL = 1;
+p.debug         = 1;
+p.testEdf       = 1; % eyelink will make file with this same name each tst run
+p.localizer     = 0;
+p.staircase     = 1; % these could be staircase and/or localizers (or could be separate programs)
+p.proceduralGL  = 1;
 
 % GET EYELINK DETAILS
-[p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used
+[p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
 
 %% CHECK THESE VARIABLES BEFORE STARTING!!!
 p = SEQ_ParamsGen(p); % set general pre-screen opening parameters;  %% SUB-SCRIPT
@@ -97,7 +99,7 @@ try
 % %     cd ..
     
     % make TEXTURES for sti        mDisplay
-    [p] =   makeTextures(p);
+    %[p] =   makeTextures(p);
     sr = []; % initialize structure for series
     
     % RUN LOCALIZER
@@ -110,7 +112,7 @@ try
         
         % show the Main experiment text
         makeTexts(exper, p, 'localizer', 0);  % makeTexts(exper, p, 'localizer', 0);
-        doKbCheck(p)  %% SUB-SCRIPT
+        [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
         
         % EYETRACKING
         if p.useEyelink == 1
@@ -130,19 +132,17 @@ try
             end
             p = EL_calibration(p, calText);
             % Do last check of eye position (driftcorrect does NOT recalibrate)
-            EyelinkDoDriftCorrection(p.el);
+            % EyelinkDoDriftCorrection(p.el);
             p.statusRecord = EL_startRecord(lr.number); % CHECK
         end
         
-        % SETUP AUDIO
-        % p=audioOpen(p); % CHECK AUDIO
-        
         % RUN LOCALIZER
-        [p, lr] = localizerProc(p, lr);  
+        if p.proceduralGL
+            [p, lr] = localizerProc( p, lr); %localizerProc(p, lr);  
+        else
+           [p, lr] = localizer(p, lr); 
+        end
         exper.lr = lr;
-        
-        %CLOSE AUDIO
-        % PsychPortAudio('Close')
         
         % if  EYETRACKING previous series, stop now, save and move file to subject folder
         if p.useEyelink
@@ -177,7 +177,7 @@ try
     %% show the introductory text screen
     sr = []; %  variable
     makeTexts(exper, p, 'intro', sr);   %% SUB-SCRIPT (exp, p, textName, sr) calls makeTexts.m
-    doKbCheck(p)                        %% SUB-SCRIPT % get participant to move forward using TWO keystrokes
+    doKbCheck(p, 2)                        %% SUB-SCRIPT % get participant to move forward using TWO keystrokes
     
     %% BLOCK LEVEL
     bl = [];
@@ -204,15 +204,15 @@ try
             [seriesDot] = makeDotSeries(p, dotProb); %% SUB-SCRIPT
             sr.dot.series = seriesDot;
             
-            %%% DON'T DELETE
+            %%% MAIN EXPERIMENT TEXT - DON'T DELETE
             if sr_i == 1
                 %% show the Main experiment text
                 makeTexts(exper, p, 'main', sr);
-                doKbCheck(p)  %% SUB-SCRIPT
+                doKbCheck(p, 2)  %% SUB-SCRIPT
             else
                 %% show continuation-of-block presentation text
                 makeTexts(exper, p, 'nextSeries', sr);
-                doKbCheck(p);  %% SUB-SCRIPT
+                doKbCheck(p, 2);  %% SUB-SCRIPT
             end
             
             % EYETRACKING

@@ -1,7 +1,18 @@
-function[] = doKbCheck(p, window) 
-    KbWait; while KbCheck([],0); end   % [secs, keyCode, deltaSecs] = KbWait([deviceNumber][, forWhat=0][, untilTime=inf])       
-    KbWait; while KbCheck([],0); end
-    WaitSecs(p.scr.waitBlank);
+function[quitNow] = doKbCheck(p, numPress)
+
+quitNow = 0;
+
+for i = 1: numPress
+    
+    [~, keyCode, ~] = KbPressWait();
+    
+    if keyCode == p.quitKey
+        quitNow = 1;
+        return;
+    end    
+end
+
+WaitSecs(p.scr.waitBlank);
 end
 
 % % NOTES ON KBWAIT

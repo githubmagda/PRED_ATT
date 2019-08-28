@@ -17,7 +17,7 @@ lr.monitor.totalErrorTime       = zeros( 1, p.series.stimPerSeries);
 % Draw gaussian
 Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white) % [p.scr.fixColorChange]
 % Draw cue fixation cross with red arm pointing to attentional quadrant
-Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
 % Draw smaller center dot
 Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2*p.scr.fixRadiusInner  );
 
@@ -38,11 +38,11 @@ if p.useEyelink
     
     if thisErrorTime > p.scr.maxPoliceErrorTime
         disp('ERROR');
-        audioOpen(p)
-        PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
-        PsychPortAudio('Start', p.audio.handle, 1, 0, 1);     % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-        PsychPortAudio('Stop', p.audio.handle, 1);
-        PsychPortAudio('Close', p.audio.handle);
+%         audioOpen(p)
+%         PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
+%         PsychPortAudio('Start', p.audio.handle, 1, 0, 1);     % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+%         PsychPortAudio('Stop', p.audio.handle, 1);
+%         PsychPortAudio('Close', p.audio.handle);
         runFix = 1;
         break;
     else runFix = 0;
@@ -72,7 +72,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     % DRAW FIXATION gaussian
     Screen('DrawTexture',p.scr.window, gaus_fix_tex,[],[],[],[],[],p.scr.white)
     % Draw the cue fixation cross
-    Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+    Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
     % Draw smaller center dot
     Screen('FillOval', p.scr.window, p.scr.white, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
     %Screen('DrawTexture',p.scr.window, gaus_fix_texSmall,[],[],[],[],[],[p.scr.white]) % [p.scr.fixColorChange]
@@ -118,7 +118,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         % %         timePassed =
         % %         thisWaitTime = p.scr.stimDur -
         % %         monitorFixation(p, lr, thisWaitTime)
-        % %         Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidthPix, attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+        % %         Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, attn0, [ p.scr.centerX, p.scr.centerY ], 2);
         % %         Screen('FillOval', p.scr.window, p.scr.fixColorChange, [p.scr.centerX-p.scr.fixRadiusInner, p.scr.centerY-p.scr.fixRadiusInner, p.scr.centerX+p.scr.fixRadiusInner, p.scr.centerY+p.scr.fixRadiusInner],2.1*p.scr.fixRadiusInner );
         % %         % send message to .edf file
         % %         messageText = ['gazeOutOfBounds_', 'Series',num2str( slr.number), 'thisQuad', thisQuad];

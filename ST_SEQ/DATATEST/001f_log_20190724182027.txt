@@ -1,0 +1,20 @@
+Monitor running at 60
+PTB-INFO: Using modified PortAudio V19.6.0-devel, revision unknown
+PsychPortAudio initialized. Will use CoreAudio for audio.
+PTB-INFO: New audio device -1 with handle 0 opened as PortAudio stream:
+PTB-INFO: For 2 channels Playback: Audio subsystem is Core Audio, Audio device name is Built-in Output
+PTB-INFO: Real samplerate 10000.000000 Hz. Input latency 0.000000 msecs, Output latency 15.400000 msecs.
+Compiling all shaders matching BasicGaborShader * into a GLSL program.
+Building a fragment shader:Reading shader from file /Applications/Psychtoolbox/PsychOpenGL/PsychGLSLShaders/BasicGaborShader.frag.txt ...
+Building a vertex shader:Reading shader from file /Applications/Psychtoolbox/PsychOpenGL/PsychGLSLShaders/BasicGaborShader.vert.txt ...
+Building a vertex shader:Reading shader from file /Applications/Psychtoolbox/PsychOpenGL/PsychGLSLShaders/BasicSineGratingShader.vert.txt ...
+Building a fragment shader:Reading shader from file /Applications/Psychtoolbox/PsychOpenGL/PsychGLSLShaders/ApertureSineGratingShader.frag.txt ...
+{Undefined function or variable 'angleGrat1'.
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('localizerProc', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/localizerProc.m', 106)" style="font-weight:bold">localizerProc</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/localizerProc.m',106,0)">line 106</a>)
+    thisAngle           = angleGrat1;
+
+Error in <a href="matlab:matlab.internal.language.introspective.errorDocCallback('presentPredAttStair', '/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/presentPredAttStair.m', 139)" style="font-weight:bold">presentPredAttStair</a> (<a href="matlab: opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/presentPredAttStair.m',139,0)">line 139</a>)
+        [p, lr] = localizerProc(p, lr);
+} 
+opentoline('/Users/magdaaltman/Documents/0_MEG/PRED_ATT/ST_SEQ/KIT/localizerProc.m',106,0)

@@ -1,17 +1,19 @@
 
 function [p, pix] = deg2pix(p, deg)
+
 % pix = deg2pix(p.scr, deg = sizeof angle in degrees)
 % provides pix/cm and visual angles in degrees to pixels for windowRect
 % Uses average of X and Y pixels
 
 % PIX/CM 
-p.scr.pixPerCmX = round( p.scr.pixelsX ./ p.scr.cmX );   % cm/pix for x-axis
-p.scr.pixPerCmY = round( p.scr.pixelsY ./ p.scr.cmY );   % cm/pix for y-axis 
-p.scr.pixPerCmXY = round( mean ([ p.scr.pixPerCmX, p.scr.pixPerCmY ]));
+p.monitor.pixPerCmX = round( p.monitor.pixelX ./ p.monitor.cmX );   % cm/pix for x-axis
+p.monitor.pixPerCmY = round( p.monitor.pixelY ./ p.monitor.cmY );  
+% p.scr.pixPerCmY = round( p.scr.height ./ p.scr.cmY );   % cm/pix for y-axis 
+% p.scr.pixPerCmXY = round( mean ([ p.scr.pixPerCmX, p.scr.pixPerCmY ]));
 
 % PIX/DEG
-p.scr.cmPerDeg = 2*p.scr.monitorDist * atan( (pi * 1) ./ 360 );  
-p.scr.pixPerDeg = round( p.scr.cmPerDeg .* p.scr.pixPerCmXY ); % can't have fraction of pixels
+p.monitor.cmPerDeg = 2 *p.monitor.distance * atan( (pi * 1) ./ 360 );  
+p.scr.pixPerDeg = round( p.monitor.cmPerDeg .* p.monitor.pixPerCmX ); % can't have fraction of pixels
 pix = deg * p.scr.pixPerDeg;
 
 end
