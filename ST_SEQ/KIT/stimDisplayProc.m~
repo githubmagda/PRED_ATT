@@ -371,7 +371,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
     
     if sr.dot.series(f) == 1
-     Screen('DrawTexture', p.scr.window, gaussTex, gaussTexRect, round(dstRectDot)', [], [], [], [1,1,1,1], [], kPsychDontDoRotation, [paramsGauss; paramsGaussDot]');
+      Screen('DrawTexture', p.scr.window, gaussTex, gaussTexRect, round(dstRectDot)', [], [], [], [1,1,1,1], [], kPsychDontDoRotation, paramsGaussDot'); %[paramsGauss; paramsGaussDot]');
     end
     
     % FLIP

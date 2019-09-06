@@ -155,8 +155,7 @@ try
     
     % START STAIRCASE
     if p.staircase  
-        makeTexts(exper, p, 'staircase', 0);  
-        [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+        
         for str_i = 1: p.staircaseSeriesNum
             str  = [];
             str.number = str_i;
