@@ -31,6 +31,7 @@ grey = white / 2;
 Screen('Preference', 'SkipSyncTests', 2);
 
 try
+    
 % Open the screen
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey, [0 0 500 500], 32, 2,...
     [], [],  kPsychNeed32BPCFloat);
@@ -46,12 +47,12 @@ height      = windowRect(4);
 centerY     = height/2;
 
 % fix cross
-fixCrossColor       = [0.5, 0.5, 0.5];
+fixCrossColor       = [ 1, 1, 1];
 fixCrossLineWidth   = 4;
 fixCrossArmLength   = 15;
 xCoords             = [ centerX-fixCrossArmLength, centerX+fixCrossArmLength , centerX, centerX];
 yCoords             = [ centerY, centerY, centerY-fixCrossArmLength, centerY+fixCrossArmLength]; %[0, 0, 0, 0];
-allCoords           = [xCoords; yCoords];
+allCoords           = [ xCoords; yCoords];
 
 %--------------------
 % GABOR information
@@ -70,16 +71,19 @@ th = 2*si+1;
 
 backgroundColorOffset = [.5,.5,.5, 0];
 
-[gaussTex, gaussTexRect] = CreateProceduralGaussBlob(window , tw * 2, th * 2, backgroundColorOffset, 0, 1);
-fixScale = 1;
-dotScale = .25;
-dstRectFix = OffsetRect(gaussTexRect*fixScale, centerX-tw*fixScale, centerY-th*fixScale);
-dstRectDot = OffsetRect(gaussTexRect*dotScale, centerX-tw*dotScale, centerY-th*dotScale);
+[gaussTex, gaussTexRect] = CreateProceduralGaussBlob(window , tw *2, th *2, backgroundColorOffset, 0, 1);
+fixScale        = 1;
+fixInnerScale   = .15;
+dotScale        = .25;
+dstRectFix      = OffsetRect(gaussTexRect*fixScale, centerX-tw*fixScale, centerY-th*fixScale);
+dstRectFixInner = OffsetRect(gaussTexRect*fixInnerScale, centerX-tw*fixInnerScale, centerY-th*fixInnerScale);
+dstRectDot      = OffsetRect(gaussTexRect*dotScale, centerX-100-tw*dotScale, centerY-100-th*dotScale);
 
 % Spatial constant of the exponential "hull"
 sc = 15;          % sigma; regulates size of gaussian blur;
 % Contrast (brightness):
-contrast = 25.0;     % 
+contrast1 = 25; contrast2 = 100; contrast3 = 100;
+%contrast = [25.0,50,100]';     % 
 % Aspect ratio i.e.width vs. height:
 aspectratio = 1;
 
@@ -135,7 +139,9 @@ end
 trialStart = GetSecs; % start timer for first trial
 waitTime = GetSecs +imageDur -0.015;
 
-for i = 1:3
+for i = 1:5
+    
+    contrast3 = contrast3*.75;   % reduce contrast on each iteration
     
     % trial options
     select              = randi(2,1);
@@ -143,10 +149,9 @@ for i = 1:3
     
     % Draw the GAUSSIAN 
     %Screen('DrawTexture', window, gaussFixTex, [], [], [], [], [], [], [], kPsychDontDoRotation, [contrast, sc, aspectratio, 1]);
-    Screen('DrawTextures', window, gaussTex, gaussTexRect, [dstRectFix;dstRectDot]', [], [], [], [], [], kPsychDontDoRotation, repmat([contrast, sc, aspectratio, 1],2,1)');
-
-    Screen('DrawLines', window, allCoords, fixCrossLineWidth, [.5 .5 .5  1]); 
-    Screen('DrawTexture', window, gaussTex, gaussTexRect, dstRectDot, [], [], [], [], [], kPsychDontDoRotation, [contrast, sc, aspectratio, 1]);
+    Screen('DrawLines', window, allCoords, fixCrossLineWidth, [0 0 0]); 
+    Screen('DrawTextures', window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner;dstRectDot]', [], [], [], [], [], kPsychDontDoRotation, [ [contrast1;contrast2;contrast3], repmat(sc, 3,1), repmat(aspectratio, 3,1), ones(3,1)]');
+    %Screen('DrawTexture', window, gaussTex, gaussTexRect, dstRectFixInner, [], [], [], [], [], kPsychDontDoRotation, [contrast, sc, aspectratio, 1]);
 
     % Flip to the screen
     [ vbl] = Screen('Flip', window, waitTime);
@@ -201,4 +206,3 @@ end
 end
 
 
-%Published with MATLAB® R2015b

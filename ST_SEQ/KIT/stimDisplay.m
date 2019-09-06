@@ -207,7 +207,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             
             % DOT POSITION - is  dot in attentional quad 'VALID'?
             selEl = randi(10,1);                    % 1 in 10 probability
-            if selEl <= ( p.scr.cueValidPerc*10)    % e.g. xx% likelihood
+            if selEl <= ( p.series.cueValidPerc*10)    % e.g. xx% likelihood
                 sr.dot.valid(f) = 1;
                 dotQuad = thisCue;
             else

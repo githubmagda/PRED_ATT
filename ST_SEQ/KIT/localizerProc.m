@@ -1,21 +1,21 @@
 function[p, lr] = localizerProc(p, lr)
 % This script displays the localizer in the 4 quadrant gratings
 
-fixRadius = p.scr.fixRadius;
-virtualSizeGauss = fixRadius *2;
+fixRadius               = p.scr.fixRadius;
+virtualSizeGauss        = fixRadius *2;
 
 % Initial stimulus params for the smooth sine grating:
-virtualSizeGrat = p.scr.gratRadius *2;
+virtualSizeGrat         = p.scr.gratRadius *2;
 
 backgroundColorOffset   = [.5 .5 .5 0];
 
 phaseGrat               = 0;          % starting value
-freqGrat                = .11;        % see paper by Martin Vinck
+freqGrat                = .07;        % see paper by Martin Vinck
 tiltGrat                = 45;         % dummy value; set below in trial loop
 contrastGrat            = 1.5;        % 0.5;  changes 'brightness'
 
 % radius of the disc edge
-radiusGrat              = virtualSizeGrat /2;
+gratRadius              = p.scr.gratRadius;
 % smoothing sigma in pixel
 sigmaGrat               = 55;
 
@@ -28,19 +28,22 @@ smoothMethod            = 1;          % ignored
 
 % MAKE TEXTURES
 [sineTex, sineTexRect] = CreateProceduralSmoothedApertureSineGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat,...
-          backgroundColorOffset, radiusGrat, [], sigmaGrat, useAlpha, smoothMethod);
+          backgroundColorOffset, gratRadius, [], sigmaGrat, useAlpha, smoothMethod);
 [gaussTex, gaussTexRect]    = CreateProceduralGaussBlob( p.scr.window , virtualSizeGauss, virtualSizeGauss,...
     backgroundColorOffset, [],[]);
 %[gratTex, gratTexRect]      = CreateProceduralSineGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat, p.scr.backgroundColorOffsetGrat, p.scr.gratRadius, p.scr.contrastPreMultiplicatorGrat);
 
-% determining scaling of displays 
+angleSet                    = 1:6:180;
+
+% determining scaling of gaussian textures 
 fixScale                    = 1;               % scale of  adjustmentd to gaussians in 'DrawTexture'
 fixInnerScale               = 0.25;
 
 dstRectFix                  = OffsetRect(gaussTexRect*fixScale,      p.scr.centerX-(fixRadius*fixScale), p.scr.centerY-(fixRadius*fixScale));
 dstRectFixInner             = OffsetRect(gaussTexRect*fixInnerScale, p.scr.centerX-(fixRadius*fixInnerScale), p.scr.centerY -(fixRadius*fixInnerScale));
 
-angleSet                   = 1:6:180;
+paramsGauss         = [p.scr.fixContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1;...
+    p.scr.fixInnerContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1];
 
 % END TEXTURES 
 
@@ -58,10 +61,10 @@ lr.gratQuad                     = zeros( 2, p.series.stimPerSeries);
 
 % Draw cue fixation cross : dark cross two nested white gaussians
 Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, [p.scr.fixContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1; p.scr.fixInnerContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1]');
+Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
 
 % FLIP
-[vbl] = Screen('Flip', p.scr.window, 0);
+[vbl] = Screen('Flip', p.scr.window, 0, 1);  % [VBLTimestamp StimulusOnsetTime FlipTimestamp Missed Beampos] = Screen('Flip', windowPtr [, when] [, dontclear]
 thisWaitTime = p.preSeriesFixTime - (.9 *p.scr.flipInterval);
 
 % EYETRACKER SEND MESSAGE and MONITOR
@@ -86,10 +89,6 @@ else
     WaitSecs(thisWaitTime); % just show cross
 end
 
-% quick priming of grating
-Screen('DrawTexture', p.scr.window, sineTex, [], [], tiltGrat+180, [], [], [], [], [], [phaseGrat, freqGrat, contrastGrat, 0]);
-[vbl] = Screen('Flip', p.scr.window,0);
-[vbl] = Screen('Flip', p.scr.window,0);
 
 % DISPLAY SEQUENCE
 trialStart = zeros(1, p.series.stimPerSeries);
@@ -117,7 +116,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     thisXOffset         = p.scr.gratPosCenterX( thisQuad); % p.scr.offsetXSet( thisQuad);
     thisYOffset         = p.scr.gratPosCenterY( thisQuad); % p.scr.offsetYSet( thisQuad);
     lr.gratQuad(:,f)    = [thisXOffset, thisYOffset];
-    %dstRectGrat         = OffsetRect( gratTexRect, thisXOffset -gratTexRect(3)/2, thisYOffset -gratTexRect(4)/2); %thisXOffset, thisYOffset);
     dstRectSine         = OffsetRect( sineTexRect, thisXOffset -sineTexRect(3)/2, thisYOffset -sineTexRect(4)/2); %thisXOffset, thisYOffset);
 
     % Draw the gratings
@@ -127,7 +125,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     % DRAW FIXATION gaussian 
     Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-    Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, [p.scr.fixContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1; p.scr.fixInnerContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1]');
+    Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
 
     % FLIP 
     thisWaitTime =  p.scr.stimDur -(0.9 *p.scr.flipInterval);
@@ -147,11 +145,10 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         lr.monitor.totalFixTime( f)  = totalFixTime;
         if thisErrorTime > p.scr.maxPoliceErrorTime
             disp('ERROR');
-%             audioOpen(p)
-%             PsychPortAudio('FillBuffer', p.aud.handle, p.aud.beepWarn);
-%             PsychPortAudio('Start', p.aud.handle, 1, 0, 1);     % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-%             PsychPortAudio('Stop', p.aud.handle, 1);
-%             PsychPortAudio('Close', p.aud.handle);
+%             PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
+%             PsychPortAudio('Start', p.audio.handle, 1, 0, 1);     % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+%             PsychPortAudio('Stop', p.audio.handle, 1);
+%             PsychPortAudio('Close', p.audio.handle);
             % SEND EYETRACKER MESSAGE
             messageText = strcat('LOCALIZER_PREFIXATION_FAILED');
             Eyelink('message', messageText)
@@ -189,8 +186,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         % %         WaitSecs(p.scr.flipInterval);
         % %     end
 
-%     lr.time.trialEnd(f) = GetSecs;
-%     lr.time.trialDur(f) = lr.time.trialEnd(f) - lr.time.trialSetup(f);
     if f == p.series.stimPerSeries
         runFix = 0;
     end
@@ -201,6 +196,7 @@ lr.trialDur = trialStart(2:end) - trialStart(1:( end-1));
 lr.time.seriesEnd = GetSecs;
 lr.time.seriesDur = lr.time.seriesEnd - lr.time.seriesStart; 
 
+lr;
 % SEND EYETRACKER MESSAGE
 if p.useEyelink
     messageText = strcat('LOCALIZER_','SeriesEND',lr.number);

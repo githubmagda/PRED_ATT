@@ -52,20 +52,21 @@ try
     % the 'DrawTextures' can be used to modulate the intensity of each pixel of
     % the drawn patch before it is superimposed to the framebuffer image, ie.,
     % it allows to specify a global per-patch contrast value:
-    Screen('BlendFunction', window, GL_ONE, GL_ONE); %MA
+    %Screen('BlendFunction', window, GL_ONE, GL_ONE); %MA
     %Screen('Blendfunction', window, GL_ONE, GL_ONE_MINUS_SRC_ALPHA); 
+    Screen('Blendfunction', window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
     %--------------------
     % Grating information
     %--------------------
-    
     size = 64;
     % Size of support in pixels, derived from size:
-    tw = 2*size+1;
-    th = 2*size+1;
+     tw = 2*size+1;
+     th = 2*size+1;
     
     % grating
-    backgroundColorOffsetGrat       = [0, 0, 0, 0];
+    backgroundColorOffsetGrat       = [2, 2, 2, 0];
     contrastPreMultiplicatorGrat    = 1;
     
     % round mask
@@ -103,7 +104,7 @@ try
     [blobTex, blobRect]         = CreateProceduralGaussBlob(window, winWidth/2, winHeight/2);
    
     %Screen('DrawTexture', windowPointer, texturePointer [,sourceRect] [,destinationRect] [,rotationAngle] [, filterMode] [, globalAlpha] [, modulateColor] [, textureShader] [, specialFlags] [, auxParameters]);
-    Screen('DrawTextures', window, gratingTex, [], [], [], [], [], ...
+    Screen('DrawTextures', window, gratingTex, gratingRect, [], [], [], [], ...
         [], [], [], repmat([phase+180, freq, contrast, 0], 2, 1)');
     %Screen('DrawTexture', window, gratingTex, [], gratingRect, [], [], [], [], [], kPsychDontDoRotation, [contrast, sc, aspectratio, 0]);
     Screen('Flip', window);

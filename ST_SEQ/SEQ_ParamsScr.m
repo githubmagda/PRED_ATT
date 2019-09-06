@@ -13,14 +13,14 @@ p.scr.textType              = 'Helvetica';
 p.scr.textColor             = p.scr.white;
 
 % TRIAL SPECS
-p.blockNumber               = 0; % CHECK - do we need blocks?
-p.seriesNumber              = 0;
+p.blockNumber               = 1; % CHECK - do we need blocks?
+p.seriesNumber              = 1;
 p.staircaseSeriesNum        = 1;
 p.seriesPerBlock            = 1;
 p.seriesPerEdf              = 1; % how often data is output to edf file; safer to output each series in case participant quits
 
 % SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries      = 25;
+p.series.stimPerSeries      = 40;
 p.series.seqBasicSet        = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRpts          = 10;
 p.series.chunkLength        = 3;
@@ -71,9 +71,9 @@ p.scr.frameDur          = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 
 % TEXTURES GRATINGS (for QUADRANTS)
 % calculate grating radius - based on degrees or on quadrant size 
-p.scr.gratRadiusDeg     = 0.75;                              % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
-p.scr.gratRadius        = p.scr.gratRadiusDeg .*p.scr.pixPerDeg; 
-p.scr.gratGrid          = 2 *p.scr.gratRadius +1;           % scaffolding for grating
+p.scr.gratRadiusDeg         = 1.0;                              % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
+p.scr.gratRadius            = p.scr.gratRadiusDeg .*p.scr.pixPerDeg; 
+p.scr.gratGrid              = 2 *p.scr.gratRadius +1;           % scaffolding for grating
 %%%p.scr.angleSet          = [15,105];     % Possible angles for grating       
 
 % calculate distance of grating center from screen center based on degrees or quadrant size 
@@ -83,14 +83,14 @@ p.scr.gratPosSide           = round( sqrt( p.scr.gratPos^2 /2));
 p.scr.gratPosCenterX        = [ (p.scr.centerX-p.scr.gratPosSide), (p.scr.centerX+p.scr.gratPosSide), (p.scr.centerX+p.scr.gratPosSide), (p.scr.centerX-p.scr.gratPosSide)];
 p.scr.gratPosCenterY        = [ (p.scr.centerY-p.scr.gratPosSide), (p.scr.centerY-p.scr.gratPosSide), (p.scr.centerY+p.scr.gratPosSide), (p.scr.centerY+p.scr.gratPosSide)];
 
-% PARAMETERS FOR PROCEDURAL GRATING
-p.scr.backgroundColorOffsetGrat             = [ 2, 2, 2, 0]; 
-p.scr.contrastPreMultiplicatorGrat          = 1;
-% - Spatial Frequency (Cycles Per Pixel); One Cycle = Grey-Black-Grey-White-Grey i.e. One Black and One White Lobe
-p.scr.numCyclesGrat                         = 8; 
-p.scr.freqGrat                              = p.scr.numCyclesGrat / p.scr.gratGrid;           
-p.scr.phaseGrat                             = 90;
-p.scr.contrastGrat                          = 1;
+% % PARAMETERS FOR PROCEDURAL GRATING
+% % p.scr.backgroundColorOffsetGrat             = [ 2, 2, 2, 0]; 
+% % p.scr.contrastPreMultiplicatorGrat          = 1;
+% % - Spatial Frequency (Cycles Per Pixel); One Cycle = Grey-Black-Grey-White-Grey i.e. One Black and One White Lobe
+% % p.scr.numCyclesGrat                         = 8; 
+% % p.scr.freqGrat                              = p.scr.numCyclesGrat / p.scr.gratGrid;           
+% % p.scr.phaseGrat                             = 90;
+% % p.scr.contrastGrat                          = 1;
 
 % timing of predictive texture in ms  
 p.scr.flashDur          = round2flips( p, .05);    % duration of predictive flash in 
@@ -100,7 +100,7 @@ p.scr.flashDur          = round2flips( p, .05);    % duration of predictive flas
 p.series.dotProbStaircase   = .2;           % must be less than 1/3???
 % main series dot specs
 p.series.dotProb            = .02;                 % DEFAULT .03 = percent of dots per series
-p.scr.cueValidPerc          = .80;
+p.series.cueValidPerc          = .80;
 p.series.dotMinDist         = 3;                % e.g. every X trial can be a dot                    
 p.series.dotZeroPadding     = 3;            % number of non-dot trials at beginning and end of series
 p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
@@ -108,10 +108,29 @@ p.scr.dotDur                = round2flips(p, .10);
 p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by factor of 1:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
-p.scr.dotRadiusDeg          = .030; 
+p.scr.dotRadiusDeg          = .15; 
 p.scr.dotRadius             = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
+p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
+% START
+numDot = 360;
+dotAngles = linspace(0, 2*pi, numDot); 
+dotRingRadius = p.scr.gratPos -20;
+dotRingX = dotRingRadius * cos(dotAngles) + p.scr.centerX; 
+dotRingY = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY);
 
-% masks
+% get locations for dots in quads (very confusing cause x/y grids are
+% different for dotRing and Psychotoolbox
+thisMargin = 25;
+p.scr.dotSetX2 = dotRingX( thisMargin : numDot/4-thisMargin);
+p.scr.dotSetY2 = dotRingY( thisMargin : numDot/4-thisMargin);
+p.scr.dotSetX1 = dotRingX( numDot/4+thisMargin :numDot/2-thisMargin);
+p.scr.dotSetY1 = dotRingY( numDot/4+thisMargin :numDot/2-thisMargin);
+p.scr.dotSetX4 = dotRingX( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
+p.scr.dotSetY4 = dotRingY( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
+p.scr.dotSetX3 = dotRingX( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
+p.scr.dotSetY3 = dotRingY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
+
+% masks % for older version
 p.scr.maskBorder            = 15;                               % so as to make the gradient mask for dot presentation smaller than gradient 
 p.scr.outerDotMaskRadius    = p.scr.gratPos - p.scr.maskBorder;     % hypot( p.scr.quadDim/2-10, p.scr.quadDimY/2-10 ); % CHECK - base on visual angle?
 p.scr.innerDotMaskRadius    = p.scr.gratPos - p.scr.gratRadius + p.scr.maskBorder;   % hypot( p.scr.quadDim/2 - p.scr.quadGratRad, p.scr.quadDim/2 - p.scr.quadGratRad);
@@ -122,7 +141,7 @@ p.scr.innerDotMaskRadius    = p.scr.gratPos - p.scr.gratRadius + p.scr.maskBorde
 % % p.series.dotNumRange = [ p.series.dotNumAv-1 : p.series.dotNumAv+1 ]; % range of possible catch trials per series ( selected in makeCatchSeries.m )
 
 % SERIES QUESTION
-p.series.questionProb               = .02;
+p.series.questionProb               = .2;
 p.series.questionNum                = floor( p.series.stimPerSeries * p.series.questionProb);
 
 % FIXATION GAUSSIAN
@@ -152,18 +171,18 @@ p.scr.fixCrossColor         = p.scr.background;
 p.scr.fixCrossColorChange    = [255, 0, 0]; % for e.g. red warning signal, check DrawTexture commands
 
 %%% length of 4 arms used for  cross
-ext = 1.0; % stretches arms (to compensate for Gaussian dispersion)
-extColor = 1.0; % less stretch on colored arm
-xCoords = [ 0, -p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, -p.scr.fixCrossX];
-yCoords = [ 0, -p.scr.fixCrossY, 0, -p.scr.fixCrossY, 0, p.scr.fixCrossY, 0, p.scr.fixCrossY];
+ext         = 1.0; % stretches arms (to compensate for Gaussian dispersion)
+extColor    = 1.0; % less stretch on colored arm
+xCoords     = [ 0, -p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, -p.scr.fixCrossX];
+yCoords     = [ 0, -p.scr.fixCrossY, 0, -p.scr.fixCrossY, 0, p.scr.fixCrossY, 0, p.scr.fixCrossY];
 
 % fixation cross - dimensions 
-p.scr.fixCoords0 = [xCoords .* ext; yCoords .* ext]; % no attentional cue
+p.scr.fixCoords0    = [xCoords .* ext; yCoords .* ext]; % no attentional cue
 % dimensions with attentional cue (shorter due to color contrast)
-p.scr.fixCoords1 = p.scr.fixCoords0 .* [ext,extColor,ext,ext,ext,ext,ext,ext; ext,extColor,ext,ext,ext,ext,ext,ext];
-p.scr.fixCoords2 = p.scr.fixCoords0 .* [ext,ext,ext,extColor,ext,ext,ext,ext; ext,ext,ext,extColor,ext,ext,ext,ext];
-p.scr.fixCoords3 = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,extColor,ext,ext; ext,ext,ext,ext,ext,extColor,ext,ext];
-p.scr.fixCoords4 = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,ext,ext,extColor; ext,ext,ext,ext,ext,ext,ext,extColor];
+p.scr.fixCoords1    = p.scr.fixCoords0 .* [ext,extColor,ext,ext,ext,ext,ext,ext; ext,extColor,ext,ext,ext,ext,ext,ext];
+p.scr.fixCoords2    = p.scr.fixCoords0 .* [ext,ext,ext,extColor,ext,ext,ext,ext; ext,ext,ext,extColor,ext,ext,ext,ext];
+p.scr.fixCoords3    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,extColor,ext,ext; ext,ext,ext,ext,ext,extColor,ext,ext];
+p.scr.fixCoords4    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,ext,ext,extColor; ext,ext,ext,ext,ext,ext,ext,extColor];
  
 % IF only 2 arms are used for cross
 % %     xCoords = [p.scr.fixDimX -p.scr.fixDimX -p.scr.fixDimX p.scr.fixDimX];
@@ -180,40 +199,31 @@ alphO = 0.0; alphT = 1.0; % transparency O=opaque, T=transparent  - not currentl
 % no highlight - basic cross
 p.scr.attn0 = [ b bEnd b bEnd b bEnd b bEnd ; b bEnd b bEnd b bEnd b bEnd ; b bEnd b bEnd b bEnd b bEnd]; % no highlighted arm
 % attentional cue highlight
-p.scr.attn1 = [ b hilite b b b b b b; b remove b b b b b b; b remove b b b b b b];% alphT alphO alphT alphT]; % upper-left
-p.scr.attn2 = [ b b b hilite b b b b; b b b remove b b b b; b b b remove b b b b];% alphT alphT alphT alphO]; % upper-right
-p.scr.attn3 = [ b b b b b hilite b b; b b b b b remove b b; b b b b b remove b b];% alphO alphT alphT alphT]; % lower-right
-p.scr.attn4 = [ b b b b b b b hilite; b b b b b b b remove; b b b b b b b remove];% alphT alphT alphO alphT];
+p.scr.attn1 = [ b hilite b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphT alphO alphT alphT]; % upper-left
+p.scr.attn2 = [ b bEnd b hilite b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphT alphT alphT alphO]; % upper-right
+p.scr.attn3 = [ b bEnd b bEnd b hilite b bEnd; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphO alphT alphT alphT]; % lower-right
+p.scr.attn4 = [ b bEnd b bEnd b bEnd b hilite; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphT alphT alphO alphT];
+
+% % % p.scr.attn1 = [ b hilite b bEnd b bEnd b bEnd; b remove b b b b b b; b remove b b b b b b];% alphT alphO alphT alphT]; % upper-left
+% % % p.scr.attn2 = [ b bEnd b hilite b bEnd b bEnd; b bEnd b remove b b b b; b b b remove b b b b];% alphT alphT alphT alphO]; % upper-right
+% % % p.scr.attn3 = [ b b b b b hilite b b; b b b b b remove b b; b b b b b remove b b];% alphO alphT alphT alphT]; % lower-right
+% % % p.scr.attn4 = [ b b b b b b b hilite; b b b b b b b remove; b b b b b b b remove];% alphT alphT alphO alphT];
 
 %%% TEST
 % Screen('DrawLines', p.scr.window, p.scr.fixCoords4, p.scr.fixCrossLineWidth, p.scr.attn4, [ p.scr.centerX, p.scr.centerY ], 2);
 % Screen('Flip', p.scr.window);
 % % % end test
 
-%%% ALTERNATIVE solid leg color specs
-% % rgb specs for 4 attention conditions with colored leg pointing to quadrants clockwise from top-left
-% p.scr.attn1 = [ hilite hilite b b b b b b ; b remove b b b b b b ; b remove b b b b b b];% alphT alphO alphT alphT]; % upper-left
-% p.scr.attn2 = [ b b hilite hilite b b b b ; b b b remove b b b b ; b b b remove b b b b ];% alphT alphT alphT alphO]; % upper-right
-% p.scr.attn3 = [ b b b b hilite hilite b b; b b b b b remove b b; b b b b b remove b b];% alphO alphT alphT alphT]; % lower-right
-% p.scr.attn4 = [ b b b b b b hilite hilite ; b b b b b b b remove; b b b b b b b remove];% alphT alphT alphO alphT];
-
-% ALTERNATIVE CROSS WITH 2 LEGS ONLY
-%     % rgb specs for 4 attention conditions with 2 legs pointing to quadrants clockwise from top-left
-% p.scr.attn1 = [base hilite base base ; base remove base base ; base remove base base];% alphT alphO alphT alphT]; % upper-left
-% p.scr.attn2 = [base base base hilite ; base base base remove ; base base base remove];% alphT alphT alphT alphO]; % upper-right
-% p.scr.attn3 = [hilite base base base ; remove base base base; remove base base base];% alphO alphT alphT alphT]; % lower-right
-% p.scr.attn4 = [p.scrbase base hilite base ; base base remove base ; base base remove base];% alphT alphT alphO alphT];
-
 % TEXT TIMING using frameRate
 p.scr.waitText = round(p.waitText ./p.scr.flipInterval) * p.scr.flipInterval; %% time for instruction delay
 p.scr.waitBlank = round(p.waitBlank ./ p.scr.flipInterval) * p.scr.flipInterval; %% time for blank screen intervals
 
 % POLICING 
-p.preSeriesFixTime = round2flips (p, 5.0); 
-p.scr.fixMonitorX = p.scr.centerX; 
-p.scr.fixMonitorY = p.scr.centerY;
-p.scr.fixMonitorAng = 4.0;
-p.scr.fixMonitorRadius = round( p.scr.fixMonitorAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
+p.preSeriesFixTime      = round2flips (p, 5.0); 
+p.scr.fixMonitorX       = p.scr.centerX; 
+p.scr.fixMonitorY       = p.scr.centerY;
+p.scr.fixMonitorAng     = 4.0;
+p.scr.fixMonitorRadius  = round( p.scr.fixMonitorAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
 p.scr.maxPoliceErrorTime = round2flips (p, 0.01); % secs adjusted to refresh rates
 % % p.maxMonitorErrorTimeMovie = round2flips (p, 0.005); % secs adjusted to refresh rates
  

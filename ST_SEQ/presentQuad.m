@@ -1,4 +1,4 @@
-function[exper] = presentQuad(p, lr) % (could ask for inputs, e.g. debug, useEyelink)
+function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
 
 % DESCRIPTION
 % Main script for Predictive Attention presentations - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
@@ -33,14 +33,14 @@ RestrictKeysForKbCheck([p.activeKeys]);
 quitKey = KbName('Escape');
 contKey = KbName('space');
 
-%p = openAudioPort(p);  %        % audioOpen(p)
+p = audioOpen(p);    %openAudioPort(p);  %        % audioOpen(p)
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
-p.debug         = 1;
+p.debug         = 1;                          
 p.testEdf       = 1; % eyelink will make file with this same name each tst run
-p.localizer     = 0;
-p.staircase     = 1; % these could be staircase and/or localizers (or could be separate programs)
-p.proceduralGL  = 1;
+p.localizer     = 0  ;
+p.staircase     = 0; % these could be staircase and/or localizers (or could be separate programs)
+%p.proceduralGL  = 1;
 
 % GET EYELINK DETAILS
 [p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
@@ -98,7 +98,7 @@ try
 % %     cd ..
 % %     cd ..
     
-    % make TEXTURES for sti        mDisplay
+    % make TEXTURES for sti                             mDisplay
     %[p] =   makeTextures(p);
     sr = []; % initialize structure for series
     
@@ -137,11 +137,11 @@ try
         end
         
         % RUN LOCALIZER
-        if p.proceduralGL
+%         if p.proceduralGL
             [p, lr] = localizerProc( p, lr); %localizerProc(p, lr);  
-        else
-           [p, lr] = localizer(p, lr); 
-        end
+%         else
+%            [p, lr] = localizer(p, lr); 
+%         end
         exper.lr = lr;
         
         % if  EYETRACKING previous series, stop now, save and move file to subject folder
@@ -153,7 +153,9 @@ try
         end
         screenBlank(p);
     end
-    % end LOCALIZER    
+    % END LOCALIZER 
+    
+    % START STAIRCASE
     if p.staircase                 
         for str_i = 1: p.staircaseSeriesNum
             str  = [];
@@ -169,9 +171,10 @@ try
         % name/number series and add to exp structure
         strName = sprintf('str%d',str_i);
         exper.(strName) = str;
-        p.scr.dotIntFactor = round(mean(str.PSEfinal));
+        p.scr.thisProbe = round(mean(dotIntFactor)*100)/100;
+    else
+    p.scr.thisProbe= 1;
     end
-    p.scr.dotIntFactor= 10;
     %  DON'T DELETE if commented out !!!!
     
     %% show the introductory text screen
@@ -238,7 +241,7 @@ try
             end
             
             % RUN NEXT SERIES
-            [p, sr] = stimDisplay( p, sr, 'regularSeries');
+            [p, sr] = stimDisplayProc( p, sr, 'regularSeries');
             
             % name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);
@@ -278,8 +281,8 @@ try
     %%DrawFormattedText(p.scr.window, text2show, 'center','center', p.scr.textColor); %%, p.scr.textType);
     WaitSecs(2); % CHECK for real experiment
     
-  catch
-    psychrethrow(psychlasterror);
+catch
+      psychrethrow(psychlasterror);
     cleanup(p);    
 end
  
