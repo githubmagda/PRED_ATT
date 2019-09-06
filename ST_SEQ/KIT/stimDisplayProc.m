@@ -66,7 +66,7 @@ angleVal                        = angleSet( anglePos);
 % angleValA                       = angleSetA( anglePosA);
 % angleValB                       = angleSetB( anglePosB);
 
-% update sets and positions to include all 
+% update sets and positions to include all
 angleSet                          = [1:1:180];
 anglePos                          = find(ismember(angleSet, angleVal));
 % angleSetA                       = angleMargin:1:90; %(90-angleMargin);
@@ -136,13 +136,13 @@ if regularSeries
     switch thisCue
         case 1
             attn = p.scr.attn1;             % selects the fixation cue (arm of cross)
-            fixCoords = p.scr.fixCoords1;   % quad and length of fixation cue arms            
+            fixCoords = p.scr.fixCoords1;   % quad and length of fixation cue arms
         case 2
             attn = p.scr.attn2;
-            fixCoords = p.scr.fixCoords2;            
+            fixCoords = p.scr.fixCoords2;
         case 3
             attn = p.scr.attn3;
-            fixCoords = p.scr.fixCoords3;            
+            fixCoords = p.scr.fixCoords3;
         case 4
             attn = p.scr.attn4;
             fixCoords = p.scr.fixCoords4;
@@ -358,7 +358,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     if regularSeries
         % Draw  gratings, inserting predictive grating
         %paramsGrats( 1, thisPred)      = phaseGrat-phaseIncrement*2;
-   
         anglePos(thisPred) = anglePos(thisPred) + 7; % anglePredSet(f);        % predictive grating gets pred angle
         Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, anglePos, [], [], ...
             [], [], [], paramsGrats);
@@ -478,12 +477,12 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             
             % check timing of  next probe routine
             sr.time.probeStart(f) = GetSecs; % just to check time of calculation
-            [thisProbe,entexp,ind]  = stair.get_next_probe(); % get next probe to test  [thisProbe, entexp, ind]  = stair.get_next_probe();
+            [thisProbe,entexp,rot_i]  = stair.get_next_probe(); % get next probe to test  [thisProbe, entexp, ind]  = stair.get_next_probe();
             sr.time.probeEnd(f) = GetSecs;
             sr.time.probeDur(f) = sr.time.probeEnd(f) - sr.time.probeStart(f);
             fprintf('response: %d\n',r);
             fprintf('%d, new sample point: %f\nexpect ent: %f\n', ...
-                ktrial,thisProbe,entexp(ind));
+                ktrial,thisProbe,entexp(rot_i));
             
         end
     end
@@ -495,67 +494,64 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             
             %% INSERT QUESTION
             
-% possible next-screens
-rotationSet = Shuffle(1:4);  
-thisQuad = mod( rotationSet(1), length(rotationSet)); % first
-
-% initialize
-found = 0;
-i = sr.pred.series(f);
-
-% stop to signal upcoming question
-WaitSecs(0.7);
-
-while ~found
-    
-    circleTime = GetSecs;
-
-    KbQueueCreate();
-    KbQueueStart();
-    
-    % Draw  fixation cross without cue and Gratings
-    Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-    Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
-    
-    Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, anglePos, [], [], ...
-        [], [], [], paramsGrats);
-   
-    thisRect = dstRectGrats(:,thisQuad);
-    Screen('FrameOval', p.scr.window, [255,0,0], thisRect, 1.8,[]);
-    
-    Screen('Flip', p.scr.window);
-     WaitSecs(0.3)   % IFF movie doesn't keep running
-    %end % movie keeps running
-
-     [event, ~] = KbEventGet( [], 0.001); % CHECK how to suppress output ([device], [wait time])
-     if  ~isempty(event) && event.Pressed == 1 % there was a keyPress and this is the downPress
-        
-        if strcmp( KbName(event.Keycode), 'Return')
-            question.responseQuad(f) = thisQuad;
-            question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
-            if question.responseCorrect(f) == 1
-                display('Correct');
-            else
-                display('Not correct, Should be:');
-                sr.pred.series(f-(p.series.chunkLength-1))
-            end
+            % possible next-screens
+            rotationSet = 0:3;
+            % initialize
+            found = 0;
+            rot_i = 0; % index for rotation   
             
-            question.RT(f) = event.Time - circleTime; % minus stim onset
-            question.chunkNum(f) = sr.pred.trackerByChunk(f);
-            question.elementNum(f) = sr.pred.trackerByElement (f);
-            found = 1; % get out of loop
+            % stop to signal upcoming question
+            WaitSecs(0.7);
             
-        elseif strcmp( KbName(event.Keycode), 'space')
-            thisQuad = mod( mod( rotationSet(i), 4, length(rotationSet));
-            i = i+1;
-        end
-        KbQueueStop();  % KbQueueStop([deviceIndex])   %[secs, keyCode, deltaSecs] = KbPressWait; % [secs, keyCode, deltaSecs] = KbPressWait([deviceNumber][, untilTime=inf][, more optional args for KbWait]);   % event = KbEventGet();
-        KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
-        KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
-    end
-
-end
-            
+            while ~found
+                
+                circleTime = GetSecs;
+                
+                KbQueueCreate();
+                KbQueueStart();
+                
+                % Draw  fixation cross without cue and Gratings
+                Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+                Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');                
+                Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, anglePos, [], [], ...
+                    [], [], [], paramsGrats);
+                
+                % which quad circle appears in and adjust thisRect
+                thisQuad = mod( rot_i, length( rotationSet))+1;  % mod rotates but have to add +1 to avoid index of zero
+                thisRect = dstRectGrats(:,thisQuad)';
+                Screen('FrameOval', p.scr.window, [255,0,0], thisRect, 1.8,[]);
+                
+                Screen('Flip', p.scr.window);
+                WaitSecs(0.3)   % IFF movie doesn't keep running
+                %end % movie keeps running
+                
+                [event, ~] = KbEventGet( [], 0.001); % CHECK how to suppress output ([device], [wait time])
+                if  ~isempty(event) && event.Pressed == 1 && found == 0 % there was a keyPress and this is the downPress
+                    
+                    if strcmp( KbName(event.Keycode), 'Return')
+                        question.responseQuad(f) = thisQuad;
+                        question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
+                        if question.responseCorrect(f) == 1
+                            display('Correct');
+                        else
+                            display('Not correct, Should be:');
+                            sr.pred.series(f-(p.series.chunkLength-1))
+                        end
+                        
+                        question.RT(f) = event.Time - circleTime; % minus stim onset
+                        question.chunkNum(f) = sr.pred.trackerByChunk(f);
+                        question.elementNum(f) = sr.pred.trackerByElement (f);
+                        found = 1; % get out of loop
+                        
+                    elseif strcmp( KbName(event.Keycode), 'space')
+                        rot_i = rot_i+1;
+                    end
+                    
+                    KbQueueStop();  % KbQueueStop([deviceIndex])   %[secs, keyCode, deltaSecs] = KbPressWait; % [secs, keyCode, deltaSecs] = KbPressWait([deviceNumber][, untilTime=inf][, more optional args for KbWait]);   % event = KbEventGet();
+                    KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
+                    KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])                   
+                end
+            end 
             %% END QUESTION
             WaitSecs(1.0);
         end % end question routine

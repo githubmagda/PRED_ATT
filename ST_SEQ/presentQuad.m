@@ -1,4 +1,4 @@
-function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
+   function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
 
 % DESCRIPTION
 % Main script for Predictive Attention presentations - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
