@@ -1,11 +1,11 @@
-   function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
+function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
 
 % DESCRIPTION
 % Main script for Predictive Attention presentations - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
 
 % Clear the workspace and the screen
 sca;
-close all;
+close all;  
 clearvars;
 
 rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTANT
@@ -38,10 +38,9 @@ p = audioOpen(p);    %openAudioPort(p);  %        % audioOpen(p)
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug         = 1;                          
 p.testEdf       = 1; % eyelink will make file with this same name each tst run
-p.localizer     = 1;
+p.localizer     = 0;
 p.staircase     = 1; % these could be staircase and/or localizers (or could be separate programs)
-%p.proceduralGL  = 1;
-
+   
 % GET EYELINK DETAILS
 [p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
 
@@ -155,8 +154,8 @@ try
     
     % START STAIRCASE
     if p.staircase  
-        makeTexts(exper, p, 'staircase', 0);  
-        [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+%         makeTexts(exper, p, 'staircase    ', 0);  
+%         [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
         for str_i = 1: p.staircaseSeriesNum
             str  = [];
             str.number = str_i;
@@ -296,6 +295,7 @@ KbQueueRelease();
 RestrictKeysForKbCheck([]);
 ShowCursor;
 Priority(0);
+clear MEX;
 if p.useEyelink
     Eyelink('Stoprecording');
     Eyelink('Closefile');

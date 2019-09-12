@@ -6,7 +6,6 @@ function [p] = openWindowKit(p)
 p.scr.number = max(Screen('Screens')); 
 
 % Enable 32bpc
-
 PsychImaging('PrepareConfiguration');
 PsychImaging('AddTask', 'General', 'FloatingPoint32BitIfPossible');
 
@@ -51,6 +50,8 @@ end
 % the 'DrawTextures' can be used to modulate the intensity of each pixel of
 % the drawn patch before it is superimposed to the framebuffer image, ie.,
 % it allows to specify a global per-patch contrast value:
-
-Screen('Blendfunction', p.scr.window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+%Screen('BlendFunction', p.scr.window, GL_ONE, GL_ZERO);
+%Screen('BlendFunction', p.scr.window, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+%Screen('BlendFunction', p.scr.window, GL_ONE, GL_ONE);
+Screen('Blendfunction', p.scr.window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
 end

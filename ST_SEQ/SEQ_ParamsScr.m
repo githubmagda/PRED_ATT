@@ -13,8 +13,8 @@ p.scr.textType              = 'Helvetica';
 p.scr.textColor             = p.scr.white;
 
 % TRIAL SPECS
-p.blockNumber               = 1; % CHECK - do we need blocks?
-p.seriesNumber              = 1;
+p.blockNumber               = 0; % CHECK - do we need blocks?
+p.seriesNumber              = 0;
 p.staircaseSeriesNum        = 1;
 p.seriesPerBlock            = 1;
 p.seriesPerEdf              = 1; % how often data is output to edf file; safer to output each series in case participant quits
@@ -73,7 +73,7 @@ p.scr.frameDur          = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 % calculate grating radius - based on degrees or on quadrant size 
 p.scr.gratRadiusDeg         = 1.0;                              % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
 p.scr.gratRadius            = p.scr.gratRadiusDeg .*p.scr.pixPerDeg; 
-p.scr.gratGrid              = 2 *p.scr.gratRadius +1;           % scaffolding for grating
+%p.scr.gratGrid              = 2 *p.scr.gratRadius +1;           % scaffolding for grating
 %%%p.scr.angleSet          = [15,105];     % Possible angles for grating       
 
 % calculate distance of grating center from screen center based on degrees or quadrant size 
@@ -93,14 +93,14 @@ p.scr.gratPosCenterY        = [ (p.scr.centerY-p.scr.gratPosSide), (p.scr.center
 % % p.scr.contrastGrat                          = 1;
 
 % timing of predictive texture in ms  
-p.scr.flashDur          = round2flips( p, .05);    % duration of predictive flash in 
+%p.scr.flashDur          = round2flips( p, .05);    % duration of predictive flash in 
 
 % ATTENTIONAL DOT & CUE ATTRIBUTES
 % probability of dots in staircase procedure
 p.series.dotProbStaircase   = .2;           % must be less than 1/3???
 % main series dot specs
 p.series.dotProb            = .02;                 % DEFAULT .03 = percent of dots per series
-p.series.cueValidPerc          = .80;
+p.series.cueValidPerc       = .80;
 p.series.dotMinDist         = 3;                % e.g. every X trial can be a dot                    
 p.series.dotZeroPadding     = 3;            % number of non-dot trials at beginning and end of series
 p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
@@ -111,7 +111,7 @@ p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by factor of
 p.scr.dotRadiusDeg          = .15; 
 p.scr.dotRadius             = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
 p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
-% START
+
 numDot = 360;
 dotAngles = linspace(0, 2*pi, numDot); 
 dotRingRadius = p.scr.gratPos -20;
@@ -120,7 +120,7 @@ dotRingY = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY);
 
 % get locations for dots in quads (very confusing cause x/y grids are
 % different for dotRing and Psychotoolbox
-thisMargin = 25;
+thisMargin = p.scr.dotRadius;
 p.scr.dotSetX2 = dotRingX( thisMargin : numDot/4-thisMargin);
 p.scr.dotSetY2 = dotRingY( thisMargin : numDot/4-thisMargin);
 p.scr.dotSetX1 = dotRingX( numDot/4+thisMargin :numDot/2-thisMargin);
@@ -141,25 +141,25 @@ p.scr.innerDotMaskRadius    = p.scr.gratPos - p.scr.gratRadius + p.scr.maskBorde
 % % p.series.dotNumRange = [ p.series.dotNumAv-1 : p.series.dotNumAv+1 ]; % range of possible catch trials per series ( selected in makeCatchSeries.m )
 
 % SERIES QUESTION
-p.series.questionProb               = .2;
-p.series.questionNum                = floor( p.series.stimPerSeries * p.series.questionProb);
+p.series.questionProb               = .01;
+p.series.questionNum                = ceil( p.series.stimPerSeries * p.series.questionProb);
 
 % FIXATION GAUSSIAN
-p.scr.fixRadiusDeg                  = .6;                   % Thaler, 2013 recommend radius : .6 or 1.5 degrees
-p.scr.fixRadius                     = p.scr.fixRadiusDeg * p.scr.pixPerDeg; % deg2pix(p, p.scr.fixRadiusDeg);
-%p.scr.fixGrid                       = 3 .* p.scr.fixRadius + 1;
-p.scr.fixRadiusInnerDeg             = .025;                  %  inner inset fixation dot
-p.scr.fixRadiusInner                = p.scr.fixRadiusInnerDeg * p.scr.pixPerDeg;    % deg2pix(p, p.scr.fixRadiusInnerDeg);
-%p.scr.fixInnerGrid                  = 3 .* p.scr.fixRadiusInner + 1;
+% p.scr.fixRadiusDeg                  = .6;                   % Thaler, 2013 recommend radius : .6 or 1.5 degrees
+% p.scr.fixRadius                     = p.scr.fixRadiusDeg * p.scr.pixPerDeg; % deg2pix(p, p.scr.fixRadiusDeg);
+% %p.scr.fixGrid                       = 3 .* p.scr.fixRadius + 1;
+% p.scr.fixRadiusInnerDeg             = .025;                  %  inner inset fixation dot
+% p.scr.fixRadiusInner                = p.scr.fixRadiusInnerDeg * p.scr.pixPerDeg;    % deg2pix(p, p.scr.fixRadiusInnerDeg);
+% %p.scr.fixInnerGrid                  = 3 .* p.scr.fixRadiusInner + 1;
 
-p.scr.fixSc                         = 15.0;  % sigma for gaussian (exponential 'hull')
-p.scr.fixContrast                   = 30; 
-p.scr.fixInnerContrast              = 50;
-%p.scr.fixBackgroundColorOffset      = [.5, .5, .5, 0];
-p.scr.fixContrastPreMultiplicator   = 1; 
-p.scr.fixPhase                      = 0;
-p.scr.fixFreq                       = 24;
-p.scr.fixAspectRatio                = 1;
+% p.scr.fixSc                         = 15.0;  % sigma for gaussian (exponential 'hull')
+% p.scr.fixContrast                   = 30; 
+% p.scr.fixInnerContrast              = 50;
+% %p.scr.fixBackgroundColorOffset      = [.5, .5, .5, 0];
+% p.scr.fixContrastPreMultiplicator   = 1; 
+% p.scr.fixPhase                      = 0;
+% p.scr.fixFreq                       = 24;
+% p.scr.fixAspectRatio                = 1;
 
 
 %%% FIXATION CROSS
