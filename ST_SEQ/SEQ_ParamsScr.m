@@ -191,19 +191,19 @@ p.scr.fixCoords4    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,ext,ext,extColor;
 % %     allCoords = [xCoords; yCoords];
 
 %%% fixation cross: cue color
-b = p.scr.black; % 1.0; % p.scr.white; % off white?
+w = p.scr.white; % 1.0; % p.scr.white; % off white?
 bEnd = p.scr.background;
 hilite = 1.0; remove = 0.0;
 alphO = 0.0; alphT = 1.0; % transparency O=opaque, T=transparent  - not currently set
 
 %%% BLENDED RGB color specs for 4 attention cross - colored arm points to quadrants clockwise from top-left
 % no highlight - basic cross
-p.scr.attn0 = [ b bEnd b bEnd b bEnd b bEnd ; b bEnd b bEnd b bEnd b bEnd ; b bEnd b bEnd b bEnd b bEnd]; % no highlighted arm
+p.scr.attn0 = [ w bEnd w bEnd w bEnd w bEnd ; w bEnd w bEnd w bEnd w bEnd ; w bEnd w bEnd w bEnd w bEnd]; % no highlighted arm
 % attentional cue highlight
-p.scr.attn1 = [ b hilite b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphT alphO alphT alphT]; % upper-left
-p.scr.attn2 = [ b bEnd b hilite b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphT alphT alphT alphO]; % upper-right
-p.scr.attn3 = [ b bEnd b bEnd b hilite b bEnd; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphO alphT alphT alphT]; % lower-right
-p.scr.attn4 = [ b bEnd b bEnd b bEnd b hilite; b bEnd b bEnd b bEnd b bEnd; b bEnd b bEnd b bEnd b bEnd];% alphT alphT alphO alphT];
+p.scr.attn1 = [ w hilite w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphO alphT alphT]; % upper-left
+p.scr.attn2 = [ w bEnd w hilite w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphT alphT alphO]; % upper-right
+p.scr.attn3 = [ w bEnd w bEnd w hilite w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphO alphT alphT alphT]; % lower-right
+p.scr.attn4 = [ w bEnd w bEnd w bEnd w hilite; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphT alphO alphT];
 
 % % % p.scr.attn1 = [ b hilite b bEnd b bEnd b bEnd; b remove b b b b b b; b remove b b b b b b];% alphT alphO alphT alphT]; % upper-left
 % % % p.scr.attn2 = [ b bEnd b hilite b bEnd b bEnd; b bEnd b remove b b b b; b b b remove b b b b];% alphT alphT alphT alphO]; % upper-right

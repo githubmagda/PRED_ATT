@@ -99,8 +99,8 @@ p.scr.offsetXSet    = [ left, right, right, left];
 p.scr.offsetYSet    = [ top, top, bottom, bottom];
 
 % destinations Rects for gaussian fixations
-% dstRectFix          = OffsetRect(gaussTexRect*fixScale,      p.scr.centerX-(radiusFix*2*fixScale), p.scr.centerY-(radiusFix*2*fixScale));
-% dstRectFixInner     = OffsetRect(gaussTexRect*fixInnerScale, p.scr.centerX-(radiusFix*2*fixInnerScale), p.scr.centerY -(radiusFix*2*fixInnerScale));
+dstRectFix          = OffsetRect(gaussTexRect*fixScale,      p.scr.centerX-(radiusFix*2*fixScale), p.scr.centerY-(radiusFix*2*fixScale));
+dstRectFixInner     = OffsetRect(gaussTexRect*fixInnerScale, p.scr.centerX-(radiusFix*2*fixInnerScale), p.scr.centerY -(radiusFix*2*fixInnerScale));
 
 % make destination rects for gratings
 dstRectGrats        = OffsetRect( sineTexRect, p.scr.offsetXSet', p.scr.offsetYSet')';
@@ -158,11 +158,11 @@ end
 if staircase
     % Draw  fixation cross without cue : dark cross two nested white gaussians
     Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-%     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
+    Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
 else
     % Draw cue fixation cross with attentional pointer 'attn' (set above)
     Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidth, attn, [ p.scr.centerX, p.scr.centerY ], 2);
-%     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, [contrastFix, scFix, aspectRatio, 1; contrastFixInner, scFixInner, aspectRatio, 1]');
+    Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, [contrastFix, scFix, aspectRatio, 1; contrastFixInner, scFixInner, aspectRatio, 1]');
     
 end
 
@@ -345,11 +345,11 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         % make dstRect and update params for dot and grats
         dstRectDot                  = OffsetRect([0,0,radiusDotsize,radiusDotsize], thisDotX-radiusDotsize, thisDotY-radiusDotsize);
         %dstRectDot                  = OffsetRect(gaussTexRect*dotScale, thisDotX-(radiusFix*2*dotScale), thisDotY-(radiusFix*2*dotScale));
-%         if staircase
-%             paramsGaussDot          = [1, scDot, aspectRatio, 1]; % scDot
-%         else % regular
-%             paramsGaussDot          = [p.scr.thisProbe, scDot, aspectRatio, 1];
-%         end
+        if staircase
+            paramsGaussDot          = [1, scDot, aspectRatio, 1]; % scDot
+        else % regular
+            paramsGaussDot          = [p.scr.thisProbe, scDot, aspectRatio, 1];
+        end
         
     end
     
@@ -380,7 +380,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         
         % Draw  fixation cross without cue : dark cross two nested white gaussians
         Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-%         Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
+        Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
         
         if sr.dot.series(f) == 1
             
@@ -398,7 +398,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                         thisWaitTime = sr.time.dotOn(f) -(0.9 *p.scr.flipInterval);                       
                 case 2
                     % draw dot
-                    Screen('DrawTexture', p.scr.window, dotTex, [], dstRectDot, [], 1, 0.5, []); %, [], kPsychDontDoRotation, [1,15,1,1]');
+                    Screen('DrawTexture', p.scr.window, dotTex, [], dstRectDot, [], 1, 1, [128,128,128]); %, [], kPsychDontDoRotation, [1,15,1,1]');
                     
                     if sr.time.dotOff(f) < p.scr.stimDur
                         thisWaitTime = p.scr.dotDur -(0.9 *p.scr.flipInterval);
