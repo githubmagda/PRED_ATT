@@ -108,7 +108,7 @@ p.scr.dotDur                = round2flips(p, .10);
 %%p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by  1-p.scr.stimDur:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
-p.scr.dotRadiusDeg          = 1.0; 
+p.scr.dotRadiusDeg          = 0.25; 
 p.scr.dotRadius             = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
 p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
 

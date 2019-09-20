@@ -17,7 +17,8 @@ end
 % structure
 
 % GAUSSIANS
-radiusDot               = p.scr.dotRadius; % * p.scr.pixPerDeg;
+radiusSTD               = p.scr.dotRadius;
+radiusDotsize           = 5. * p.scr.dotRadius; 
 
 radiusFix               = 0.3 * p.scr.pixPerDeg;  % equal to 1 deg
 virtualSizeGauss        = radiusFix * 2;
@@ -40,16 +41,20 @@ dotScale                    = 1;
 % FIXATION GAUSSIAN
 % p.scr.fixGridRadius = 3.* p.scr.fixRadius; % the box is always 3 * 1 standard deviation of the gaussian
 % szFix = p.scr.fixGridRadius;
-[ dotX, dotY ] = meshgrid( -radiusDot:radiusDot, -radiusDot:radiusDot );    % CHECK - visual angle?
-lenDot = length(-radiusDot:radiusDot);
+[ dotX, dotY ] = meshgrid( -radiusDotsize:radiusDotsize, -radiusDotsize:radiusDotsize );    % CHECK - visual angle?
+lenDot = radiusDotsize.*2 + 1;
 % create gaussian
-alph = exp(-( dotX.^2 / (2* (radiusDot) .^2) ) - ( dotY.^2 / (2* (radiusDot) .^2 )));% .* ( p.scr.intDot); % CHECK was dotX / Z sets dot size
-color = 1.0;
+alph = exp(-( dotX.^2 / (2* (radiusSTD) .^2) ) - ( dotY.^2 / (2* (radiusSTD) .^2 )));% .* ( p.scr.intDot); % CHECK was dotX / Z sets dot size
+color = 1;
 gausFix = cat(3, color .* ones(lenDot,lenDot,3), alph);   % default: gaus = ones(101,101,1) creates white box
 
+gausFix(:,:,[1 2]) = 0;
 % make TEXTURE
 [dotTex] = Screen('MakeTexture', p.scr.window, gausFix);
-
+% Screen('DrawTexture', p.scr.window, dotTex, [], [0 0 90 90], [], 1, 1, [255,255,255]); %, [], kPsychDontDoRotation, [1,15,1,1]');
+% Screen('Flip', p.scr.window, 0);
+% %   
+        
 % Initial params for the SINE GRATING
 backgroundColorOffsetGrat   = [0,0,0,0];
 phaseGrat                   = 0;
@@ -75,8 +80,8 @@ smoothMethod            = 1;          % ignored
 [gaussTex, gaussTexRect]    = CreateProceduralGaussBlob( p.scr.window , virtualSizeGauss*2, virtualSizeGauss*2,...
     backgroundColorOffsetGAUSS, [],[]);
 
-[dotTex, dotTexRect]    = CreateProceduralGaussBlob( p.scr.window , virtualSizeGauss*2, virtualSizeGauss*2,...
-    backgroundColorOffsetGAUSS, [],[]);
+% [dotTex, dotTexRect]    = CreateProceduralGaussBlob( p.scr.window , virtualSizeGauss*2, virtualSizeGauss*2,...
+%     backgroundColorOffsetGAUSS, [],[]);
 
 % other options
 %    [gratTex, gratTexRect]      = CreateProceduralSineGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat, p.scr.backgroundColorOffsetGrat, p.scr.gratRadius, p.scr.contrastPreMultiplicatorGrat);
@@ -341,7 +346,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         sr.dot.posY(f) = thisDotY;
         
         % make dstRect and update params for dot and grats
-        dstRectDot                  = OffsetRect([0,0,radiusDot,radiusDot], thisDotX-radiusDot, thisDotY-radiusDot);
+        dstRectDot                  = OffsetRect([0,0,radiusDotsize,radiusDotsize], thisDotX-radiusDotsize, thisDotY-radiusDotsize);
         %dstRectDot                  = OffsetRect(gaussTexRect*dotScale, thisDotX-(radiusFix*2*dotScale), thisDotY-(radiusFix*2*dotScale));
         if staircase
             paramsGaussDot          = [1, scDot, aspectRatio, 1]; % scDot
@@ -396,7 +401,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                         thisWaitTime = sr.time.dotOn(f) -(0.9 *p.scr.flipInterval);                       
                 case 2
                     % draw dot
-                    Screen('DrawTexture', p.scr.window, dotTex, [], dstRectDot, [], 1, 1, [128,128,128, 1]); %, [], kPsychDontDoRotation, [1,15,1,1]');
+                    Screen('DrawTexture', p.scr.window, dotTex, [], dstRectDot, [], 1, 1, [128,128,128]); %, [], kPsychDontDoRotation, [1,15,1,1]');
                     
                     if sr.time.dotOff(f) < p.scr.stimDur
                         thisWaitTime = p.scr.dotDur -(0.9 *p.scr.flipInterval);

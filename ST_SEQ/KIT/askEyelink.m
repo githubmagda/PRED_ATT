@@ -5,7 +5,7 @@ function [ p ] = askEyelink( p )
 %% eyetracker parameters and question 
 %p.location = 'dev'; % 'dev'/'meg'    % Where we are - set for display parameters
 
-button = questdlg('Use eyetracking?','Eyetracking','Yes','No','Yes');
+button = questdlg('Use eyetracking?','Eyetracking','Yes','No','No');
 
 switch button
     case 'Yes'
