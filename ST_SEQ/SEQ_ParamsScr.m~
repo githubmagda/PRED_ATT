@@ -105,7 +105,7 @@ p.series.dotMinDist         = 3;                % e.g. every X trial can be a do
 p.series.dotZeroPadding     = 3;            % number of non-dot trials at beginning and end of series
 p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
 p.scr.dotDur                = round2flips(p, .10);
-%%p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by  1-p.scr.stimDur:
+p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by  1-p.scr.stimDur:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
 p.scr.dotRadiusDeg          = 1.0; 

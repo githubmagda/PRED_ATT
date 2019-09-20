@@ -25,7 +25,6 @@ if p.debug == 1 % set to additional screen or to partial screen size for debuggi
     else
         [p.scr.window, p.scr.windowRect] = PsychImaging('OpenWindow', p.scr.number, 0.5, p.scr.testDimensions, 32, 2,...
              [], [],  kPsychNeed32BPCFloat);
-        %[p.scr.window, p.scr.windowRect] = PsychImaging('OpenWindow', p.scr.number, 0.5, p.scr.testDimensions);
     end
        
 else % normal experimental mode with full window size; ensures sync tests are run
@@ -53,5 +52,8 @@ end
 %Screen('BlendFunction', p.scr.window, GL_ONE, GL_ZERO);
 %Screen('BlendFunction', p.scr.window, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 %Screen('BlendFunction', p.scr.window, GL_ONE, GL_ONE);
-Screen('Blendfunction', p.scr.window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
+%Screen('Blendfunction', p.scr.window, GL_SRC_ALPHA, GL_ONE);
+%Screen('BlendFunction', p.scr.window, GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+%Screen('Blendfunction', p.scr.window, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_COLOR);
+Screen('Blendfunction', p.scr.window, GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 end
