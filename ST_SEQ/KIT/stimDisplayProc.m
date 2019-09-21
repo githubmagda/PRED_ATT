@@ -370,10 +370,10 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, angleSet, [], [], ...
                 [], [], [], paramsGrats);
         else % staircase
-% % %             if loopCounter == 1
-% % %                 angleSet = angleSet +7;
-% % %                 str.series.angleSet(f,:) = angleSet;
-% % %             end
+            if loopCounter == 1
+                angleSet = angleSet +7;
+                str.series.angleSet(f,:) = angleSet;
+            end
             Screen('DrawTextures', p.scr.window, sineTex, sineTexRect, dstRectGrats, angleSet, [], 0, ...
                 [0,0,0,1], [], [], paramsGrats);
         end
@@ -395,7 +395,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             
             switch loopCounter                
                 case 1
-                    timeLeft =0;
                     thisWaitTime = sr.time.dotOn(f) -(0.5 *p.scr.flipInterval);
                     loopCounter
                     thisWaitTime
@@ -404,20 +403,22 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                     Screen('DrawTexture', p.scr.window, dotTex, [], dstRectDot, [], 1, 0.5, [.5,.5,.5, thisProbe]); %, [], kPsychDontDoRotation, [1,15,1,1]');
                     %Screen('DrawTextures', p.scr.window, dotTex, [], dstRectDots', [], 1, 0.5, []); %, [], kPsychDontDoRotation, [1,15,1,1]');
                     loopCounter
-                    if sr.time.dotOff(f) < p.scr.stimDur                       
-                        thisWaitTime = (sr.time.dotOff(f)-sr.time.dotOn(f)) -(0.5 *p.scr.flipInterval);
+                    diff = p.scr.stimDur-sr.time.dotOff(f);
+                    diff
+                    
+                    if diff > (p.scr.dotDur + 2*p.scr.flipInterval)                       
+                        thisWaitTime = p.scr.dotDur -(0.5 *p.scr.flipInterval);                      
                         thisWaitTime
-                    else
-                        timeLeft = sr.time.dotOff(f)-p.scr.stimDur;
-                        sr.dot.series(f+1) = 1;
-                        sr.time.dotOn(f+1) = 1;
-                        sr.time.dotOff(f+1) = timeLeft;
-                        display('timeLeft');
-                        timeLeft
-                        thisWaitTime = p.scr.stimDur -sr.time.dotOn(f)-(0.5 *p.scr.flipInterval);
-                        loopOn = 0; % go to next trial where dot is completed               
-                        thisWaitTime
-                        %% THIS IS A Change!!!! AND ANOTHER CHANGE
+                    else    
+                        if (p.scr.dotDur-diff) > 2*p.scr.flipInterval
+                            sr.dot.series(f+1) = 1;
+                            sr.time.dotOn(f+1) = 1;
+                            sr.time.dotOff(f+1) = p.scr.dotDur-diff;
+                            loopOn = 0; % go to next trial
+                        end
+                        thisWaitTime = diff-(0.5 *p.scr.flipInterval);
+                          % go to next trial where dot is completed
+                        thisWaitTime         
                     end
                     
                 case 3
