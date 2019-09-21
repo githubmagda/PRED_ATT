@@ -417,7 +417,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                         thisWaitTime = p.scr.stimDur -sr.time.dotOn(f)-(0.5 *p.scr.flipInterval);
                         loopOn = 0; % go to next trial where dot is completed               
                         thisWaitTime
-                        %% THIS IS A Change!!!!
+                        %% THIS IS A Change!!!! AND ANOTHER CHANGE
                     end
                     
                 case 3
