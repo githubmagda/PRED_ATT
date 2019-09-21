@@ -17,6 +17,7 @@ end
 % structure
 
 % GAUSSIANS
+
 radiusSTD               = p.scr.dotRadius;
 radiusDotSize           = 5.0 * p.scr.dotRadius; 
 
