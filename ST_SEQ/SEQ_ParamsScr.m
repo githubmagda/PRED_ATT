@@ -115,13 +115,13 @@ p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
 numDot = 360;
 dotAngles = linspace(0, 2*pi, numDot); 
 dotRingRadius = p.scr.gratPos-25;
-dotRingX = dotRingRadius * cos(dotAngles) + p.scr.centerX +p.scr.dotRadius/2; 
-dotRingY = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY +p.scr.dotRadius/2);
+dotRingX = dotRingRadius * cos(dotAngles) + p.scr.centerX;  %+p.scr.dotRadius/2; 
+dotRingY = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY); % +p.scr.dotRadius/2);
 p.scr.dotRingX = dotRingX;
 p.scr.dotRingY = dotRingY;
 % get locations for dots in quads (very confusing cause x/y grids are
 % different for dotRing and Psychotoolbox
-thisMargin = 25;
+thisMargin = 30;
 p.scr.dotSetX2 = dotRingX( thisMargin : numDot/4-thisMargin);
 p.scr.dotSetY2 = dotRingY( thisMargin : numDot/4-thisMargin);
 p.scr.dotSetX1 = dotRingX( numDot/4+thisMargin :numDot/2-thisMargin);

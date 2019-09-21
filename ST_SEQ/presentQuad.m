@@ -7,7 +7,7 @@ function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
 sca;
 close all;  
 clearvars;
-
+      
 rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTANT
 
 % Force GetSecs and WaitSecs into memory to avoid latency later on:
@@ -16,7 +16,7 @@ WaitSecs(0.1);
 
 % SET PATHS - PSYCHTOOLBOX AND KIT (subscripts)
 p.main_path = pwd; % get current path
-
+    
 if IsOSX
     addpath(genpath([p.main_path, '/KIT/']));   % add functions folder
 else
@@ -161,7 +161,7 @@ try
             str.number = str_i;
             [ seriesDot] = makeDotSeries( p, p.series.dotProbStaircase); %% SUB-SCRIPT
              str.dot.series = seriesDot;
-            [ p, str] = stimDisplayProc( p, str, 'staircase');
+             [ p, str] = stimDisplayProc( p, str, 'staircase');
             % name/number series and add to exp structure
             strName = sprintf('str%d',str_i);
             exper.(strName) = str;
