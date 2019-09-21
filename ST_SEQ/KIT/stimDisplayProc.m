@@ -396,7 +396,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             switch loopCounter                
                 case 1
                     thisWaitTime = sr.time.dotOn(f) -(0.5 *p.scr.flipInterval);
-                    loopCounter
                     thisWaitTime
                 case 2
                     % draw dot
