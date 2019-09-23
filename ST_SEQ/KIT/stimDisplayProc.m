@@ -18,9 +18,9 @@ end
 
 % GAUSSIANS
 radiusSTD               = p.scr.dotRadius;
-radiusDotSize           = 5.0 * p.scr.dotRadius; 
+radiusDotSize           = 5.0 * p.scr.dotRadius;
 
-radiusFix               = 0.3 * p.scr.pixPerDeg;  
+radiusFix               = 0.3 * p.scr.pixPerDeg;
 virtualSizeGauss        = radiusFix * 2;
 
 scFix                   = 10;  % sd
@@ -53,8 +53,8 @@ gausFix = cat(3, color .* ones(lenDot,lenDot,3), alph);   % default: gaus = ones
 [dotTex] = Screen('MakeTexture', p.scr.window, gausFix);
 % Screen('DrawTexture', p.scr.window, dotTex, [], [0 0 90 90], [], 1, 1, [255,255,255]); %, [], kPsychDontDoRotation, [1,15,1,1]');
 % Screen('Flip', p.scr.window, 0);
-% %   
-        
+% %
+
 % Initial params for the SINE GRATING
 backgroundColorOffsetGrat   = [0,0,0,0];
 phaseGrat                   = 0;
@@ -158,12 +158,11 @@ end
 if staircase
     % Draw  fixation cross without cue : dark cross two nested white gaussians
     Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-%     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
+    %     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
 else
     % Draw cue fixation cross with attentional pointer 'attn' (set above)
     Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidth, attn, [ p.scr.centerX, p.scr.centerY ], 2);
-%     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, [contrastFix, scFix, aspectRatio, 1; contrastFixInner, scFixInner, aspectRatio, 1]');
-    
+    %     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, [contrastFix, scFix, aspectRatio, 1; contrastFixInner, scFixInner, aspectRatio, 1]');
 end
 
 Screen('DrawingFinished', p.scr.window);
@@ -283,16 +282,16 @@ sr.time.seriesStart = GetSecs;
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     %%sr.time.trialSetup(f) = GetSecs;
-        
+    
     % if REGULAR SERIES: set predictive gratings
     if regularSeries
         thisPred = sr.pred.series(f);           %  quadrant where flash will appear
     end
     
-    loopOn = 1; % reset for display of dot times
+    loopOn = 1; % reset for display of dot
     
     if sr.dot.series(f) == 1 % PREPARE DOT
-                
+        
         if regularSeries % dot placement determined by attentional cue and cue validity
             
             % DOT POSITION - is  dot in attentional quad 'VALID'?
@@ -340,324 +339,318 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         dstRectDot                  = OffsetRect([0,0,radiusDotSize,radiusDotSize], thisDotX-radiusDotSize/2, thisDotY-radiusDotSize/2);
         
         %dstRectDot                  = OffsetRect(gaussTexRect*dotScale, thisDotX-(radiusFix*2*dotScale), thisDotY-(radiusFix*2*dotScale));
-%         if staircase
-%             paramsGaussDot          = [1, scDot, aspectRatio, 1]; % scDot
-%         else % regular
-%             paramsGaussDot          = [p.scr.thisProbe, scDot, aspectRatio, 1];
-%         end
+        %         if staircase
+        %             paramsGaussDot          = [1, scDot, aspectRatio, 1]; % scDot
+        %         else % regular
+        %             paramsGaussDot          = [p.scr.thisProbe, scDot, aspectRatio, 1];
+        %         end
         
+        
+        
+        loopCounter = 0;
+        % default trial time - % of  screen refresh
+        thisWaitTime = p.scr.stimDur -(0.5 *p.scr.flipInterval); %(0.5 *p.scr.flipInterval);%
     end
-    
-    loopCounter = 0;
-    % default trial time - % of  screen refresh
-    thisWaitTime = p.scr.stimDur -(0.5 *p.scr.flipInterval); %(0.5 *p.scr.flipInterval);%
-    
-    while loopOn
-        
-        loopCounter = loopCounter +1;
-        % DRAW TEXTURES % if REGULAR SERIES:
-        % for ff = 1:30
-        %     phaseIncrement = 0;
-        %     phaseGrat       = phaseGrat + phaseIncrement; %mod( phaseGrat+1, 180);
-        %     paramsGrats     = repmat([phaseGrat, freqGrat, contrastGrat, 0], 4, 1)';
-        
-        if regularSeries
-            % Draw  gratings, inserting predictive grating
-            %paramsGrats( 1, thisPred)      = phaseGrat-phaseIncrement*2;
-            angleSet(thisPred) = angleSet(thisPred) + angleIncrement; % anglePredSet(f);        % predictive grating gets pred angle
-            angleSet = mod(angleSet, 180);
-            sr.series.angleSet(f,:) = angleSet;
-            Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, angleSet, [], [], ...
-                [], [], [], paramsGrats);
-        else % staircase
-            if loopCounter == 1
-                angleSet = angleSet +7;
-                str.series.angleSet(f,:) = angleSet;
-            end
-            Screen('DrawTextures', p.scr.window, sineTex, sineTexRect, dstRectGrats, angleSet, [], 0, ...
-                [0,0,0,1], [], [], paramsGrats);
-        end
-        
-        % Draw  fixation cross without cue : dark cross two nested white gaussians
-        Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-%         Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
-        
-        if sr.dot.series(f) == 1
+        while loopOn
             
-%             % N.B. dot has to be opaque in color setting
-%             dstRectDots   = OffsetRect([0,0,radiusDotSize,radiusDotSize], p.scr.dotSetX2'-radiusDotSize/2, p.scr.dotSetY2'-radiusDotSize/2);
-%             dstRectDots   = OffsetRect([0,0,radiusDotSize,radiusDotSize], p.scr.dotRingX'-(radiusDotSize/2), p.scr.dotRingY'-(radiusDotSize/2));
-%             dstRectDot     = OffsetRect([0,0,radiusDotSize,radiusDotSize], thisDotX-radiusDotSize/2, thisDotY-radiusDotSize/2);
-
-            if sr.time.dotOn(f) == 1 % dot should start with first screen
-                loopCounter = loopCounter +1;
+            loopCounter = loopCounter +1;
+            % DRAW TEXTURES % if REGULAR SERIES:
+            % for ff = 1:30
+            %     phaseIncrement = 0;
+            %     phaseGrat       = phaseGrat + phaseIncrement; %mod( phaseGrat+1, 180);
+            %     paramsGrats     = repmat([phaseGrat, freqGrat, contrastGrat, 0], 4, 1)';
+            
+            if regularSeries
+                % Draw  gratings, inserting predictive grating
+                %paramsGrats( 1, thisPred)      = phaseGrat-phaseIncrement*2;
+                angleSet(thisPred) = angleSet(thisPred) + angleIncrement; % anglePredSet(f);        % predictive grating gets pred angle
+                angleSet = mod(angleSet, 180);
+                sr.series.angleSet(f,:) = angleSet;
+                Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, angleSet, [], [], ...
+                    [], [], [], paramsGrats);
+            else % staircase
+                %if loopCounter == 1
+                angleSet = angleSet +1;
+                sr.series.angleSet(f,:) = angleSet;
+                %end
+                Screen('DrawTextures', p.scr.window, sineTex, sineTexRect, dstRectGrats, angleSet, [], 0, ...
+                    [0,0,0,1], [], [], paramsGrats);
             end
             
-            switch loopCounter                
-                case 1
-                    thisWaitTime = sr.time.dotOn(f) -(0.5 *p.scr.flipInterval);
-                    thisWaitTime
-                case 2
-                    % draw dot
-                    Screen('DrawTexture', p.scr.window, dotTex, [], dstRectDot, [], 1, 0.5, [.5,.5,.5, thisProbe]); %, [], kPsychDontDoRotation, [1,15,1,1]');
-                    %Screen('DrawTextures', p.scr.window, dotTex, [], dstRectDots', [], 1, 0.5, []); %, [], kPsychDontDoRotation, [1,15,1,1]');
-                    loopCounter
-                    diff = p.scr.stimDur-sr.time.dotOff(f);
-                    diff
-                    
-                    if diff > (p.scr.dotDur + 2*p.scr.flipInterval)                       
-                        thisWaitTime = p.scr.dotDur -(0.5 *p.scr.flipInterval);                      
+            % Draw  fixation cross without cue : dark cross two nested white gaussians
+            Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+            %         Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
+            
+            if sr.dot.series(f) == 1
+                
+                %             % N.B. dot has to be opaque in color setting
+                %             dstRectDots   = OffsetRect([0,0,radiusDotSize,radiusDotSize], p.scr.dotSetX2'-radiusDotSize/2, p.scr.dotSetY2'-radiusDotSize/2);
+                %             dstRectDots   = OffsetRect([0,0,radiusDotSize,radiusDotSize], p.scr.dotRingX'-(radiusDotSize/2), p.scr.dotRingY'-(radiusDotSize/2));
+                %             dstRectDot     = OffsetRect([0,0,radiusDotSize,radiusDotSize], thisDotX-radiusDotSize/2, thisDotY-radiusDotSize/2);
+                
+                if sr.time.dotOn(f) == 1 % dot should start with first screen
+                    loopCounter = loopCounter +1;
+                end
+                
+                switch loopCounter
+                    case 1
+                        thisWaitTime = sr.time.dotOn(f) -(0.5 *p.scr.flipInterval);
                         thisWaitTime
-                    else    
-                        if (p.scr.dotDur-diff) > 2*p.scr.flipInterval
+                    case 2
+                        % draw dot
+                        Screen('DrawTexture', p.scr.window, dotTex, [], dstRectDot, [], 1, 0.5, [.5,.5,.5, thisProbe]); %, [], kPsychDontDoRotation, [1,15,1,1]');
+                        %Screen('DrawTextures', p.scr.window, dotTex, [], dstRectDots', [], 1, 0.5, []); %, [], kPsychDontDoRotation, [1,15,1,1]');
+                        loopCounter
+                        diff = sr.time.dotOff(f) - p.scr.stimDur;
+                        diff
+                        
+                        if diff < ( 2*p.scr.flipInterval)
+                            thisWaitTime = p.scr.dotDur -(0.5 *p.scr.flipInterval);
+                            thisWaitTime
+                            
+                        else
                             sr.dot.series(f+1) = 1;
                             sr.time.dotOn(f+1) = 1;
-                            sr.time.dotOff(f+1) = p.scr.dotDur-diff;
+                            sr.time.dotOff(f+1) =diff;
                             loopOn = 0; % go to next trial
                         end
-                        thisWaitTime = diff-(0.5 *p.scr.flipInterval);
-                          % go to next trial where dot is completed
-                        thisWaitTime         
-                    end
+                        
+                    case 3
+                        loopCounter
+                        thisWaitTime = p.scr.stimDur -sr.time.dotOff(f) -(0.5 *p.scr.flipInterval);
+                        loopOn = 0;
+                        thisWaitTime
+                end
+            end
+ 
+            Screen('DrawingFinished', p.scr.window);
+            
+            % FLIP 
+            [vbl] = Screen('Flip', p.scr.window);
+            sr.time.trialEvents(f, loopCounter) = vbl;
+            
+            % %         % get trial start time
+            % %         if ff ==1
+            % %             sr.time.trialStart(ff) = vbl;
+            % %         end
+            
+            % START POLICING FIXATION
+            if p.useEyelink == 1
+                
+                % SEND MESSAGE to EYETRACKER .edf file
+                if regularSeries
+                    messageText = strcat('SERIES_',num2str( sr.number),'_TRIAL_START',num2str(f),'_FlashON_PredQUAD_', num2str(thisPred), '_AttnQUAD_', num2str(thisCue) );
+                else
+                    messageText = strcat( 'SERIES',num2str( sr.number),'TRIAL_START', num2str(f));
+                end
+                Eyelink('Message', messageText);
+                monitorFixation( p, sr, thisWaitTime);
+            else
+                WaitSecs( thisWaitTime); % cue w/without attentional cross
+            end
+            %     if p.useEyelink %CHECK
+            %         Eyelink('GetQueuedData?') % [samples, events, drained] = Eyelink('GetQueuedData'[, eye])
+            %     end
+            %end
+            [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])
+            sr.dot.missed(f) = 1;  % default
+            
+            if  f>2 && ~isempty(event)  && ( event.Keycode == KbName('space')) && ~checked(f) %f >= 2 && ~isempty(event) % event.Pressed == 1
+                
+                sr.dot.response(f) = 1;
+                
+                if sr.dot.series(f)    % this trial had a dot
+                    sr.dot.responseCorrect(f) = 1;
+                    sr.dot.missed(f) = 0;
+                    sr.RT(f) = event.Time - sr.time.trialEvents(f,1);%sr.time.dotOn(f);
+                    checked(f:f+2) = 1;
                     
-                case 3
-                    loopCounter
-                    thisWaitTime = p.scr.stimDur -sr.time.dotOff(f) -(0.5 *p.scr.flipInterval);
-                    loopOn = 0;
-                    thisWaitTime
-            end
-        else loopOn = 0;
-            thisWaitTime
-        end
-            
-        Screen('DrawingFinished', p.scr.window);
-        
-        % FLIP
-        
-        [vbl] = Screen('Flip', p.scr.window);
-        sr.time.trialEvents(f, loopCounter) = vbl;
-        
-        % %         % get trial start time
-        % %         if ff ==1
-        % %             sr.time.trialStart(ff) = vbl;
-        % %         end
-        
-        % START POLICING FIXATION
-        if p.useEyelink == 1
-            
-            % SEND MESSAGE to EYETRACKER .edf file
-            if regularSeries
-                messageText = strcat('SERIES_',num2str( sr.number),'_TRIAL_START',num2str(f),'_FlashON_PredQUAD_', num2str(thisPred), '_AttnQUAD_', num2str(thisCue) );
-            else
-                messageText = strcat( 'SERIES',num2str( sr.number),'TRIAL_START', num2str(f));
-            end
-            Eyelink('Message', messageText);
-            monitorFixation( p, sr, thisWaitTime);
-        else
-            WaitSecs( thisWaitTime); % cue w/without attentional cross
-        end
-        %     if p.useEyelink %CHECK
-        %         Eyelink('GetQueuedData?') % [samples, events, drained] = Eyelink('GetQueuedData'[, eye])
-        %     end
-        %end
-        [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])
-        sr.dot.missed(f) = 1;  % default
-        
-        if  f>2 && ~isempty(event)  && ( event.Keycode == KbName('space')) && ~checked(f) %f >= 2 && ~isempty(event) % event.Pressed == 1
-            
-            sr.dot.response(f) = 1;
-            
-            if sr.dot.series(f)    % this trial had a dot
-                sr.dot.responseCorrect(f) = 1;
-                sr.dot.missed(f) = 0;
-                sr.RT(f) = event.Time - sr.time.trialEvents(f,1);%sr.time.dotOn(f);
-                checked(f:f+2) = 1;
-                
-                % play positive beep
-                PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
-                PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                PsychPortAudio('Stop', p.audio.handle, 1);
-                
-            elseif sr.dot.series(f-1)  % previous trial had a dot
-                sr.dot.responseCorrect(f-1) = 1;
-                sr.dot.missed(f-1) = 0;
-                sr.RT(f-1) = event.Time - sr.time.trialEvents(f,1); %sr.time.dotOn(f-1);
-                checked( f: f+1) = 1;
-                
-                % play positive beep
-                PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
-                PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                PsychPortAudio('Stop', p.audio.handle, 1);
-                
-            elseif sr.dot.series(f-2)  % previous trial had a dot
-                sr.dot.responseCorrect(f-2) = 1;
-                sr.dot.missed(f-2) = 0;
-                sr.RT(f-2) = event.Time - sr.time.trialEvents(f,1); %sr.time.dotOn(f-2);
-                checked(f) = 1;
-                
-                % play positive beep
-                PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
-                PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                PsychPortAudio('Stop', p.audio.handle, 1);
-            else
-                sr.dot.FA(f-2) = 1;
-                % play negative beep
-                PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
-                PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                PsychPortAudio('Stop', p.audio.handle, 1);
-                
-            end
-            
-            % clear old queue and start next one
-            KbQueueRelease();   %KbQueueFlush([],3); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
-            event = [];
-            KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
-            KbQueueStart();   %% KbQueueStart([deviceIndex])
-        end
-        
-        % PROBE ADJUST check for response on trial f-1
-        if staircase
-            
-            if f > 2 && sr.dot.series( f-2) == 1 % check if correct/no response on trial n-1
-                
-                ktrial = ktrial + 1; % update staircase probe counter
-                r = 0; % reset default response to zero
-                if sr.dot.responseCorrect( f-2) == 1
-                    r = 1;  % get response for staircase routine
+                    % play positive beep
+                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
+                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+                    PsychPortAudio('Stop', p.audio.handle, 1);
+                    
+                elseif sr.dot.series(f-1)  % previous trial had a dot
+                    sr.dot.responseCorrect(f-1) = 1;
+                    sr.dot.missed(f-1) = 0;
+                    sr.RT(f-1) = event.Time - sr.time.trialEvents(f,1); %sr.time.dotOn(f-1);
+                    checked( f: f+1) = 1;
+                    
+                    % play positive beep
+                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
+                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+                    PsychPortAudio('Stop', p.audio.handle, 1);
+                    
+                elseif sr.dot.series(f-2)  % previous trial had a dot
+                    sr.dot.responseCorrect(f-2) = 1;
+                    sr.dot.missed(f-2) = 0;
+                    sr.RT(f-2) = event.Time - sr.time.trialEvents(f,1); %sr.time.dotOn(f-2);
+                    checked(f) = 1;
+                    
+                    % play positive beep
+                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
+                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+                    PsychPortAudio('Stop', p.audio.handle, 1);
+                else
+                    sr.dot.FA(f-2) = 1;
+                    % play negative beep
+                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
+                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+                    PsychPortAudio('Stop', p.audio.handle, 1);
+                    
                 end
                 
-                stair.process_resp(r); % convert to logical type; process response
-                
-                % check timing of  next probe routine
-                sr.time.probeStart(f) = GetSecs; % just to check time of calculation
-                [thisProbe,entexp,rot_i]  = stair.get_next_probe(); % get next probe to test  [thisProbe, entexp, ind]  = stair.get_next_probe();
-                sr.time.probeEnd(f) = GetSecs;
-                sr.time.probeDur(f) = sr.time.probeEnd(f) - sr.time.probeStart(f);
-%                 fprintf('response: %d\n',r);
-%                 fprintf('%d, new sample point: %f\nexpect ent: %f\n', ...
-%                     ktrial,thisProbe,entexp(rot_i));
-%                 
+                % clear old queue and start next one
+                KbQueueRelease();   %KbQueueFlush([],3); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
+                event = [];
+                KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
+                KbQueueStart();   %% KbQueueStart([deviceIndex])
             end
-        end
-        
-        % call question routine
-        if regularSeries
-            if uint8( any( thisQuestionSet == f)) % Question re 'next screen': uses Colored Ring
-                %%%[sr] = askQuestion( p, sr, f, 0);  % (p, sr, f, useText=1)
+            
+            % PROBE ADJUST check for response on trial f-1
+            if staircase
                 
-                %% INSERT QUESTION
-                
-                % possible next-screens
-                rotationSet = 0:3;
-                % initialize
-                found = 0;
-                rot_i = 0; % index for rotation
-                
-                % stop to signal upcoming question
-                WaitSecs(0.7);
-                
-                while ~found
+                if f > 2 && sr.dot.series( f-2) == 1 % check if correct/no response on trial n-1
                     
-                    circleTime = GetSecs;
+                    ktrial = ktrial + 1; % update staircase probe counter
+                    r = 0; % reset default response to zero
+                    if sr.dot.responseCorrect( f-2) == 1
+                        r = 1;  % get response for staircase routine
+                    end
                     
-                    KbQueueCreate();
-                    KbQueueStart();
+                    stair.process_resp(r); % convert to logical type; process response
                     
-                    % Draw  fixation cross without cue and Gratings
-                    %Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
-                    Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
-                    Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, angleSet, [], [], ...
-                        [], [], [], paramsGrats);
+                    % check timing of  next probe routine
+                    sr.time.probeStart(f) = GetSecs; % just to check time of calculation
+                    [thisProbe,entexp,rot_i]  = stair.get_next_probe(); % get next probe to test  [thisProbe, entexp, ind]  = stair.get_next_probe();
+                    sr.time.probeEnd(f) = GetSecs;
+                    sr.time.probeDur(f) = sr.time.probeEnd(f) - sr.time.probeStart(f);
+                    %                 fprintf('response: %d\n',r);
+                    %                 fprintf('%d, new sample point: %f\nexpect ent: %f\n', ...
+                    %                     ktrial,thisProbe,entexp(rot_i));
+                    %
+                end
+            end
+            
+            % call question routine
+            if regularSeries
+                if uint8( any( thisQuestionSet == f)) % Question re 'next screen': uses Colored Ring
+                    %%%[sr] = askQuestion( p, sr, f, 0);  % (p, sr, f, useText=1)
                     
-                    % which quad circle appears in and adjust thisRect
-                    thisQuad = mod( rot_i, length( rotationSet))+1;  % mod rotates but have to add +1 to avoid index of zero
-                    thisRect = dstRectGrats(:,thisQuad)';
-                    Screen('FrameOval', p.scr.window, [255,0,0], thisRect, 1.8,[]);
+                    %% INSERT QUESTION
                     
-                    Screen('Flip', p.scr.window);
-                    WaitSecs(0.3)   % IFF movie doesn't keep running
-                    %end % movie keeps running
+                    % possible next-screens
+                    rotationSet = 0:3;
+                    % initialize
+                    found = 0;
+                    rot_i = 0; % index for rotation
                     
-                    [event, ~] = KbEventGet( [], 0.001); % CHECK how to suppress output ([device], [wait time])
-                    if  ~isempty(event) && event.Pressed == 1 && found == 0 % there was a keyPress and this is the downPress
+                    % stop to signal upcoming question
+                    WaitSecs(0.7);
+                    
+                    while ~found
                         
-                        if strcmp( KbName(event.Keycode), 'Return')
-                            question.responseQuad(f) = thisQuad;
-                            question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
-                            if question.responseCorrect(f) == 1
-                                display('Correct');
-                            else
-                                display('Not correct, Should be:');
-                                sr.pred.series(f-(p.series.chunkLength-1))
+                        circleTime = GetSecs;
+                        
+                        KbQueueCreate();
+                        KbQueueStart();
+                        
+                        % Draw  fixation cross without cue and Gratings
+                        %Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+                        Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
+                        Screen('DrawTextures', p.scr.window, sineTex, [], dstRectGrats, angleSet, [], [], ...
+                            [], [], [], paramsGrats);
+                        
+                        % which quad circle appears in and adjust thisRect
+                        thisQuad = mod( rot_i, length( rotationSet))+1;  % mod rotates but have to add +1 to avoid index of zero
+                        thisRect = dstRectGrats(:,thisQuad)';
+                        Screen('FrameOval', p.scr.window, [255,0,0], thisRect, 1.8,[]);
+                        
+                        Screen('Flip', p.scr.window);
+                        WaitSecs(0.3)   % IFF movie doesn't keep running
+                        %end % movie keeps running
+                        
+                        [event, ~] = KbEventGet( [], 0.001); % CHECK how to suppress output ([device], [wait time])
+                        if  ~isempty(event) && event.Pressed == 1 && found == 0 % there was a keyPress and this is the downPress
+                            
+                            if strcmp( KbName(event.Keycode), 'Return')
+                                question.responseQuad(f) = thisQuad;
+                                question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
+                                if question.responseCorrect(f) == 1
+                                    display('Correct');
+                                else
+                                    display('Not correct, Should be:');
+                                    sr.pred.series(f-(p.series.chunkLength-1))
+                                end
+                                
+                                question.RT(f) = event.Time - circleTime; % minus stim onset
+                                question.chunkNum(f) = sr.pred.trackerByChunk(f);
+                                question.elementNum(f) = sr.pred.trackerByElement (f);
+                                found = 1; % get out of loop
+                                
+                            elseif strcmp( KbName(event.Keycode), 'space')
+                                rot_i = rot_i+1;
                             end
                             
-                            question.RT(f) = event.Time - circleTime; % minus stim onset
-                            question.chunkNum(f) = sr.pred.trackerByChunk(f);
-                            question.elementNum(f) = sr.pred.trackerByElement (f);
-                            found = 1; % get out of loop
-                            
-                        elseif strcmp( KbName(event.Keycode), 'space')
-                            rot_i = rot_i+1;
+                            KbQueueStop();  % KbQueueStop([deviceIndex])   %[secs, keyCode, deltaSecs] = KbPressWait; % [secs, keyCode, deltaSecs] = KbPressWait([deviceNumber][, untilTime=inf][, more optional args for KbWait]);   % event = KbEventGet();
+                            KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
+                            KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
                         end
-                        
-                        KbQueueStop();  % KbQueueStop([deviceIndex])   %[secs, keyCode, deltaSecs] = KbPressWait; % [secs, keyCode, deltaSecs] = KbPressWait([deviceNumber][, untilTime=inf][, more optional args for KbWait]);   % event = KbEventGet();
-                        KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
-                        KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
                     end
-                end
-                %% END QUESTION
-                WaitSecs(1.0);
-            end % end question routine
-            
-        end
-        % SEND EYETRACKER MESSAGE
-        if p.useEyelink
-            messageText = strcat('SERIES_%d',sr.number, 'TRIALEND_%d', f);
-            Eyelink('message', messageText)
-        end
+                    %% END QUESTION
+                    WaitSecs(1.0);
+                end % end question routine
+                
+            end
+            % SEND EYETRACKER MESSAGE
+            if p.useEyelink
+                messageText = strcat('SERIES_%d',sr.number, 'TRIALEND_%d', f);
+                Eyelink('message', messageText)
+            end
+        end % end of trial f-loop
     end
-end  % end of trial f-loop
-sr.time.trialStart = sr.time.trialEvents(:,1);
-sr.time.trialDur= sr.time.trialStart(2:end) - sr.time.trialStart(1:end-1);
-
-% record series times
-sr.time.seriesEnd = GetSecs;
-sr.time.seriesDur = sr.time.seriesEnd - sr.time.seriesStart;
-
-% save probe for regular series
-p.scr.thisProbe = thisProbe;
-
-% SEND EYETRACKER MESSAGE
-if p.useEyelink
-    messageText = strcat('SeriesEND_%d',sr.number);
-    Eyelink('message', messageText)
-end
-
-% STAIRCASE: RESULTS
-if staircase
-    [sr.PSEfinal, sr.DLfinal, loglikfinal]  = stair.get_PSE_DL();
-    finalent                        = sum(-exp(loglikfinal(:)).*loglikfinal(:));
-    fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',sr.PSEfinal, sr.DLfinal, finalent);
-    sr.dot.intFactor = sr.PSEfinal; % scales dot intensity in main experiment
-end
-
-% CALCULATE HITS, misses, FAs for report
-sr.dot.totalNum = numel( sr.dot.series( sr.dot.series==1));
-sr.dot.hitNum = numel(sr.dot.responseCorrect(sr.dot.responseCorrect ==1)); %int8( (v1 + v2) > 0 );
-sr.dot.FANum = numel(sr.dot.FA(sr.dot.FA ==1));
-sr.dot.missedNum = sr.dot.totalNum - sr.dot.hitNum;
-
-if sr.dot.hitNum > 0
-    sr.dot.hitRate = sr.dot.hitNum / sr.dot.totalNum;
-else
-    sr.dot.hitRate = 0;
-end
-
-if regularSeries
-    % calculate question results
-    sr.question.numCorrect = length(find( sr.question.responseCorrect == 1));
-    sr.question.ratioCorrect = sr.question.numCorrect ./ numel(thisQuestionSet);
-end
-
+    
+    sr.time.trialStart = sr.time.trialEvents(:,1);
+    sr.time.trialDur= sr.time.trialStart(2:end) - sr.time.trialStart(1:end-1);
+    
+    % record series times
+    sr.time.seriesEnd = GetSecs;
+    sr.time.seriesDur = sr.time.seriesEnd - sr.time.seriesStart;
+    
+    % save probe for regular series
+    p.scr.thisProbe = thisProbe;
+    
+    % SEND EYETRACKER MESSAGE
+    if p.useEyelink
+        messageText = strcat('SeriesEND_%d',sr.number);
+        Eyelink('message', messageText)
+    end
+    
+    % STAIRCASE: RESULTS
+    if staircase
+        [sr.PSEfinal, sr.DLfinal, loglikfinal]  = stair.get_PSE_DL();
+        finalent                        = sum(-exp(loglikfinal(:)).*loglikfinal(:));
+        fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',sr.PSEfinal, sr.DLfinal, finalent);
+        sr.dot.intFactor = sr.PSEfinal; % scales dot intensity in main experiment
+    end
+    
+    % CALCULATE HITS, misses, FAs for report
+    sr.dot.totalNum = numel( sr.dot.series( sr.dot.series==1));
+    sr.dot.hitNum = numel(sr.dot.responseCorrect(sr.dot.responseCorrect ==1)); %int8( (v1 + v2) > 0 );
+    sr.dot.FANum = numel(sr.dot.FA(sr.dot.FA ==1));
+    sr.dot.missedNum = sr.dot.totalNum - sr.dot.hitNum;
+    
+    if sr.dot.hitNum > 0
+        sr.dot.hitRate = sr.dot.hitNum / sr.dot.totalNum;
+    else
+        sr.dot.hitRate = 0;
+    end
+    
+    if regularSeries
+        % calculate question results
+        sr.question.numCorrect = length(find( sr.question.responseCorrect == 1));
+        sr.question.ratioCorrect = sr.question.numCorrect ./ numel(thisQuestionSet);
+    end
+    
 end
 
