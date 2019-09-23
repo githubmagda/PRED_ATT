@@ -9,6 +9,8 @@ if strcmp(type, 'staircase')
     regularSeries = 0;
 end
 
+%THIS IS 
+
 % This script displays stimulus sequence for 'type', e.g. staircase or main
 % experiment; the staircase determines 75% detection based on luminance? of the attentional dot;
 % The predictive quadrant is always at same angle; other 3 gratings are
