@@ -126,7 +126,7 @@ try
             % do calibration, save .edf file, (re)start eyetracker
             if lr.number == 1 % choose text to show 'first' or 'subsequent'
                 calText = 'first';
-            else
+            else    
                 calText = 'subsequent';
             end
             p = EL_calibration(p, calText);
@@ -161,7 +161,7 @@ try
             str.number = str_i;
             [ seriesDot] = makeDotSeries( p, p.series.dotProbStaircase); %% SUB-SCRIPT
              str.dot.series = seriesDot;
-             [ p, str] = stimDisplayProcMA2( p, str, 'staircase');
+             [ p, str] = stimDisplayProc( p, str, 'staircase');
             % name/number series and add to exp structure
             strName = sprintf('str%d',str_i);
             exper.(strName) = str;
@@ -240,7 +240,7 @@ try
             end
             
             % RUN NEXT SERIES
-            [p, sr] = stimDisplayProcMA2( p, sr, 'regularSeries');
+            [p, sr] = stimDisplayProc( p, sr, 'regularSeries');
             
             % name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);
@@ -280,7 +280,7 @@ try
     %%DrawFormattedText(p.scr.window, text2show, 'center','center', p.scr.textColor); %%, p.scr.textType);
     WaitSecs(2); % CHECK for real experiment
     
-catch
+              catch
       psychrethrow(psychlasterror);
     cleanup(p);    
 end
