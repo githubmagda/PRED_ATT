@@ -64,7 +64,7 @@ p.scr.Hz        = FrameRate(p.scr.window);    %1/p.scr.flipInterval;
 % end
 
 % STIM / MOVIE SPECS 
-p.scr.stimDur           = round2flips(p, .5); %How long each stimulus/trial is on screen
+p.scr.stimDur           = round2flips(p, 0.5); %How long each stimulus/trial is on screen
 p.scr.framesHz          = 60;
 p.scr.framesPerMovie    = round(p.scr.stimDur * p.scr.framesHz); 
 p.scr.frameDur          = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;

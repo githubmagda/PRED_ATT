@@ -351,8 +351,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     while loopOn
         
-        loopCounter = mod(loopCounter, 4);
-        
         % DRAW TEXTURES % if REGULAR SERIES:
         % for ff = 1:30 % movie loop
         %     phaseIncrement = 0;
@@ -393,11 +391,14 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                 
                 case 1
                     thisWaitTime = sr.time.dotOn(f) -(0.5 *p.scr.flipInterval);
-                    loopCounterTrack(f,1) = thisWaitTime; 
+                    loopCounterTrack(f,1) = thisWaitTime;
+                    loopCounter = loopCounter +1;
+                    
                     
                 case 2
                     % draw dot
                     Screen('DrawTexture', p.scr.window, dotTex, [], sr.dot.dstRectDot(f,:), [], 1, 1, [1,0,0,1]); % [1,0,0, thisProbe], [], kPsychDontDoRotation, [1,15,1,1]');
+                    loopCounter = loopCounter +1;
                     %Screen('DrawTextures', p.scr.window, dotTex, [], dstRectDots', [], 1, 0.5, []); %, [], kPsychDontDoRotation, [1,15,1,1]');
                     
                     diff = sr.time.dotOff(f) - p.scr.stimDur;
@@ -423,10 +424,10 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                     
                 case 3
                     thisWaitTime = p.scr.stimDur -sr.time.dotOff(f);
+                    loopCounter = 1;    % reset
                     loopOn = 0;         % deset
                     loopCounterTrack(f,3) = thisWaitTime;
             end
-            loopCounter = loopCounter +1; % reset - above 4 mod(loopCounter,4) above ensures reset to 1
         else
             loopCounterTrack(f,1) = thisWaitTime;
             loopOn = 0;
