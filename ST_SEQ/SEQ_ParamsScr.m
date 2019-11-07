@@ -13,14 +13,14 @@ p.scr.textType              = 'Helvetica';
 p.scr.textColor             = p.scr.white;
 
 % TRIAL SPECS
-p.blockNumber               = 0; % CHECK - do we need blocks?
-p.seriesNumber              = 0;
+p.blockNumber               = 1; % CHECK - do we need blocks?
+p.seriesNumber              = 1;
 p.staircaseSeriesNum        = 1;
 p.seriesPerBlock            = 1;
 p.seriesPerEdf              = 1; % how often data is output to edf file; safer to output each series in case participant quits
 
 % SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries      = 60;
+p.series.stimPerSeries      = 30;
 p.series.seqBasicSet        = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRpts          = 10;
 p.series.chunkLength        = 3;
@@ -64,7 +64,7 @@ p.scr.Hz        = FrameRate(p.scr.window);    %1/p.scr.flipInterval;
 % end
 
 % STIM / MOVIE SPECS 
-p.scr.stimDur           = round2flips(p, 0.5); %How long each stimulus/trial is on screen
+p.scr.stimDur           = round2flips(p, 1.5); %How long each stimulus/trial is on screen
 p.scr.framesHz          = 60;
 p.scr.framesPerMovie    = round(p.scr.stimDur * p.scr.framesHz); 
 p.scr.frameDur          = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
@@ -99,18 +99,18 @@ p.scr.gratPosCenterY        = [ (p.scr.centerY-p.scr.gratPosSide), (p.scr.center
 % probability of dots in staircase procedure
 p.series.dotProbStaircase   = .2;           % must be less than 1/3???
 % main series dot specs
-p.series.dotProb            = .02;                 % DEFAULT .03 = percent of dots per series
+p.series.dotProb            = .05;           % DEFAULT .03 = percent of dots per series
 p.series.cueValidPerc       = .80;
-p.series.dotMinDist         = 3;                % e.g. every X trial can be a dot                    
+p.series.dotMinDist         = 3;            % e.g. every X trial can be a dot                    
 p.series.dotZeroPadding     = 3;            % number of non-dot trials at beginning and end of series
 p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
-p.scr.dotDur                = round2flips(p, .10);
+p.scr.dotDur                = round2flips(p, .1);
 %%p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by  1-p.scr.stimDur:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
-p.scr.dotRadiusDeg          = 0.25; 
+p.scr.dotRadiusDeg          = 0.10; 
 p.scr.dotRadius             = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
-p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
+%%p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
 
 numDot = 360;
 dotAngles = linspace(0, 2*pi, numDot); 
@@ -193,10 +193,11 @@ p.scr.fixCoords4    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,ext,ext,extColor;
 %%% fixation cross: cue color
 w = p.scr.white; % 1.0; % p.scr.white; % off white?
 bEnd = p.scr.background;
-hilite = 1.0; remove = 0.0;
-alphO = 0.0; alphT = 1.0; % transparency O=opaque, T=transparent  - not currently set
+hilite = 1.0; 
+% % % remove = 0.0;
+% % % alphO = 0.0; alphT = 1.0; % transparency O=opaque, T=transparent  - not currently set
 
-%%% BLENDED RGB color specs for 4 attention cross - colored arm points to quadrants clockwise from top-left
+% BLENDED RGB color specs for 4 attention cross - colored arm points to quadrants clockwise from top-left
 % no highlight - basic cross
 p.scr.attn0 = [ w bEnd w bEnd w bEnd w bEnd ; w bEnd w bEnd w bEnd w bEnd ; w bEnd w bEnd w bEnd w bEnd]; % no highlighted arm
 % attentional cue highlight

@@ -1,12 +1,12 @@
- function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
+function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
 
 % DESCRIPTION
 % Main script for Predictive Attention presentations - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
-
-% Clear the workspace and the screen
+ 
+% Clear the workspace and the sncreen
 sca;
 close all;  
-clearvars;
+clearvars;          
       
 rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTANT
 
@@ -30,17 +30,16 @@ KbName('UnifyKeyNames');
 p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape')]; % CHECK
 % restrict the keys for keyboard input to the keys we want
 RestrictKeysForKbCheck([p.activeKeys]);
-quitKey = KbName('Escape');
-contKey = KbName('space');
+p.quitKey = KbName('Escape');
 
 p = audioOpen(p);    %openAudioPort(p);  %        % audioOpen(p)
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
-p.debug         = 1;                          
+p.debug         = 1; % run with smaller window                        
 p.testEdf       = 1; % eyelink will make file with this same name each tst run
-p.localizer     = 0;
-p.staircase     = 1; % these could be staircase and/or localizers (or could be separate programs)
-   
+p.localizer     = 0; 
+p.useStaircase  = 1;
+
 % GET EYELINK DETAILS
 [p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
 
@@ -50,32 +49,7 @@ p = SEQ_ParamsGen(p); % set general pre-screen opening parameters;  %% SUB-SCRIP
 % window parameters to have been established
 
 %  DON'T DELETE if commented out !!!!
-% % % % Make directory for this subject's data
-% % % p.date = date;
-% % % p.experimentStart = datestr(now,'yymmddHHMMSS');
-% % % 
-% % % if p.debug
-% % %     p.directoryName = 'DATATEST';
-% % %     [p] = makeDirectory(p);  %% SUB-SCRIPT
-% % %     if IsOSX
-% % %         p.subjectPathStr = [p.directoryName,'/', p.subjectFolder];
-% % %     else
-% % %         p.subjectPathStr = [p.directoryName,'\', p.subjectFolder];
-% % %     end
-% % % else
-% % %     p.directoryName = 'DATA';
-% % %     [p] = makeDirectory(p); %% SUB-SCRIPT
-% % %     if IsOSX
-% % %         p.subjectPathStr = [p.directoryName,'/', p.subjectFolder];
-% % %     else
-% % %         p.subjectPathStr = [p.directoryName,'\', p.subjectFolder];
-% % %     end
-% % % end
-% % % p.subjectFolder
-% % % 
-% % % % intiate shell logging
-% % % diary([p.main_path, '/', p.subjectPathStr, '_', 'log_', p.experimentStart, '.txt']); % note - a date scaler number is used after the date, it can be converted to date and time by entering it in datestr(...)
-
+ 
 % TRY - CATCH LOOP (error catch)
 try
     
@@ -97,134 +71,191 @@ try
 % %     cd ..
 % %     cd ..
     
-    % make TEXTURES for sti                             mDisplay
-    %[p] =   makeTextures(p);
-    sr = []; % initialize structure for series
+% %     % make TEXTURES for sti                             mDisplay
+% %     %[p] =   makeTextures(p);
+% %     sr = []; % initialize structure for series
+% %     
+% %     % RUN LOCALIZER
+% %     if p.localizer
+% %         lr = []; % structure to save data
+% %         lr.number = 1;
+% %         
+% % % %         % get string specifying quadrants for localizer
+% % % %         lr.series = pseudoRandListNoRpt(p); %% SUB-SCRIPT
+% % % %         
+% % % %         % show the localizer text
+% % % %         makeTexts(exper, p, 'localizer', 0);  
+% % % %         [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+% %         
+% %         if quitNow
+% %         end
+% %         
+% %         % EYETRACKING
+% %         if p.useEyelink == 1
+% %             % if a EL file is still open from previous recording, close it
+% %             if p.statusFile == 0
+% %                 p.statusFile = EL_closeFile();
+% %             end
+% %             % open .edf file for new series
+% %             thisFileName = strcat( 'Lr', num2str( lr.number));
+% %             EL_openFile(p, thisFileName, lr.number); % open and name file for this series
+% %             
+% %             % do calibration, save .edf file, (re)start eyetracker
+% %             if lr.number == 1 % choose text to show 'first' or 'subsequent'
+% %                 calText = 'first';
+% %             else    
+% %                 calText = 'subsequent';
+% %             end
+% %             p = EL_calibration(p, calText);
+% %             % Do last check of eye position (driftcorrect does NOT recalibrate)
+% %             % EyelinkDoDriftCorrection(p.el);
+% %             p.statusRecord = EL_startRecord(lr.number); % CHECK
+% %         end
+% %         
+% %         % RUN LOCALIZER
+% %         [p, lr] = localizerProc( p, lr); 
+% %         
+% %         % add to main structre
+% %         exper.lr = lr;
+% %         
+% %         % if  EYETRACKING previous series, stop now, save and move file to subject folder
+% %         if p.useEyelink
+% %             if p.statusRecord == 0
+% %                 p = EL_stopRecord(p, lr);
+% %                 p = EL_closeFile( p, lr);
+% %             end
+% %         end
+% %         screenBlank(p);
+% %     end
+% %     % END LOCALIZER 
+% %     
+% %     % START STAIRCASE
+% %     if p.useStaircase  
+% % %         makeTexts(exper, p, 'useStaircase', 0);  
+% % %         [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+% %         for str_i = 1: p.staircaseSeriesNum
+% %             str  = [];
+% %             str.number = str_i;
+% %             [ seriesDot] = makeDotSeries( p, p.series.dotProbStaircase); %% SUB-SCRIPT
+% %              str.dot.series = seriesDot;
+% %              [ p, str] = stimDisplayProc( p, str, 'useStaircase');
+% %             % name/number series and add to exp structure
+% %             strName = sprintf('str%d',str_i);
+% %             exper.(strName) = str;
+% %             dotIntFactor(str_i) = str.PSEfinal;
+% %         end
+% %         % name/number series and add to exp structure
+% %         strName = sprintf('str%d',str_i);
+% %         exper.(strName) = str;
+% %         p.scr.thisProbe = round(mean(dotIntFactor)*100)/100;       
+% %         
+% %     end
+% %     %  DON'T DELETE if commented out !!!!
+% %     
+% %     %% show the introductory text screen
+% %     sr = []; %  variable
+% %     makeTexts(exper, p, 'intro', sr);   %% SUB-SCRIPT (exp, p, textName, sr) calls makeTexts.m
+% %     doKbCheck(p, 2)                        %% SUB-SCRIPT % get participant to move forward using TWO keystrokes
     
-    % RUN LOCALIZER
-    if p.localizer
-        lr = []; % structure to save data
-        lr.number = 1;
+    % BLOCK setup
+    if p.localizer 
+        localizerDone = 0;
+        p.blockNumber = p.blockNumber + 1; % main blocks plus localizer block
+    end
+    if p.useStaircase 
+        staircaseDone = 0;
+        p.blockNumber = p.blockNumber + 1; % main blocks plus staircase block
+    end
+     
+    % BLOCK LEVEL
+    for bl_i = 1 : p.blockNumber
         
-        % get string specifying quadrants for localizer
-        lr.series = pseudoRandListNoRpt(p); %% SUB-SCRIPT
+        if p.localizer && ~localizerDone
+            blName = sprintf('LR%d',bl_i);
+            numSeries = 1;
+        elseif p.useStaircase && ~staircaseDone
+             blName = sprintf('STR%d',bl_i); 
+             numSeries = 1;
+        else blName = sprintf('sr%d',bl_i); 
+            numSeries = p.seriesNumber;
+        end
         
-        % show the Main experiment text
-        makeTexts(exper, p, 'localizer', 0);  
-        [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
-        
-        % EYETRACKING
-        if p.useEyelink == 1
-            % if a EL file is still open from previous recording, close it
-            if p.statusFile == 0
-                p.statusFile = EL_closeFile();
-            end
-            % open .edf file for new series
-            thisFileName = strcat( 'Lr', num2str( lr.number));
-            EL_openFile(p, thisFileName, lr.number); % open and name file for this series
+        % SERIES LEVEL
+        for sr_i = 1 : numSeries
             
-            % do calibration, save .edf file, (re)start eyetracker
-            if lr.number == 1 % choose text to show 'first' or 'subsequent'
-                calText = 'first';
-            else    
-                calText = 'subsequent';
-            end
-            p = EL_calibration(p, calText);
-            % Do last check of eye position (driftcorrect does NOT recalibrate)
-            % EyelinkDoDriftCorrection(p.el);
-            p.statusRecord = EL_startRecord(lr.number); % CHECK
-        end
-        
-        % RUN LOCALIZER
-        [p, lr] = localizerProc( p, lr); %localizerProc(p, lr);
-        
-        % add to main structre
-        exper.lr = lr;
-        
-        % if  EYETRACKING previous series, stop now, save and move file to subject folder
-        if p.useEyelink
-            if p.statusRecord == 0
-                p = EL_stopRecord(p, lr);
-                p = EL_closeFile( p, lr);
-            end
-        end
-        screenBlank(p);
-    end
-    % END LOCALIZER 
-    
-    % START STAIRCASE
-    if p.staircase  
-%         makeTexts(exper, p, 'staircase    ', 0);  
-%         [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
-        for str_i = 1: p.staircaseSeriesNum
-            str  = [];
-            str.number = str_i;
-            [ seriesDot] = makeDotSeries( p, p.series.dotProbStaircase); %% SUB-SCRIPT
-             str.dot.series = seriesDot;
-             [ p, str] = stimDisplayProc( p, str, 'staircase');
-            % name/number series and add to exp structure
-            strName = sprintf('str%d',str_i);
-            exper.(strName) = str;
-            dotIntFactor(str_i) = str.PSEfinal;
-        end
-        % name/number series and add to exp structure
-        strName = sprintf('str%d',str_i);
-        exper.(strName) = str;
-        p.scr.thisProbe = round(mean(dotIntFactor)*100)/100;
-    else
-    p.scr.thisProbe= 1;
-    end
-    %  DON'T DELETE if commented out !!!!
-    
-    %% show the introductory text screen
-    sr = []; %  variable
-    makeTexts(exper, p, 'intro', sr);   %% SUB-SCRIPT (exp, p, textName, sr) calls makeTexts.m
-    doKbCheck(p, 2)                        %% SUB-SCRIPT % get participant to move forward using TWO keystrokes
-    
-    %% BLOCK LEVEL
-    bl = [];
-    
-    for bl_i = 1:p.blockNumber
-        display('block')
-        bl_i
-        %% SERIES LEVEL
-        for sr_i = 1 : p.seriesNumber
-            display('series')
-            sr_i
             % initialize new
             sr = [];
             sr.number = sr_i;
             
-            % make predictive series
-            [seriesPred, trackerByElement, trackerByChunk] = makePredSeriesReplaceNoRptEven(p); %% SUB-SCRIPT
-            sr.pred.series = seriesPred;
-            sr.pred.trackerByElement  = trackerByElement;
-            sr.pred.trackerByChunk  = trackerByChunk;
-            
-            % attentional dot
-            dotProb = p.series.dotProb;
-            [seriesDot] = makeDotSeries(p, dotProb); %% SUB-SCRIPT
-            sr.dot.series = seriesDot;
-            
-            %%% MAIN EXPERIMENT TEXT - DON'T DELETE
-            if sr_i == 1
-                %% show the Main experiment text
-                makeTexts(exper, p, 'main', sr);
-                doKbCheck(p, 2)  %% SUB-SCRIPT
-            else
-                %% show continuation-of-block presentation text
-                makeTexts(exper, p, 'nextSeries', sr);
-                doKbCheck(p, 2);  %% SUB-SCRIPT
+            if p.localizer && ~localizerDone
+                
+                % make series specifying quadrants for localizer
+                sr.type = 'LR';
+                sr.series = pseudoRandListNoRpt(p); %% SUB-SCRIPT               
+                if sr_i >= numSeries
+                    localizerDone = 1;
+                end
+                % TEXT
+                makeTexts(exper, p, sr.type, sr);
+                [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+                
+                if quitNow
+                    break; 
+                end
+                
+            else % stairCase or main
+                                
+                [seriesPred, trackerByElement, trackerByChunk] = makePredSeriesReplaceNoRptEven(p); %% SUB-SCRIPT
+                sr.pred.series = seriesPred;
+                sr.pred.trackerByElement  = trackerByElement;
+                sr.pred.trackerByChunk  = trackerByChunk;
+                
+                if  p.useStaircase && ~staircaseDone
+                    sr.type = 'STR';
+                    % specify series 
+                    [ seriesDot] = makeDotSeries( p, p.series.dotProbStaircase); %% SUB-SCRIPT
+                    sr.dot.series = seriesDot;
+                    
+                    if sr_i >= numSeries
+                        staircaseDone = 1;
+                    end
+                    
+                    % TEXTS
+                    makeTexts(exper, p, sr.type, sr);   
+                    [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+                    if quitNow
+                    break; end
+                
+                else
+                    sr.type = 'sr';
+                    [seriesDot] = makeDotSeries(p, p.series.dotProb); %% SUB-SCRIPT
+                    sr.dot.series = seriesDot;
+                  
+                    if sr_i == 1
+                        %% show the Main experiment text
+                        makeTexts(exper, p, sr.type, sr);
+                        [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+                        if quitNow
+                        break; end%% SUB-SCRIPT
+                    else
+                        %% show continuation-of-block presentation text
+                        makeTexts(exper, p, sr.type, sr);
+                        [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+                        if quitNow
+                         break; end  %% SUB-SCRIPT
+                    end
+                end
             end
-            
+
             % EYETRACKING
             if p.useEyelink == 1
+                
                 % if a file is still open from previous recording, close it
                 if p.el.statusFile == 0
                     p.el.statusFile = EL_closeFile();
                 end
                 % open .edf file for new series
-                thisFileName = strcat( 'sr', num2str( sr.number));
+                thisFileName = strcat( sr.type, num2str( sr.number));
                 EL_openFile(p, thisFileName, sr.number) % open and name file for this series
                 
                 % do calibration, save .edf file, (re)start eyetracker
@@ -240,11 +271,11 @@ try
             end
             
             % RUN NEXT SERIES
-            [p, sr] = stimDisplayProc( p, sr, 'regularSeries');
+            [p, sr] = stimDisplayProc( p, sr);
             
             % name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);
-            exper.(srName) = sr;
+            exper.(blName).(srName) = sr;
             
             % if already eyetracking last series stop, save and move file to subject folder
             if p.useEyelink
@@ -253,15 +284,11 @@ try
                     p = EL_closeFile(p, sr);
                 end
             end
-            screenBlank(p);
-            
-            %% give task feedback
-            if sr_i < p.seriesNumber
+            screenBlank(p);  
+            % give task feedback
+            if strcmp(sr.type, 'sr') && sr_i < p.seriesNumber
                 taskFeedback(p, sr);
-            end
-            
-            %% ADD FIELDS TO TEMPORARY EXPERIMENT STRUCTURE (updated after
-            %% each series in case participant quits
+            end            
         end  % END OF SERIES LOOP
     end % END OF BLOCK LOOP
     
@@ -280,9 +307,9 @@ try
     %%DrawFormattedText(p.scr.window, text2show, 'center','center', p.scr.textColor); %%, p.scr.textType);
     WaitSecs(2); % CHECK for real experiment
     
-              catch
-      psychrethrow(psychlasterror);
-    cleanup(p);    
+catch
+    psychrethrow(psychlasterror);
+    cleanup(p);
 end
  
 cleanup(p);

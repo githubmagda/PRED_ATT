@@ -4,13 +4,13 @@ function[exper, text2show] = makeTexts( exper, p, textName, sr)
 
 switch textName
     
-    case 'localizer'
+    case 'LR'
         exper.texts.localizer = ['You will see images in the corners', '\n\n'];
         exper.texts.localizer= [exper.texts.localizer, 'But ALWAYS keep your gaze at CENTER!', '\n\n'];
         
         text2show = exper.texts.localizer;
         
-    case 'staircase'
+    case 'STR'
         exper.texts.staircase = ['You will see images in the corners', '\n\n'];
         exper.texts.staircase = [exper.texts.staircase,'Press the button quickly if you see a dot','\n\n'];            
         exper.texts.staircase= [exper.texts.staircase, 'But ALWAYS keep your gaze at CENTER!', '\n\n'];
@@ -31,12 +31,6 @@ switch textName
         exper.texts.main = [exper.texts.main,'But ALWAYS keep your gaze at CENTER','\n'];        
     
         text2show = exper.texts.main;
-        
-    case 'localizer'
-        exper.texts.localizer = ['You will see images in the corners of the screen', '\n\n\n'];
-        exper.texts.localizer = [exper.texts.localizer,'But ALWAYS keep your gaze at CENTER','\n\n\n'];            
-    
-        text2show = exper.texts.localizer;
     
     case 'nextSeries'    
         exper.texts.nextSeries = ['Ready for another series?', '\n\n'];

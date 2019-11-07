@@ -1,51 +1,35 @@
 function[p, lr] = localizerProc(p, lr)
 % This script displays the localizer in the 4 quadrant gratings
 
-fixRadius               = p.scr.fixRadius;
-virtualSizeGauss        = fixRadius *2;
-
-% Initial stimulus params for the smooth sine grating:
-virtualSizeGrat         = p.scr.gratRadius *2;
-
-backgroundColorOffset   = [.5 .5 .5 0];
-
-phaseGrat               = 0;          % starting value
-freqGrat                = .07;        % see paper by Martin Vinck
-tiltGrat                = 45;         % dummy value; set below in trial loop
-contrastGrat            = 1.5;        % 0.5;  changes 'brightness'
+% SQUARE WAVE GRATING
+backgroundColorOffsetGrat   = [0,0,0,1];
+phaseGrat                   = 0;
+freqGrat                    = 3.2 / p.scr.pixPerDeg;      % Landau & Fries, 2015 3.2    % see paper by Ayelet, Fries 2015 : 3.2 20; Martin Vinck - .11?
+contrastGrat                = 1.0;
 
 % radius of the disc edge
 gratRadius              = p.scr.gratRadius;
-% smoothing sigma in pixel
-sigmaGrat               = 55;
-
-% IGNORED PARAMETERS
-% use alpha channel for smoothing?
-useAlpha                =   true;     % ignored
-% smoothing method: cosine (0) or smoothstep (1)
-smoothMethod            = 1;          % ignored          
-
+% basic grating size
+virtualSizeGrat         = p.scr.gratRadius *2;
 
 % MAKE TEXTURES
-[sineTex, sineTexRect] = CreateProceduralSmoothedApertureSineGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat,...
-          backgroundColorOffset, gratRadius, [], sigmaGrat, useAlpha, smoothMethod);
-[gaussTex, gaussTexRect]    = CreateProceduralGaussBlob( p.scr.window , virtualSizeGauss, virtualSizeGauss,...
-    backgroundColorOffset, [],[]);
-%[gratTex, gratTexRect]      = CreateProceduralSineGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat, p.scr.backgroundColorOffsetGrat, p.scr.gratRadius, p.scr.contrastPreMultiplicatorGrat);
+[sineTex, sineTexRect]  = CreateProceduralSquareWaveGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat,...
+    backgroundColorOffsetGrat, gratRadius, 1);
+angleSet                = 1:6:180;
 
-angleSet                    = 1:6:180;
+% CALCULATE GRATING QUAD POSITIONS (centered on point p.scr.gratPos from center)
+left                = p.scr.centerX -sineTexRect(3)/2 -p.scr.gratPosSide ;
+right               = p.scr.centerX -sineTexRect(3)/2 +p.scr.gratPosSide ;
+top                 = p.scr.centerY -sineTexRect(4)/2 -p.scr.gratPosSide ;
+bottom              = p.scr.centerY -sineTexRect(4)/2 +p.scr.gratPosSide ;
+p.scr.offsetXSet    = [ left, right, right, left];
+p.scr.offsetYSet    = [ top, top, bottom, bottom];
 
-% determining scaling of gaussian textures 
-fixScale                    = 1;               % scale of  adjustmentd to gaussians in 'DrawTexture'
-fixInnerScale               = 0.25;
+% make destination rects for gratings
+dstRectGrats        = OffsetRect( sineTexRect, p.scr.offsetXSet', p.scr.offsetYSet')';
+paramsGrats         = repmat([phaseGrat, freqGrat, contrastGrat, 0], 4, 1)';
 
-dstRectFix                  = OffsetRect(gaussTexRect*fixScale,      p.scr.centerX-(fixRadius*fixScale), p.scr.centerY-(fixRadius*fixScale));
-dstRectFixInner             = OffsetRect(gaussTexRect*fixInnerScale, p.scr.centerX-(fixRadius*fixInnerScale), p.scr.centerY -(fixRadius*fixInnerScale));
-
-paramsGauss         = [p.scr.fixContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1;...
-    p.scr.fixInnerContrast, p.scr.fixSc, p.scr.fixAspectRatio, 1];
-
-% END TEXTURES 
+% END GRATINGS
 
 runFix = 1;
 
@@ -64,8 +48,8 @@ Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.s
 Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
 
 % FLIP
-[vbl] = Screen('Flip', p.scr.window, 0, 1);  % [VBLTimestamp StimulusOnsetTime FlipTimestamp Missed Beampos] = Screen('Flip', windowPtr [, when] [, dontclear]
-thisWaitTime = p.preSeriesFixTime - (.9 *p.scr.flipInterval);
+[vbl]           = Screen('Flip', p.scr.window, 0, 1);  % [VBLTimestamp StimulusOnsetTime FlipTimestamp Missed Beampos] = Screen('Flip', windowPtr [, when] [, dontclear]
+thisWaitTime    = p.preSeriesFixTime - (.9 *p.scr.flipInterval);
 
 % EYETRACKER SEND MESSAGE and MONITOR
 if p.useEyelink
@@ -73,16 +57,16 @@ if p.useEyelink
     Eyelink('message', messageText);
     
     % START POLICING FIXATION
-    [ thisErrorTime, totalErrorTime, totalFixTime]     = monitorFixation(p, thisWaitTime);
-    lr.monitor.preSeriesTotalErrorTime              = totalErrorTime;
-    lr.monitor.preSeriesTotalFixTime                = totalFixTime;
+    [ thisErrorTime, totalErrorTime, totalFixTime]      = monitorFixation(p, thisWaitTime);
+    lr.monitor.preSeriesTotalErrorTime                  = totalErrorTime;
+    lr.monitor.preSeriesTotalFixTime                    = totalFixTime;
     
     if thisErrorTime > p.scr.maxPoliceErrorTime
         %disp('ERROR');
-%         PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
-%         PsychPortAudio('Start', p.audio.handle, 1, 0, 1);     % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-%         PsychPortAudio('Stop', p.audio.handle, 1);
-%         PsychPortAudio('Close', p.audio.handle);
+        PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
+        PsychPortAudio('Start', p.audio.handle, 1, 0, 1);     % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+        PsychPortAudio('Stop', p.audio.handle, 1);
+        PsychPortAudio('Close', p.audio.handle);
         break;
     end
 else
@@ -108,7 +92,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     % SET OPTIONS for GRATING TEXTURE
     
     % angle of grating
-    select              = randi([1,length(angleSet)],1);  % choose 4random angles from set   
+    select              = randi([1,length(angleSet)],1);  % choose 4 random angles from set   
     tiltGrat            = angleSet(select);
     lr.gratAngle(f)     = tiltGrat;                            % save to lr structure
     
