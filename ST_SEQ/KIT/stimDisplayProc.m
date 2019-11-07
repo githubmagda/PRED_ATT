@@ -240,15 +240,11 @@ if p.useEyelink
 end
 
 sr.time.seriesStart = GetSecs;
+thisWaitTime = p.scr.stimDur; % preset for first trial (not a dot)
 
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
-    % default stim time
-    %thisWaitTime = p.scr.stimDur;
-    
     if ~(strcmp(sr.type, 'LR'))  % REGULAR OR STAIRCASE SERIES: set predictive gratings
-        
-
         
         if sr.dot.series(f) == 1 % PREPARE DOT
             
@@ -286,8 +282,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                         dotSetY = p.scr.dotSetY4;
                 end
                 
-                sr.dot.quad(f) = dotQuad;
-                
+                sr.dot.quad(f) = dotQuad;  
                 
                 % DOT SPECS
                 % get location of occasional dot using random selection wihtin
@@ -308,6 +303,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         end % END DOT SETUP
     end
     
+    f
     loopOn = 1;
     loopCounter = 1;
     
@@ -316,8 +312,8 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         if ~(strcmp(sr.type, 'LR'))
             
             thisPred = sr.pred.series(f);
-            
-            if loopCounter == 1
+             
+            if loopCounter == 1 && ~dotContinues
                 % predictive angle change
                 angleSet(thisPred) = mod(angleSet(thisPred) + angleIncrement, 180);
             end
@@ -329,6 +325,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                     dotContinues = 0;   % default off
                 end
                 
+                loopCounter
                 switch loopCounter % loop1 = noDot; loop2 = displayDot; loop3 = dotOff
                     
                     case 1
@@ -344,7 +341,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                         if  diff > p.scr.flipInterval % dot continues on next trial
                             
                             % dot continues on next trial (reset variables for f+1)
-                            dotContinues = 1;
+                            dotContinues = 1
                             sr.dot.series(f+1) = 1;
                             sr.time.dotOn(f+1) = p.scr.flipInterval;
                             sr.time.dotOff(f+1) = diff;
@@ -368,20 +365,21 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                 % increment loopCounter
                 loopCounter = loopCounter +1;
             else
-                loopOn = 0;
+                thisWaitTime = p.scr.stimDur;
+                loopOn = 0;     % don't repeat loop
             end
             
             Screen('DrawTextures', p.scr.window, sineTex, sineTexRect, dstRectGrats, angleSet, [], 0, ...
                 [0,0,0,1], [], [], paramsGrats);
-            
+                        
         else % localizer LR
+            thisWaitTime = p.scr.stimDur;
             Screen('DrawTextures', p.scr.window, sineTex, sineTexRect, dstRectGrats(:,sr.series(f)), angleSetLR(f), [], 0, ...
                 [0,0,0,1], [], [], paramsGrats(:,sr.series( f)));
-            
+           
             loopCounter = 1; % loop unused - just to keep track of wait time
-            loopOn = 0;
-            thisWaitTime = p.scr.stimDur;
             loopCounterTrack(f,1) = thisWaitTime;
+            loopOn = 0;
         end
         
         % Draw  fixation cross without cue : dark cross two nested white gaussians
@@ -391,10 +389,10 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         % WaitSecs(thisWaitTime);
         
         % FLIP
-        [vbl] = Screen('Flip', p.scr.window, vbl+thisWaitTime -(0.5 *p.scr.flipInterval));
-        thisWaitTime
-        
+        [vbl] = Screen('Flip', p.scr.window); %, vbl+thisWaitTime -(0.5 *p.scr.flipInterval));        
         sr.time.trialEvents(f, loopCounter) = vbl - sr.time.seriesStart;
+        thisWaitTime       
+        thisWaitTime = thisWaitTime-(0.5 *p.scr.flipInterval);
         
         % START POLICING FIXATION
         if p.useEyelink == 1
@@ -407,6 +405,8 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             end
             Eyelink('Message', messageText);
             monitorFixation( p, sr, thisWaitTime);   %% CHECK
+        else
+            WaitSecs(thisWaitTime);
         end
                 
         if ~strcmp(sr.type, 'LR')
@@ -463,6 +463,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
             KbQueueStart();   %% KbQueueStart([deviceIndex])
         end
+        
         % PROBE ADJUST check for response on trial f-2?
         if strcmp(sr.type, 'STR')
             
@@ -479,12 +480,12 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                 %check timing of  next probe routine
                 %sr.time.probeStart(f) = GetSecs; % just to check time of calculation
                 [thisProbe,entexp,rot_i]  = stair.get_next_probe(); % get next probe to test  [thisProbe, entexp, ind]  = stair.get_next_probe();
-                thisProbe
+                %thisProbe
                 %sr.time.probeEnd(f) = GetSecs;
                 % sr.time.probeDur(f) = sr.time.probeEnd(f) - sr.time.probeStart(f);
-                fprintf('response: %d\n',r);
-                %                             fprintf('%d, new sample point: %f\nexpect ent: %f\n', ...
-                %                                 ktrial,thisProbe,entexp(rot_i));
+                % fprintf('response: %d\n',r);
+                % fprintf('%d, new sample point: %f\nexpect ent: %f\n', ...
+                %   ktrial,thisProbe,entexp(rot_i));
                 %
             end
         end

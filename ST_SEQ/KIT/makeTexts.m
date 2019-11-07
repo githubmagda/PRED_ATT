@@ -24,7 +24,7 @@ switch textName
 
         text2show = exper.texts.intro;
              
-    case 'main'
+    case 'sr'
         exper.texts.main = ['Now the main experiment begins', '\n\n'];
         exper.texts.main = [exper.texts.main,'There are ',num2str(p.seriesNumber),' series', '\n\n\n\n'];
         exper.texts.main = [exper.texts.main,'Press the button quickly if you see a dot','\n\n'];            

@@ -271,7 +271,7 @@ try
             end
             
             % RUN NEXT SERIES
-            [p, sr] = stimDisplayProc( p, sr);
+                [p, sr] = stimDisplayProc( p, sr);
             
             % name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);

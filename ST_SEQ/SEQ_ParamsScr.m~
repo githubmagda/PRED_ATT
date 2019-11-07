@@ -23,7 +23,7 @@ p.seriesPerEdf              = 1; % how often data is output to edf file; safer t
 p.series.stimPerSeries      = 200;
 p.series.seqBasicSet        = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRpts          = 10;
-p.series.chunkLength        = 4;
+p.series.chunkLength        = 3;
 
 % MONITOR SPECS in mm/cm
 p.monitor.distance          = 57; % cm
