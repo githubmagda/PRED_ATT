@@ -14,13 +14,12 @@ p.scr.textColor             = p.scr.white;
 
 % TRIAL SPECS
 p.blockNumber               = 1; % CHECK - do we need blocks?
-p.seriesNumber              = 0;
-p.staircaseSeriesNum        = 1;
+p.seriesNumber              = 2;
 p.seriesPerBlock            = 1;
 p.seriesPerEdf              = 1; % how often data is output to edf file; safer to output each series in case participant quits
 
 % SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries      = 200;
+p.series.stimPerSeries      = 60;
 p.series.seqBasicSet        = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRpts          = 10;
 p.series.chunkLength        = 4;
@@ -64,17 +63,17 @@ p.scr.Hz        = FrameRate(p.scr.window);    %1/p.scr.flipInterval;
 % end
 
 % STIM / MOVIE SPECS 
-p.scr.stimDur           = round2flips(p, 0.5); %How long each stimulus/trial is on screen
-p.scr.framesHz          = 60;
-p.scr.framesPerMovie    = round(p.scr.stimDur * p.scr.framesHz); 
-p.scr.frameDur          = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
+p.scr.stimDur               = round2flips(p, 0.5); %How long each stimulus/trial is on screen
+p.scr.framesHz              = 60;
+p.scr.framesPerMovie        = round(p.scr.stimDur * p.scr.framesHz); 
+p.scr.frameDur              = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 
 % TEXTURES GRATINGS (for QUADRANTS)
 % calculate grating radius - based on degrees or on quadrant size 
 p.scr.gratRadiusDeg         = 1.0;                              % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
 p.scr.gratRadius            = p.scr.gratRadiusDeg .*p.scr.pixPerDeg; 
 %p.scr.gratGrid              = 2 *p.scr.gratRadius +1;           % scaffolding for grating
-%%%p.scr.angleSet          = [15,105];     % Possible angles for grating       
+%%%p.scr.angleSet           = [15,105];     % Possible angles for grating       
 
 % calculate distance of grating center from screen center based on degrees or quadrant size 
 p.scr.gratPosDeg            = 2; % p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
@@ -97,12 +96,12 @@ p.scr.gratPosCenterY        = [ (p.scr.centerY-p.scr.gratPosSide), (p.scr.center
 
 % ATTENTIONAL DOT & CUE ATTRIBUTES
 % probability of dots in staircase procedure
-p.series.dotProbStaircase   = .3;           % must be less than 1/3???
+p.series.dotProbStaircase   = .3;           % must be less than 1/3 because response allows for dot +2 screens
 % main series dot specs
 p.series.dotProb            = .2;           % DEFAULT .03 = percent of dots per series
 p.series.cueValidPerc       = .80;
 p.series.dotMinDist         = 3;            % e.g. every X trial can be a dot                    
-p.series.dotZeroPadding     = 3;            % number of non-dot trials at beginning and end of series
+p.series.dotZeroPadding     = 0;            % number of non-dot trials at beginning and end of series
 p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
 p.scr.dotDur                = round2flips(p, 0.10);
 %%p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by  1-p.scr.stimDur:
@@ -110,7 +109,7 @@ p.scr.dotDur                = round2flips(p, 0.10);
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
 p.scr.dotRadiusDeg          = 0.10; 
 p.scr.dotRadius             = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
-%%p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
+p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
 
 numDot = 360;
 dotAngles = linspace(0, 2*pi, numDot); 
@@ -119,6 +118,7 @@ dotRingX = dotRingRadius * cos(dotAngles) + p.scr.centerX;  %+p.scr.dotRadius/2;
 dotRingY = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY); % +p.scr.dotRadius/2);
 p.scr.dotRingX = dotRingX;
 p.scr.dotRingY = dotRingY;
+
 % get locations for dots in quads (very confusing cause x/y grids are
 % different for dotRing and Psychotoolbox
 thisMargin = 30;
@@ -131,10 +131,10 @@ p.scr.dotSetY4 = dotRingY( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
 p.scr.dotSetX3 = dotRingX( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
 p.scr.dotSetY3 = dotRingY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
 
-% masks % for older version
-p.scr.maskBorder            = 15;                               % so as to make the gradient mask for dot presentation smaller than gradient 
-p.scr.outerDotMaskRadius    = p.scr.gratPos - p.scr.maskBorder;     % hypot( p.scr.quadDim/2-10, p.scr.quadDimY/2-10 ); % CHECK - base on visual angle?
-p.scr.innerDotMaskRadius    = p.scr.gratPos - p.scr.gratRadius + p.scr.maskBorder;   % hypot( p.scr.quadDim/2 - p.scr.quadGratRad, p.scr.quadDim/2 - p.scr.quadGratRad);
+% % masks % for older version
+% p.scr.maskBorder            = 15;                               % so as to make the gradient mask for dot presentation smaller than gradient 
+% p.scr.outerDotMaskRadius    = p.scr.gratPos - p.scr.maskBorder;     % hypot( p.scr.quadDim/2-10, p.scr.quadDimY/2-10 ); % CHECK - base on visual angle?
+% p.scr.innerDotMaskRadius    = p.scr.gratPos - p.scr.gratRadius + p.scr.maskBorder;   % hypot( p.scr.quadDim/2 - p.scr.quadGratRad, p.scr.quadDim/2 - p.scr.quadGratRad);
 
 % % p.series.dotNumAv = floor( p.series.stimPerSeries * p.series.dotProb);
 % % p.series.dotZeroPadding = 5;
@@ -156,14 +156,13 @@ p.series.questionNum                = ceil( p.series.stimPerSeries * p.series.qu
 % p.scr.fixSc                         = 15.0;  % sigma for gaussian (exponential 'hull')
 % p.scr.fixContrast                   = 30; 
 % p.scr.fixInnerContrast              = 50;
-% %p.scr.fixBackgroundColorOffset      = [.5, .5, .5, 0];
+% p.scr.fixBackgroundColorOffset      = [.5, .5, .5, 0];
 % p.scr.fixContrastPreMultiplicator   = 1; 
 % p.scr.fixPhase                      = 0;
 % p.scr.fixFreq                       = 24;
 % p.scr.fixAspectRatio                = 1;
 
-
-%%% FIXATION CROSS
+% FIXATION CROSS
 p.scr.fixCrossX             = 20; %round( p.scr.fixRadius ./ sqrt(2) ); 
 p.scr.fixCrossY             = p.scr.fixCrossX; % equal size
 p.scr.fixCrossDiagonal      = 1; % if you want fixation cross to be an 'x' rather than a '+'
@@ -171,7 +170,7 @@ p.scr.fixCrossLineWidth     = 5; % range (0.125000 to 7.000000)
 p.scr.fixCrossColor         = p.scr.background;
 p.scr.fixCrossColorChange    = [255, 0, 0]; % for e.g. red warning signal, check DrawTexture commands
 
-%%% length of 4 arms used for  cross
+% length of 4 arms used for  cross
 ext         = 1.0; % stretches arms (to compensate for Gaussian dispersion)
 extColor    = 1.0; % less stretch on colored arm
 xCoords     = [ 0, -p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, -p.scr.fixCrossX];

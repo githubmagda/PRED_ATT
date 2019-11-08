@@ -38,7 +38,7 @@ p = audioOpen(p);    %openAudioPort(p);
 p.debug         = 1; % run with smaller window                        
 p.testEdf       = 1; % eyelink will make file with this same name each tst run
 p.localizer     = 0; 
-p.useStaircase  = 0;
+p.useStaircase  = 0  ;
 
 % GET EYELINK DETAILS
 [p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT

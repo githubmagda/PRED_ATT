@@ -29,7 +29,6 @@ while length(dotTrials) < p.series.stimPerSeries
         dotTrials = [dotTrials,0];
     end
 end
-end
 
 % alternative spacing method
 % % spread out to avoid repetitions within response time
@@ -37,3 +36,5 @@ end
 % dotTrials = Shuffle( dotTrials);        % to ensure spread across series
 % dotTrials = dotTrials( 1:numDots);      % trim to numCatch
 %dotSeries( dotTrials) = 1;              % add set elements to be the catch trials 
+
+end
