@@ -3,7 +3,7 @@ function[exper] = presentQuad() % (could ask for inputs, e.g. debug, useEyelink)
 % DESCRIPTION
 % Main script for Predictive Attention presentations - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
  
-% Clear the workspace and the sncreen
+% Clear the workspace and the screen
 sca;
 close all;  
 clearvars;          
@@ -135,7 +135,7 @@ try
 % %         for str_i = 1: p.staircaseSeriesNum
 % %             str  = [];
 % %             str.number = str_i;
-% %             [ seriesDot] = makeDotSeries( p, p.series.dotProbStaircase); %% SUB-SCRIPT
+% %             [ seriesDot] = makeDotSeries( p, p.series.dotP robStaircase); %% SUB-SCRIPT
 % %              str.dot.series = seriesDot;
 % %              [ p, str] = stimDisplayProc( p, str, 'useStaircase');
 % %             % name/number series and add to exp structure

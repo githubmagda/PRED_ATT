@@ -17,16 +17,16 @@ else
     numDots = p.series.dotNumAv;
 end
 
-dotTrials =[];
+dotSeries =[0,0,0]; % pad with 3 zeros because response loop looks back to trial-2 for dot
 n = dotProb*100;
 
 % dot loop
-while length(dotTrials) < p.series.stimPerSeries    
+while length(dotSeries) < p.series.stimPerSeries    
     select = randi(100,1,1);
     if select > n
-        dotTrials = [dotTrials,[1,0,0]];
+        dotSeries = [dotSeries,[1,0,0]];
     else
-        dotTrials = [dotTrials,0];
+        dotSeries = [dotSeries,0];
     end
 end
 end

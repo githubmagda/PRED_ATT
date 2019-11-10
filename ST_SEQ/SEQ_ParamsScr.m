@@ -99,7 +99,7 @@ p.scr.gratPosCenterY        = [ (p.scr.centerY-p.scr.gratPosSide), (p.scr.center
 p.series.dotProbStaircase   = .3;           % must be less than 1/3 because response allows for dot +2 screens
 % main series dot specs
 p.series.dotProb            = .2;           % DEFAULT .03 = percent of dots per series
-p.series.cueValidPerc       = .80;
+p.series.dotValid           = .80;
 p.series.dotMinDist         = 3;            % e.g. every X trial can be a dot                    
 p.series.dotZeroPadding     = 0;            % number of non-dot trials at beginning and end of series
 p.scr.postFlashDur          = round2flips(p, .05); % from start of trial

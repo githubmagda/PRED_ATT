@@ -151,21 +151,23 @@ end
 sr.angle.series         = nan( p.series.stimPerSeries, 4);
 sr.time.trialEvents     = nan( p.series.stimPerSeries, 4);
 
-%p.scr.dotComplete       = 1;   % flag for dotDur having completed within one trial
 sr.time.dotOn           = nan( 1, p.series.stimPerSeries ); %% randi(p.scr.stimDur*1000, 1, p.series.stimPerSeries) ./ 1000;
 sr.time.dotOff          = nan( 1, p.series.stimPerSeries );  %%sr.time.dotOn + p.scr.dotDur;
 
 sr.dot.posX             = nan( 1, p.series.stimPerSeries );                % dot position and timing
 sr.dot.posY             = nan( 1, p.series.stimPerSeries );
 sr.dot.dstRectDot       = nan( p.series.stimPerSeries, 4);
+sr.dot.continues        = zeros( 1, p.series.stimPerSeries );
+sr.dot.valid            = zeros( 1, p.series.stimPerSeries );
 sr.dot.response         = nan( 1, p.series.stimPerSeries );             % dot response
-sr.dot.responseCorrect  = nan( 1, p.series.stimPerSeries );
+sr.dot.responseAttn     = nan( 1, p.series.stimPerSeries );
+sr.dot.responseUNAttn   = nan( 1, p.series.stimPerSeries );
+sr.dot.checked          = nan( 1, p.series.stimPerSeries );
 sr.dot.FA               = nan( 1, p.series.stimPerSeries );
 sr.dot.missed           = nan( 1, p.series.stimPerSeries );
 sr.dot.responsekeyCode  = nan( 1, p.series.stimPerSeries );
 sr.dot.RT               = nan( 1, p.series.stimPerSeries );
 sr.dot.quad             = nan( 1, p.series.stimPerSeries );
-checked                 = zeros( 1, p.series.stimPerSeries );            % check = 1 if no need to check for response on this trial
 loopCounterTrack        = nan( p.series.stimPerSeries,4);
 
 if strcmp(sr.type, 'sr')
@@ -174,10 +176,12 @@ if strcmp(sr.type, 'sr')
     thisProbe = p.scr.thisProbe;
     
     %  question initialize
-    sr.question.responseQuad = nan( 1, p.series.stimPerSeries );
+    sr.question.responseQuad    = nan( 1, p.series.stimPerSeries );
     sr.question.responseCorrect = nan( 1, p.series.stimPerSeries );
-    sr.question.RT = nan( 1, p.series.stimPerSeries );
-    
+    sr.question.RT              = nan( 1, p.series.stimPerSeries );
+    sr.question.chunkNum        = nan( 1, p.series.stimPerSeries );
+    sr.question.elementNum      = nan( 1, p.series.stimPerSeries );
+
     % SELECT QUESTION TRIALS % N.B. not trial with dot ??
     dot = find( sr.dot.series == 1); 
 
@@ -231,7 +235,6 @@ end % STAIRCASE END
 KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
 KbQueueStart();   %% KbQueueStart([deviceIndex])
 
-dotContinues = 0;   % continue dot on next screen; gets reset below
 
 % SERIES START MESSAGES
 if p.useEyelink
@@ -244,22 +247,22 @@ thisWaitTime = p.scr.stimDur; % preset for first trial (not a dot)
 
 for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
+    % SETUP
     if ~(strcmp(sr.type, 'LR'))  % REGULAR OR STAIRCASE SERIES: set predictive gratings
         
         if sr.dot.series(f) == 1 % PREPARE DOT
             
-            if ~dotContinues % don't override previous trial f+1 settings  if dot Continues
+            if ~sr.dot.continues(f) % don't override previous trial f+1 settings  if dot Continues
                 sr.time.dotOn(f) = dotOnset(f);
                 sr.time.dotOff(f) = sr.time.dotOn(f) + p.scr.dotDur;
                 
                 % DOT POSITION - is  dot in attentional quad 'VALID'?
-                selEl = randi(10,1);                    % 1 in 10 probability
+                selEl = randi( 100, 1, 1);                 
                 
-                if selEl <= ( p.series.cueValidPerc*10) % e.g. xx% likelihood
+                if selEl <= (p.series.dotProb*100)           
                     sr.dot.valid(f) = 1;
                     dotQuad = thisCue;
                 else
-                    sr.dot.Valid(f) = 0;
                     ShuffleSet = Shuffle(setOther);     % select next random position (not including cued position)
                     dotQuad = ShuffleSet(1);            % random allocation to any other quad
                 end
@@ -302,6 +305,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
     
     loopOn = 1;
     loopCounter = 1;
+    checked = 0;
     
     while loopOn   % loop to control trial and dot appearance
         
@@ -316,9 +320,9 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             
             if sr.dot.series(f) == 1
                 
-                if dotContinues         % continuing dot should start on first flip of next trial
+                if sr.dot.continues(f)        % continuing dot should start on first flip of next trial
                     loopCounter = 2;    % skip first dotOff loop
-                    dotContinues = 0;   % default off
+                    sr.dot.continues(f) = 0;   % default off
                 end
                 
                 %display(strcat('loop', num2str(loopCounter)))
@@ -338,7 +342,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                         if  diff > p.scr.flipInterval % dot continues on next trial
                             
                             % dot continues on next trial (reset variables for f+1)
-                            dotContinues = 1;
+                            sr.dot.continues(f+1) = 1;
                             sr.dot.series(f+1) = 1;
                             sr.time.dotOn(f+1) = p.scr.flipInterval;
                             sr.time.dotOff(f+1) = diff;
@@ -348,7 +352,6 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                             loopCounterTrack(f,loopCounter) = thisWaitTime;
                             loopOn = 0; % go directly to next trial
                         else  % dot duration within trial
-                            %dotContinues = 0;
                             thisWaitTime = p.scr.dotDur; %sr.time.dotOff(f)-sr.time.dotOn(f);
                             loopCounterTrack(f,loopCounter) = thisWaitTime;
                         end
@@ -384,8 +387,10 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
         Screen('DrawingFinished', p.scr.window);
         
         % FLIP
+        oldVbl = vbl;
         [vbl] = Screen('Flip', p.scr.window); %, vbl+thisWaitTime -(0.5 *p.scr.flipInterval));        
-        sr.time.trialEvents(f, loopCounter) = vbl - sr.time.seriesStart;     
+        sr.time.trialEvents(f, loopCounter) = vbl - oldVbl; 
+        sr.time.trialEventsGetSecs(f, loopCounter) = GetSecs;
         thisWaitTime = thisWaitTime-(0.5 *p.scr.flipInterval);
         
         % START POLICING FIXATION
@@ -409,62 +414,46 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             
             [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])  
             
-            if  f>2 && ~isempty(event)  && ( event.Keycode == KbName('space')) && ~checked(f) %f >= 2 && ~isempty(event) % event.Pressed == 1
+            if  f>2 && ~isempty(event)  && ( event.Keycode == KbName('space'))  %f >= 2 && ~isempty(event) % event.Pressed == 1
                 
                 sr.dot.response(f) = 1;
                 
-                if sr.dot.series(f)    % this trial had a dot
+                while ~checked
                     
-                    if sr.dot.Valid(f)
-                        sr.dot.responseAttn(f) = 1;
-                    else
-                        sr.dot.responseUnAttn(f) = 1;
+                    for tr = 0:2
+                        tr
+                        if sr.dot.series(f-tr)      % this trial had a dot
+                            
+                            if sr.dot.valid(f-tr)   % dot was in cued quad
+                                sr.dot.responseAttn(f-tr) = 1;
+                                checked = 1;
+                                % play positive beep
+                                PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
+                                PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+                                PsychPortAudio('Stop', p.audio.handle, 1);
+                            else
+                                sr.dot.responseUNAttn(f-tr) = 1;
+                                checked = 1;
+                                % play positive beep
+                                PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
+                                PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
+                                PsychPortAudio('Stop', p.audio.handle, 1);                               
+                            end
+                            
+                            % calculate response time
+                            if ~sr.dot.continues( f-tr)           % dot started and finished within same trial
+                                sr.dot.RT( f) = event.Time - sr.time.trialEventsGetSecs( f-tr, 2); %sr.time.dotOn(f);
+                            else
+                                sr.dot.RT( f) = event.Time - sr.time.trialEventsGetSecs( f-tr-1, 2); %sr.time.dotOn(f);
+                            end
+
+                        end
                     end
-                    
-                    sr.RT(f) = event.Time - sr.time.trialEvents(f,1);%sr.time.dotOn(f);
-                    checked(f:f+2) = 1;   % doesn't recheck subsequent two trials
-                    
-                    % play positive beep
-                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
-                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                    PsychPortAudio('Stop', p.audio.handle, 1);
-                    
-                elseif sr.dot.series(f-1)  % previous trial had a dot
-                    sr.dot.responseCorrect(f-1) = 1;
-                    sr.dot.missed(f-1) = 0;
-                    sr.RT(f-1) = event.Time - sr.time.trialEvents(f,1); %sr.time.dotOn(f-1);
-                    checked( f: f+1) = 1;
-                    
-                    % play positive beep
-                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
-                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                    PsychPortAudio('Stop', p.audio.handle, 1);
-                    
-                elseif sr.dot.series(f-2)  % f-2 trial had a dot (2 trials allowed for response time)
-                    
-                    if sr.dot.Valid(f-2)
-                        sr.dot.responseAttn(f-2) = 1;
-                    else
-                        sr.dot.responseNotAttn(f-2) = 1;
-                    end
-                    
-                    sr.dot.missed(f-2) = 0;
-                    sr.RT(f-2) = event.Time - sr.time.trialEvents(f,1); %sr.time.dotOn(f-2);
-                    checked(f) = 1;
-                    
-                    % play positive beep
-                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepHappy);
-                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                    PsychPortAudio('Stop', p.audio.handle, 1);
-                    
-                else
-                    sr.dot.FA(f-2) = 1;
-                    % play negative beep
-                    PsychPortAudio('FillBuffer', p.audio.handle, p.audio.beepWarn);
-                    PsychPortAudio('Start', p.audio.handle, 1, 0, 1);  % startTime = PsychPortAudio('Start', pahandle [, repetitions=1] [, when=0] [, waitForStart=0] [, stopTime=inf] [, resume=0]);
-                    PsychPortAudio('Stop', p.audio.handle, 1);
                 end
+            else
+                sr.dot.FA(f) = 1;
             end
+
             % clear old queue and start next one
             KbQueueRelease();   %KbQueueFlush([],3); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
             event = [];
@@ -539,18 +528,18 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                     if  ~isempty(event) && event.Pressed == 1 && found == 0 % there was a keyPress and this is the downPress
                         
                         if strcmp( KbName(event.Keycode), 'Return')
-                            question.responseQuad(f) = thisQuad;
-                            question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
-                            if question.responseCorrect(f) == 1
+                            sr.question.responseQuad(f) = thisQuad;
+                            sr.question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
+                            if sr.question.responseCorrect(f) == 1
                                 display('Correct');
                             else
                                 display('Not correct, Should be:');
                                 sr.pred.series(f-(p.series.chunkLength-1))
                             end
                             
-                            question.RT(f) = event.Time - circleTime; % minus stim onset
-                            question.chunkNum(f) = sr.pred.trackerByChunk(f);
-                            question.elementNum(f) = sr.pred.trackerByElement (f);
+                            sr.question.RT(f) = event.Time - circleTime; % minus stim onset
+                            sr.question.chunkNum(f) = sr.pred.trackerByChunk(f);
+                            sr.question.elementNum(f) = sr.pred.trackerByElement (f);
                             found = 1; % get out of loop
                             
                         elseif strcmp( KbName(event.Keycode), 'space')
@@ -604,15 +593,17 @@ end
 
 if ~strcmp(sr.type, 'LR') % staircase or main
     % CALCULATE HITS, misses, FAs for report
-    sr.dot.totalNum = numel( sr.dot.series( sr.dot.series==1));
-    sr.dot.hitNum = numel(sr.dot.responseCorrect(sr.dot.responseCorrect ==1)); %int8( (v1 + v2) > 0 );
-    sr.dot.FANum = numel(sr.dot.FA(sr.dot.FA ==1));
-    sr.dot.missedNum = sr.dot.totalNum - sr.dot.hitNum;
+    sr.dot.totalNum     = numel( sr.dot.series( sr.dot.series ==1));
+    sr.dot.validNum     = numel( sr.dot.valid(  sr.dot.valid ==1));
+    sr.dot.attnNum      = numel(sr.dot.responseAttn(sr.dot.responseAttn ==1)); %int8( (v1 + v2) > 0 );
+    sr.dot.UNAttnNum    = numel(sr.dot.responseUNAttn(sr.dot.responseUNAttn ==1)); %int8( (v1 + v2) > 0 );
+    sr.dot.FANum        = numel(sr.dot.FA(sr.dot.FA ==1));
+    sr.dot.missedNum    = sr.dot.validNum - sr.dot.attnNum;
     
-    if sr.dot.hitNum > 0
-        sr.dot.hitRate = sr.dot.hitNum / sr.dot.totalNum;
+    if sr.dot.attnNum > 0
+        sr.dot.attnRate = sr.dot.attnNum / sr.dot.validNum;
     else
-        sr.dot.hitRate = 0;
+        sr.dot.attnRate = 0;
     end
 end
 
