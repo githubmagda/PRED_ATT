@@ -14,6 +14,12 @@ rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTA
 GetSecs;
 WaitSecs(0.1);
 
+% SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
+p.debug         = 1; % run with smaller window in debug mode                       
+p.testEdf       = 1; % eyelink will make file with this same name each tst run
+p.localizer     = 0; 
+p.useStaircase  = 1;
+
 % SET PATHS - PSYCHTOOLBOX AND KIT (subscripts)
 p.main_path = pwd; % get current path
     
@@ -23,29 +29,39 @@ else
     addpath([p.main_path, '\KIT\']);            % add functions folder PC style
 end
 
-PsychDefaultSetup(2);                            % set to: (0) calls AssertOpenGL (1) also calls KbName('UnifyKeyNames') (2) also calls Screen('ColorRange', window, 1, [], 1); immediately after and whenever PsychImaging('OpenWindow',...) is called
+PsychDefaultSetup(2);    % set to: (0) calls AssertOpenGL (1) also calls KbName('UnifyKeyNames') (2) also calls Screen('ColorRange', window, 1, [], 1); immediately after and whenever PsychImaging('OpenWindow',...) is called
 
+% KEYBOARD 
 KbName('UnifyKeyNames');
 % specify key names of interest in the study N.B. PsychDefaultSetup(1+) already sets up KbName('UnifyKeyNames') using PsychDefaultSetup(1 or 2);
 p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape')]; % CHECK
 % restrict the keys for keyboard input to the keys we want
 RestrictKeysForKbCheck([p.activeKeys]);
 p.quitKey = KbName('Escape');
+p.calibKey = KbName('c');  % Key during breaks to call calibration
+p.validKey = KbName('v');  % Key during breaks to call validation of calibration
+p.quitKey = KbName('q');   % Key during breaks to stop eyetracking
 
+% INITIATE AUDIO
 p = audioOpen(p);    %openAudioPort(p);  
-
-% SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
-p.debug         = 1; % run with smaller window                        
-p.testEdf       = 1; % eyelink will make file with this same name each tst run
-p.localizer     = 0; 
-p.useStaircase  = 0;
 
 % GET EYELINK DETAILS
 [p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
 
 % CHECK THESE VARIABLES BEFORE STARTING!!!
-p = SEQ_ParamsGen(p); % set general pre-screen opening parameters;  %% SUB-SCRIPT
-% N.B. SEQ_ParamsScr is called after openWindow 
+% WINDOW DIMENSIONS 
+p.scr.testDimensionX = 600; % in pixels
+p.scr.testDimensionY = 600;
+p.scr.testDimensions = [0, 0, p.scr.testDimensionX, p.scr.testDimensionY];  %% xTest xTest*.7379 use actual screen ratio from preferences set in prefFunction below
+
+% TEXT  
+if p.debug
+    p.scr.textSize = 14;
+else p.scr.textSize = 18;
+end
+% waitText variables  
+p.waitText =  5.0; 
+p.waitBlank = 0.3;
 
 %  DON'T DELETE if commented out !!!!
  
@@ -214,7 +230,7 @@ try
                     % specify series 
                     [ seriesDot] = makeDotSeries( p, p.series.dotProbStaircase); %% SUB-SCRIPT
                     sr.dot.series = seriesDot;
-                    
+                     
                     if sr_i >= numSeries
                         staircaseDone = 1;
                     end
@@ -280,13 +296,16 @@ try
                 end
             end
             screenBlank(p);  
-            % give task feedback
-            if strcmp(sr.type, 'sr') && sr_i < p.seriesNumber
-                taskFeedback(p, sr);
-            end  
+             
             % name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);
             exper.(blName).(srName) = sr;
+            
+            % give task feedback
+            if strcmp(sr.type, 'sr') % && sr_i < p.seriesNumber
+                 taskFeedback(p, sr);
+            end 
+            
         end  % END OF SERIES LOOP
         
     end % END OF BLOCK LOOP

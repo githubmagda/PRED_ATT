@@ -1,30 +1,43 @@
  function[] = taskFeedback(p, sr)
 %% Report back on detection performance
 
-text=['You got ', num2str(sr.dot.hitNum), ' out of ', num2str(sr.dot.totalNum),'\n\n'];
+win         = sr.dot.attnNum;                       % correct responses
+lose        = (sr.dot.UNAttnNum + sr.dot.FANum);    % incorrect responses
 
-if sr.dot.FANum > 1
-    text=[text,'And clicked ', num2str(sr.dot.FANum), ' times, when there was no dot!','\n\n'];
+text=['You got ', num2str(sr.dot.attnNum), ' out of ', num2str(sr.dot.validNum),'\n\n'];
+text=[text,'You win ', num2str(win *p.dotPayout) ' euros ', '\n\n\n'];
+
+if lose > 0
+    if sr.dot.UNAttnNum > 1
+        text=[text,'But you also clicked for ', num2str(sr.dot.UNAttnNum), ' dots in the wrong quadrant','\n\n'];
+    end
+
+    if sr.dot.FANum > 1
+        text=[text,'And clicked ', num2str(sr.dot.FANum), ' times, when there was no dot!','\n\n'];
+    end
+
+    text=[text,'So you lose ', num2str(lose *p.dotPayout), ' euros','\n\n\n'];
+    text=[text,'This series you made ', num2str((win-lose) *p.dotPayout), ' euros','\n\n\n\n\n'];
 end
 
-if  sr.dot.hitRate >= .80 && sr.dot.FANum < 5   
+if  sr.dot.attnRate >= .80 && lose < 5   
     
     imNum = 1;
-    text=[text,'Great work - keep it up!','\n\n\n\n\n\n'];
+    text=[text,'Great work - keep it up!','\n\n\n'];
     
-elseif sr.dot.hitRate >= .60 && sr.dot.FANum < 5
+elseif sr.dot.attnRate >= .60 && lose < 5
     
     imNum = 2;
-    text=[text,'Pretty good - but still room for improvement!','\n\n\n\n\n\n'];
+    text=[text,'Pretty good - but still room for improvement!','\n\n\n'];
     
-elseif sr.dot.hitRate <= .60 || sr.dot.FANum >= 5
+elseif sr.dot.attnRate <= .60 || lose >= 5
     
     imNum = 3;
-    text=[text,'Better luck next round!','\n\n\n\n\n\n'];
+    text=[text,'Uffa! Better luck next round!','\n\n\n'];
     
 end
 
-text=[text,'Remember to respond as quickly and accurately as possible!','\n\n\n\n'];
+text=[text,'Remember to respond quickly only to dots in the hot corner!','\n\n\n\n\n\n'];
 textContinue=['Press any key TWICE when you are ready to continue...'];
 
 p.scr.imageSizeXPix = 100; p.scr.imageSizeYPix = 100;

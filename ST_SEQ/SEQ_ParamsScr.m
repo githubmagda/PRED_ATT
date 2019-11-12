@@ -96,14 +96,16 @@ p.scr.gratPosCenterY        = [ (p.scr.centerY-p.scr.gratPosSide), (p.scr.center
 
 % ATTENTIONAL DOT & CUE ATTRIBUTES
 % probability of dots in staircase procedure
-p.series.dotProbStaircase   = .3;           % must be less than 1/3 because response allows for dot +2 screens
+p.series.dotProbStaircase   = .2;           % must be less than 1/3 because response allows for dot +2 screens
 % main series dot specs
-p.series.dotProb            = .2;           % DEFAULT .03 = percent of dots per series
+p.series.dotProb            = .05;           % DEFAULT .03 = percent of dots per series
 p.series.dotValid           = .80;
 p.series.dotMinDist         = 3;            % e.g. every X trial can be a dot                    
 p.series.dotZeroPadding     = 0;            % number of non-dot trials at beginning and end of series
 p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
 p.scr.dotDur                = round2flips(p, 0.10);
+p.dotPayout                 = .5;
+p.dot.zeroPad               = 2; % minumum number of zeros between dots
 %%p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by  1-p.scr.stimDur:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
