@@ -190,7 +190,7 @@ try
             numSeries = 1;
         elseif p.useStaircase && ~staircaseDone
              blName = sprintf('STR%d',bl_i); 
-             numSeries = 1;
+             numSeries = 3;
         else blName = sprintf('sr%d',bl_i); 
             numSeries = p.seriesNumber;
         end
@@ -300,6 +300,10 @@ try
             % name/number series and add to exp structure
             srName = sprintf('sr%d',sr_i);
             exper.(blName).(srName) = sr;
+            
+            if strcmp(sr.type, 'STR')
+                p.scr.probeEstimate(sr.number) = p.scr.thisProbe;
+            end
             
             % give task feedback
             if strcmp(sr.type, 'sr') % && sr_i < p.seriesNumber

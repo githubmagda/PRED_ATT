@@ -173,7 +173,7 @@ loopCounterTrack        = nan( p.series.stimPerSeries,4);
 if strcmp(sr.type, 'sr')
     
     % set probe value
-    thisProbe = p.scr.thisProbe;
+    thisProbe = mean([p.scr.probeEstimate(:)]);
     
     %  question initialize
     sr.question.responseQuad    = nan( 1, p.series.stimPerSeries );
@@ -195,9 +195,9 @@ end
 if strcmp(sr.type, 'STR')
     % INITIALIZE STAIRCASE (see MinExpEntStairDemo from Psychtoolbox)
     % stair input
-    probeset    = .05 : .05 :1; % -15:0.5:15;         % set of possible probe values
-    meanset     = .05 : .05 :1; % -10:0.2:10;         % sampling of pses, doesn't have to be the same as probe set
-    slopeset    = [.1:.1:5].^2;%[.5:.1:5].^2;       % set of slopes, quad scale
+    probeset    = .01 : .05 :1; % -15:0.5:15;       % set of possible probe values
+    meanset     = .01 : .05 :1; % -10:0.2:10;       % sampling of pses, doesn't have to be the same as probe set
+    slopeset    = [.01:.05:1].^2; %[.5:.1:5].^2;      % set of slopes, quad scale
     lapse       = 0.05;                             % lapse/mistake rate
     guess       = 0.50;                             % guess rate / minimum correct response rate (for detection expt: 1/num_alternative, 0 for discrimination expt)
     
@@ -498,6 +498,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                 %   ktrial,thisProbe,entexp(rot_i));
                 %
             end
+
         end
         
         % QUESTION ROUTINE
@@ -600,6 +601,7 @@ if strcmp(sr.type, 'STR') % staircase
     finalent                                = sum(-exp(loglikfinal(:)).*loglikfinal(:));
     fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',sr.PSEfinal, sr.DLfinal, finalent);
     p.scr.thisProbe                         = sr.PSEfinal;   %thisProbe;
+    sr.staircase = stair;
 end
 
 if ~strcmp(sr.type, 'LR') % staircase or main

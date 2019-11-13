@@ -195,9 +195,9 @@ end
 if strcmp(sr.type, 'STR')
     % INITIALIZE STAIRCASE (see MinExpEntStairDemo from Psychtoolbox)
     % stair input
-    probeset    = .05 : .05 :1; % -15:0.5:15;         % set of possible probe values
-    meanset     = .05 : .05 :1; % -10:0.2:10;         % sampling of pses, doesn't have to be the same as probe set
-    slopeset    = [.1:.1:5].^2;%[.5:.1:5].^2;       % set of slopes, quad scale
+    probeset    = .01 : .05 :1; % -15:0.5:15;       % set of possible probe values
+    meanset     = .01 : .05 :1; % -10:0.2:10;       % sampling of pses, doesn't have to be the same as probe set
+    slopeset    = [.01:.05:1].^2; %[.5:.1:5].^2;      % set of slopes, quad scale
     lapse       = 0.05;                             % lapse/mistake rate
     guess       = 0.50;                             % guess rate / minimum correct response rate (for detection expt: 1/num_alternative, 0 for discrimination expt)
     
@@ -235,6 +235,8 @@ end % STAIRCASE END
 KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
 KbQueueStart();   %% KbQueueStart([deviceIndex])
 
+% FLIP blank screen for trial timing
+[vbl] = Screen('Flip', p.scr.window, 0);
 
 % SERIES START MESSAGES
 if p.useEyelink
@@ -322,7 +324,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             
             if sr.dot.series(f) == 1
                 
-                if sr.dot.continues(f)        % continuing dot should start on first flip of next trial
+                if sr.dot.continues(f) && loopCounter == 1       % continuing dot should start on first flip of next trial
                     loopCounter = 2;          % skip first dotOff loop
                 end
                 
@@ -358,7 +360,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                         
                         elseif sr.dot.continues(f)
                             thisWaitTime = sr.time.dotOff(f);                          
-                        
+                            loopCounterTrack(f,loopCounter) = thisWaitTime;
                         else   
                             % dot duration within trial
                             thisWaitTime = p.scr.dotDur; %sr.time.dotOff(f)-sr.time.dotOn(f);
@@ -488,7 +490,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                 %check timing of  next probe routine
                 %sr.time.probeStart(f) = GetSecs; % just to check time of calculation
                 [thisProbe,entexp,rot_i]  = stair.get_next_probe(); % get next probe to test  [thisProbe, entexp, ind]  = stair.get_next_probe();
-                %thisProbe
+                thisProbe
                 %sr.time.probeEnd(f) = GetSecs;
                 % sr.time.probeDur(f) = sr.time.probeEnd(f) - sr.time.probeStart(f);
                 % fprintf('response: %d\n',r);
@@ -496,6 +498,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                 %   ktrial,thisProbe,entexp(rot_i));
                 %
             end
+            sr.staircase = stair;
         end
         
         % QUESTION ROUTINE
@@ -581,7 +584,6 @@ sr.time.seriesEnd = GetSecs;
 sr.time.seriesDur = sr.time.seriesEnd - sr.time.seriesStart;
 
 loopCounterTrack(:,4) = nansum( loopCounterTrack(:,1:3),2);
-loopCounterTrack;
 sr.time.trialEvents(:,4) = nansum(sr.time.trialEvents(:,1:3),2);
 
 sr.time.trialStart = sr.time.trialEvents(:,1);
@@ -598,12 +600,7 @@ if strcmp(sr.type, 'STR') % staircase
     [sr.PSEfinal, sr.DLfinal, loglikfinal]  = stair.get_PSE_DL();
     finalent                                = sum(-exp(loglikfinal(:)).*loglikfinal(:));
     fprintf('final estimates:\nPSE: %f\nDL: %f\nent: %f\n',sr.PSEfinal, sr.DLfinal, finalent);
-%    sr.dot.intFactor                        = sr.PSEfinal; % scales dot intensity in main experiment
-end
-
-% save probe for regular series
-if strcmp(sr.type, 'STR')
-    p.scr.thisProbe                     = sr.PSEfinal;   %thisProbe;
+    p.scr.thisProbe                         = sr.PSEfinal;   %thisProbe;
 end
 
 if ~strcmp(sr.type, 'LR') % staircase or main
