@@ -96,42 +96,42 @@ p.scr.gratPosCenterY        = [ (p.scr.centerY-p.scr.gratPosSide), (p.scr.center
 
 % ATTENTIONAL DOT & CUE ATTRIBUTES
 % probability of dots in staircase procedure
-p.series.dotProbStaircase   = .2;           % must be less than 1/3 because response allows for dot +2 screens
+p.dot.probStaircase         = .2;           % must be less than 1/3 because response allows for dot +2 screens
 % main series dot specs
-p.series.dotProb            = .05;           % DEFAULT .03 = percent of dots per series
-p.series.dotValid           = .80;
-p.series.dotMinDist         = 3;            % e.g. every X trial can be a dot                    
-p.series.dotZeroPadding     = 0;            % number of non-dot trials at beginning and end of series
-p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
-p.scr.dotDur                = round2flips(p, 0.10);
-p.dotPayout                 = .5;
+p.dot.prob                  = .05;           % DEFAULT .03 = percent of dots per series
+p.dot.valid                 = .80;
+%%p.dot.minDist             = 3;            % e.g. every X trial can be a dot                    
+%%p.dotZeroPadding          = 0;            % number of non-dot trials at beginning and end of series
+%%p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
+p.dot.dur                   = round2flips(p, 0.10);
+p.dot.payout                = .5;
 p.dot.zeroPad               = 2; % minumum number of zeros between dots
 %%p.scr.dotJitter             = round2flips(p, .01);  % is multiplied by  1-p.scr.stimDur:
 
 % ATTENTION-DOT TEXTURE & MASKS (used by makeTextures.m)
-p.scr.dotRadiusDeg          = 0.10; 
-p.scr.dotRadius             = p.scr.dotRadiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
-p.scr.thisProbe             = 1.0 ; % will be adjusted by staircase
+p.dot.radiusDeg          = 0.10; 
+p.dot.radius             = p.dot.radiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
+p.dot.thisProbe          = 1.0 ; % will be adjusted by staircase
 
 numDot = 360;
 dotAngles = linspace(0, 2*pi, numDot); 
 dotRingRadius = p.scr.gratPos-25;
 dotRingX = dotRingRadius * cos(dotAngles) + p.scr.centerX;  %+p.scr.dotRadius/2; 
 dotRingY = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY); % +p.scr.dotRadius/2);
-p.scr.dotRingX = dotRingX;
-p.scr.dotRingY = dotRingY;
+p.dot.ringX = dotRingX;
+p.dot.ringY = dotRingY;
 
 % get locations for dots in quads (very confusing cause x/y grids are
 % different for dotRing and Psychotoolbox
 thisMargin = 30;
-p.scr.dotSetX2 = dotRingX( thisMargin : numDot/4-thisMargin);
-p.scr.dotSetY2 = dotRingY( thisMargin : numDot/4-thisMargin);
-p.scr.dotSetX1 = dotRingX( numDot/4+thisMargin :numDot/2-thisMargin);
-p.scr.dotSetY1 = dotRingY( numDot/4+thisMargin :numDot/2-thisMargin);
-p.scr.dotSetX4 = dotRingX( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
-p.scr.dotSetY4 = dotRingY( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
-p.scr.dotSetX3 = dotRingX( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
-p.scr.dotSetY3 = dotRingY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
+p.dot.setX2 = dotRingX( thisMargin : numDot/4-thisMargin);
+p.dot.setY2 = dotRingY( thisMargin : numDot/4-thisMargin);
+p.dot.setX1 = dotRingX( numDot/4+thisMargin :numDot/2-thisMargin);
+p.dot.setY1 = dotRingY( numDot/4+thisMargin :numDot/2-thisMargin);
+p.dot.setX4 = dotRingX( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
+p.dot.setY4 = dotRingY( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
+p.dot.setX3 = dotRingX( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
+p.dot.setY3 = dotRingY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
 
 % % masks % for older version
 % p.scr.maskBorder            = 15;                               % so as to make the gradient mask for dot presentation smaller than gradient 
@@ -144,8 +144,8 @@ p.scr.dotSetY3 = dotRingY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
 % % p.series.dotNumRange = [ p.series.dotNumAv-1 : p.series.dotNumAv+1 ]; % range of possible catch trials per series ( selected in makeCatchSeries.m )
 
 % SERIES QUESTION
-p.series.questionProb               = .01;
-p.series.questionNum                = ceil( p.series.stimPerSeries * p.series.questionProb);
+p.question.prob               = .01;
+p.question.num                = ceil( p.series.stimPerSeries * p.question.prob);
 
 % FIXATION GAUSSIAN
 % p.scr.fixRadiusDeg                  = .6;                   % Thaler, 2013 recommend radius : .6 or 1.5 degrees
