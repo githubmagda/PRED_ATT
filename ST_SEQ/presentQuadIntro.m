@@ -119,7 +119,7 @@ try
         if p.localizer && ~localizerDone
             blName = sprintf('LR%d',bl_i);
             numSeries = 1;
-            
+                     
         elseif p.useStaircase && ~staircaseDone
              blName = sprintf('STR%d',bl_i); 
              numSeries = 1;
@@ -146,6 +146,7 @@ try
                 end
                 
                 % TEXT
+                makeTexts(exper, p, 'Intro_LR', 0);
                 makeTexts(exper, p, sr.type, sr);
                 [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
                 
@@ -161,8 +162,12 @@ try
                 sr.pred.trackerByChunk  = trackerByChunk;
                 
                 if  p.useStaircase && ~staircaseDone
+                    
+                    makeTexts(exper, p, 'Intro_Staircase', 0);      % staircase
+                    makeTexts(exper, p, 'Intro_Staircase_ex', 0);     % questions
+                    
                     sr.type = 'STR';
-                    % specify series 
+                    % specify series
                     [ seriesDot] = makeDotSeries( p, p.dot.probStaircase); %% SUB-SCRIPT
                     sr.dot.series = seriesDot;
                      

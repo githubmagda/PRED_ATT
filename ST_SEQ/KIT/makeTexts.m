@@ -94,7 +94,7 @@ switch textName
         
         text2show = exper.texts.Intro_6 ;
                
-    case 'LR'
+    case 'Intro_LR'
         exper.texts.LR  = ['Now let’s collect some data!', '\n\n\'];
         exper.texts.LR  = [exper.texts.LR, 'This time, you just need to fixate the cross while gratings appear', '\n\n\n\n'];
         exper.texts.LR  = [exper.texts.LR, 'This sequence will take about 2 minutes. Don’t get distracted - fixate!', '\n\n\n\n'];
@@ -102,54 +102,54 @@ switch textName
         
         text2show            = exper.texts.LR ;
       
-% %      case 'LR'
-% %         text2show            = [];
+     case 'LR'
+        text2show            = [];
 % %         displayGrat          = 1;
 % %         numTimes             = 30;
             
-    case 'Intro_8'
-        exper.texts.Intro_8         = ['FANTASTIC!!', '\n\n'];       
-        exper.texts.Intro_8         = [exper.texts.Intro_8, 'Now let''s try something a bit more interesting!!', '\n\n'];
-        exper.texts.Intro_8         = [exper.texts.Intro_8, 'The green arm of the cross will point towards the grating you should monitor', '\n\n'];
-        exper.texts.Intro_8         = [exper.texts.Intro_8, 'If you see a dot on this grating, press the space bar ', '\n\n'];
-        exper.texts.Intro_8         = [exper.texts.Intro_8, 'But if the dot appears elsewhere, do nothing', '\n\n'];
-        exper.texts.Intro_8         = [exper.texts.Intro_8, 'The trick is to do this while ALWAYS fixating the cross!!', '\n\n\n\n'];
-        exper.texts.Intro_8         = [exper.texts.Intro_8, 'Here''s a quick example...', '\n\n'];
+    case 'Intro_Staircase'
+        exper.texts.Intro_Staircase         = ['FANTASTIC!!', '\n\n'];       
+        exper.texts.Intro_Staircase         = [exper.texts.Intro_Staircase, 'Now let''s try something a bit more interesting!!', '\n\n'];
+        exper.texts.Intro_Staircase         = [exper.texts.Intro_Staircase, 'The green arm of the cross will point towards the grating you should monitor', '\n\n'];
+        exper.texts.Intro_Staircase         = [exper.texts.Intro_Staircase, 'If you see a dot on this grating, press the space bar ', '\n\n'];
+        exper.texts.Intro_Staircase         = [exper.texts.Intro_Staircase, 'But if the dot appears elsewhere, do nothing', '\n\n'];
+        exper.texts.Intro_Staircase         = [exper.texts.Intro_Staircase, 'The trick is to do this while ALWAYS fixating the cross!!', '\n\n\n\n'];
+        exper.texts.Intro_Staircase         = [exper.texts.Intro_Staircase, 'Here''s a quick example...', '\n\n'];
         
-        text2show = exper.texts.Intro_8 ;
+        text2show = exper.texts.Intro_Staircase ;
         
-    case 'Intro_8a'
+    case 'Intro_Staircase_ex'
         
         text2show = [];
         displayGrat           = 1;
         dotSequence           = 1;
         numTimes              = 30;
         
-    case 'Intro_9'
+        case 'Intro_Question'
+        exper.texts.Intro_Question  = ['Once and while, the sequence will stop. You need to say which grating will rotate next', '\n\n\'];
+        exper.texts.Intro_Question  = [exper.texts.Intro_Question, 'Just guess! Don’t worry about being correct; this doesn’t affect your winnings', '\n\n\'];
+        exper.texts.Intro_Question  = [exper.texts.Intro_Question, 'it''s just a diagnostic component of the experiment', '\n\n\'];
+        exper.texts.Intro_Question  = [exper.texts.Intro_Question, 'Let''s give it a try now!!','\n\n\'];
+        
+        text2show             = exper.texts.Intro_Question ;
+        displayGrat           = 1;
+        dotSequence           = 1;
+        displayQuestion       = 1;
+        numTimes              = 30;  
+               
+    case 'sr'
 
-        exper.texts.Intro_9  = ['In the real experiment, there are fewer dots and they may be harder to see', '\n\n\'];
-        exper.texts.Intro_9  = [exper.texts.Intro_9, 'But... every time you spot a dot on the correct grating, you earn 50 cents!', '\n\n\'];
-        exper.texts.Intro_9  = [exper.texts.Intro_9, 'Yep! In this experiment, you can make up to €€€ extra !!!', '\n\n\\n\n\'];
-        exper.texts.Intro_9  = [exper.texts.Intro_9, 'But careful! If you click for a dot on the wrong grating, you lose 50 cents', '\n\n\'];
-        exper.texts.Intro_9  = [exper.texts.Intro_9, 'And if your eyes leave fixation, you will forfeit the sequence', '\n\n\'];
-        exper.texts.Intro_9  = [exper.texts.Intro_9, 'Give it a try!!!', '\n\n\'];
+        exper.texts.sr  = ['In the real experiment, there are fewer dots and they may be harder to see', '\n\n\'];
+        exper.texts.sr  = [exper.texts.sr, 'But... every time you spot a dot on the correct grating, you earn 50 cents!', '\n\n\'];
+        exper.texts.sr  = [exper.texts.sr, 'Yep! In this experiment, you can make up to €€€ extra !!!', '\n\n\\n\n\'];
+        exper.texts.sr  = [exper.texts.sr, 'But careful! If you click for a dot on the wrong grating, you lose 50 cents', '\n\n\'];
+        exper.texts.sr  = [exper.texts.sr, 'And if your eyes leave fixation, you will forfeit the sequence', '\n\n\'];
+        exper.texts.sr  = [exper.texts.sr, 'Give it a try!!!', '\n\n\'];
         
         text2show            = exper.texts.Intro_9 ;
         displayGrat          = 1;
         dotSequence           = 1;
         numTimes             = 60;
-        
-    case 'Intro_10'
-        exper.texts.Intro_10  = ['Once and while, the sequence will stop. You need to say which grating will rotate next', '\n\n\'];
-        exper.texts.Intro_10  = [exper.texts.Intro_10, 'Just guess! Don’t worry about being correct; this doesn’t affect your winnings', '\n\n\'];
-        exper.texts.Intro_10  = [exper.texts.Intro_10, 'it''s just a diagnostic component of the experiment', '\n\n\'];
-        exper.texts.Intro_10  = [exper.texts.Intro_10, 'Let''s give it a try now!!','\n\n\'];
-        
-        text2show             = exper.texts.Intro_9 ;
-        displayGrat           = 1;
-        dotSequence           = 1;
-        displayQuestion       = 1;
-        numTimes              = 30;   
         
 % %     case 'LR'
 % %         exper.texts.localizer       = ['In the next series, there are no dots', '\n\n'];
@@ -272,16 +272,16 @@ if displayGrat
                     select              = randi(20,1,1);
                     thisDotX            = p.dot.setX2( select);
                     thisDotY            = p.dot.setY2( select);
-                    dstRectDot          = OffsetRect([0,0, p.scr.lenDot, p.scr.lenDot], thisDotX-p.dot.radius, thisDotY-p.dot.radius);
+                    dstRectDot          = OffsetRect([0,0, p.dot.len, p.dot.len], thisDotX-p.dot.radius, thisDotY-p.dot.radius);
                 else
                     select              = randi(20,1,1);
                     thisDotX            = p.dot.setX4( select);
                     thisDotY            = p.dot.setY4( select);
-                    dstRectDot          = OffsetRect([0,0, p.scr.lenDot, p.scr.lenDot], thisDotX-p.dot.radius, thisDotY-p.dot.radius); 
+                    dstRectDot          = OffsetRect([0,0, p.dot.len, p.dot.len], thisDotX-p.dot.radius, thisDotY-p.dot.radius); 
                 end
-                dotTimes                = Shuffle([50:1: 100*( p.scr.stimDur-p.dot.dur)]);
+                dotTimes                = Shuffle([50:1: 1000*( p.scr.stimDur-p.dot.dur)]);
                 thisWaitTime            = dotTimes(1);   % change from default
-                dotOn                   =  thisWaittime;
+                dotOn                   =  thisWaitTime;
             end 
         end
         
