@@ -170,7 +170,8 @@ p.scr.fixCrossY             = p.scr.fixCrossX; % equal size
 p.scr.fixCrossDiagonal      = 1; % if you want fixation cross to be an 'x' rather than a '+'
 p.scr.fixCrossLineWidth     = 5; % range (0.125000 to 7.000000)
 p.scr.fixCrossColor         = p.scr.background;
-p.scr.fixCrossColorChange    = [255, 0, 0]; % for e.g. red warning signal, check DrawTexture commands
+p.scr.fixCrossColorRed      = [255, 0, 0]; % for e.g. red warning signal, check DrawTexture commands
+p.scr.fixCrossColorGreen    = [0, 0, 255]; % for e.g. red warning signal, check DrawTexture commands
 
 % length of 4 arms used for  cross
 ext         = 1.0; % stretches arms (to compensate for Gaussian dispersion)
@@ -195,6 +196,7 @@ p.scr.fixCoords4    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,ext,ext,extColor;
 w = p.scr.white; % 1.0; % p.scr.white; % off white?
 bEnd = p.scr.background;
 hilite = 1.0; 
+red = [255, 0, 0];
 % % % remove = 0.0;
 % % % alphO = 0.0; alphT = 1.0; % transparency O=opaque, T=transparent  - not currently set
 
@@ -206,6 +208,7 @@ p.scr.attn1 = [ w hilite w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd; w bE
 p.scr.attn2 = [ w bEnd w hilite w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphT alphT alphO]; % upper-right
 p.scr.attn3 = [ w bEnd w bEnd w hilite w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphO alphT alphT alphT]; % lower-right
 p.scr.attn4 = [ w bEnd w bEnd w bEnd w hilite; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphT alphO alphT];
+p.scr.atttWarning = [ red bEnd red bEnd red bEnd red bEnd; red bEnd red bEnd red bEnd red bEnd; red bEnd red bEnd red bEnd red bEnd];% alphT alphT alphO alphT];
 
 % % % p.scr.attn1 = [ b hilite b bEnd b bEnd b bEnd; b remove b b b b b b; b remove b b b b b b];% alphT alphO alphT alphT]; % upper-left
 % % % p.scr.attn2 = [ b bEnd b hilite b bEnd b bEnd; b bEnd b remove b b b b; b b b remove b b b b];% alphT alphT alphT alphO]; % upper-right

@@ -33,7 +33,7 @@ end
 
 % destination rects for gratings
 dstRectGrats        = p.scr.dstRectGrats;
-paramsGrats         = p.scr.paramsGrats;a
+paramsGrats         = p.scr.paramsGrats;
  
 dotOnset = Shuffle( repmat([ p.scr.flipInterval : p.scr.flipInterval : (p.scr.stimDur-p.scr.flipInterval)],1,10));
 % Screen('DrawTexture', p.scr.window, dotTex, [], [0 0 90 90], [], 1, 1, [255,255,255]); %, [], kPsychDontDoRotation, [1,15,1,1]');
@@ -92,7 +92,7 @@ else
 end
 
 % test
-% dstRectDot                  = OffsetRect([0,0, lenDot,lenDot], 200-p.scr.dotRadius, 200-p.scr.dotRadius);
+% dstRectDot                  = OffsetRect([0,0, p.dot.len,p.dot.len], 200-p.dot.radius, 200-p.dot.radius);
 % Screen('DrawTexture', p.scr.window, p.scr.dotTex, [], dstRectDot , [], [], [], [0,1,0,0.5]); % [1,0,0, thisProbe], [], kPsychDontDoRotation, [1,15,1,1]');
 % % end test
 
@@ -270,7 +270,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
                 sr.dot.posY(f) = thisDotY;
                 
                 % make dstRect and update params for dot and grats
-                dstRectDot                  = OffsetRect([0,0, lenDot, lenDot], thisDotX-p.scr.dotRadius, thisDotY-p.scr.dotRadius);
+                dstRectDot                  = OffsetRect([0,0, p.dot.len, p.dot.len], thisDotX-p.dot.radius, thisDotY-p.dot.radius);
                 sr.dot.dstRectDot(f,:)      = dstRectDot;
                 %         else % show in same place as last trial
                 %             sr.dot.dstRectDot(f,:) = sr.dot.dstRectDot(f-1,:);
@@ -291,7 +291,7 @@ for f = 1: p.series.stimPerSeries % number of times stimulus will be shown
             if loopCounter == 1
                 % predictive angle change
                 angleSet(thisPred) = mod(angleSet(thisPred) + angleIncrement, 180);
-                sr.angleSet(f) = angleSet;
+                sr.angleSet(f,:) = angleSet;
             end
             
             if sr.dot.series(f) == 1
@@ -588,9 +588,9 @@ if ~strcmp(sr.type, 'LR') % staircase or main
     else
         sr.dot.attnRate = 0;
     end
-    sr.dot.win         = sr.dot.attnNum *p.dotPayout;                       % correct responses
-    sr.dot.lose        = (sr.dot.UNAttnNum + sr.dot.FANum) *p.dotPayout;    % incorrect responses
-    sr.dot.Payount     = ( (sr.dot.win+sr.dot.lose) *p.dotPayout);
+    sr.dot.win         = sr.dot.attnNum *p.dot.payout;                       % correct responses
+    sr.dot.lose        = (sr.dot.UNAttnNum + sr.dot.FANum) *p.dot.payout;    % incorrect responses
+    sr.dot.Payount     = ( (sr.dot.win+sr.dot.lose) *p.dot.payout);
 end
 
 if strcmp( sr.type, 'sr')

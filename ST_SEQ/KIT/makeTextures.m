@@ -4,12 +4,12 @@ function[p] = makeTextures(p)
 % GAUSSIAN DOT
 dotGridRadius           = 3.0 * p.dot.radius;
 [ dotX, dotY ]          = meshgrid( -dotGridRadius:dotGridRadius, -dotGridRadius:dotGridRadius );    % CHECK - visual angle?
-p.scr.lenDot            = size(dotX,1);
+p.dot.len            = size(dotX,1);
 
 % create gaussian
 alph = exp(-( dotX.^2 / (2* (p.dot.radius) .^2) ) - ( dotY.^2 / (2* (p.dot.radius) .^2 )));% .* ( p.scr.intDot); % CHECK was dotX / Z sets dot size
 color = 1;
-gausFix = cat(3, color .* ones(p.scr.lenDot,p.scr.lenDot,3), alph);   % default: gaus = ones(101,101,1) creates white box
+gausFix = cat(3, color .* ones( p.dot.len, p.dot.len, 3), alph);   % default: gaus = ones(101,101,1) creates white box
 
 % make DOT TEXTURE & calculate onset times
 [dotTex] = Screen('MakeTexture', p.scr.window, gausFix);

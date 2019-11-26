@@ -111,7 +111,7 @@ switch textName
         exper.texts.Intro_8         = ['FANTASTIC!!', '\n\n'];       
         exper.texts.Intro_8         = [exper.texts.Intro_8, 'Now let''s try something a bit more interesting!!', '\n\n'];
         exper.texts.Intro_8         = [exper.texts.Intro_8, 'The green arm of the cross will point towards the grating you should monitor', '\n\n'];
-        exper.texts.Intro_8         = [exper.texts.Intro_8, 'If you see a dot on this grating, press the space bar ', '\n\n'];
+        exper.texts.Intro_8         = [exper.texts.Intro_8, 'If you see a dot on this grating, press XX ', '\n\n'];
         exper.texts.Intro_8         = [exper.texts.Intro_8, 'But if the dot appears elsewhere, do nothing', '\n\n'];
         exper.texts.Intro_8         = [exper.texts.Intro_8, 'The trick is to do this while ALWAYS fixating the cross!!', '\n\n\n\n'];
         exper.texts.Intro_8         = [exper.texts.Intro_8, 'Here''s a quick example...', '\n\n'];
@@ -122,8 +122,8 @@ switch textName
         
         text2show = [];
         displayGrat           = 1;
-        dotSequence           = 1;
-        numTimes              = 30;
+        dotSequence            = 1;
+        numTimes              = 10;
         
     case 'Intro_9'
 
@@ -160,19 +160,17 @@ switch textName
         
     case 'STR'
         exper.texts.staircase = ['In this experiment, you will need to montior for black dots', '\n\n'];
-        exper.texts.staircase = ['everytime you see a dot, press the space bar', '\n\n'];
-        exper.texts.staircase = [exper.texts.staircase,'Give it a try!!', '\n\n'];
-                exper.texts.staircase = [exper.texts.staircase,'In this series, there are many dots','\n\n'];
-
+        exper.texts.staircase = [exper.texts.staircase,'In this series, there are quite a few dots', '\n\n'];
+        exper.texts.staircase = [exper.texts.staircase,'Give it a try. In this series, there are quite a few dots', '\n\n'];
         exper.texts.staircase = [exper.texts.staircase,'Press XX as soon as you see a dot','\n\n'];
-        exper.texts.staircase= [exper.texts.staircase, 'Remember: Fixate the cross!!'];
+        exper.texts.staircase= [exper.texts.staircase, 'Remember: fixate the cross!!', '\n\n'];
         
         text2show = exper.texts.staircase;
         
     case 'intro'
         exper.texts.intro = ['In all of the next series, there will be dots. The red pointer shows the corner', '\n\n'];
         exper.texts.intro = [exper.texts.intro, 'you should attend', '\n\n\n\n'];
-        exper.texts.intro = [exper.texts.intro, 'But ALWAYS keep your gaze at center!'];
+        exper.texts.intro = [exper.texts.intro, 'But ALWAYS keep your gaze at center!', '\n'];
         
         text2show = exper.texts.intro;
         

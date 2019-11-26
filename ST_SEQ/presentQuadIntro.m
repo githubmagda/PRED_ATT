@@ -98,26 +98,27 @@ try
         p.blockNumber = p.blockNumber + 1; % main blocks plus staircase block
     end
     
-    makeTexts(exper, p, 'Intro_1', 0);  
-    makeTexts(exper, p, 'Intro_2', 0);
-    makeTexts(exper, p, 'Intro_3', 0);
-    makeTexts(exper, p, 'Intro_3a', 0);     % basic demo of gratings
-    makeTexts(exper, p, 'Intro_4', 0);      % then calibration
-    if p.useEyelink
+    makeTexts(exper, p, 'Intro_1', 0);      % hello
+    makeTexts(exper, p, 'Intro_2', 0);      % show cross - fixate 
+    makeTexts(exper, p, 'Intro_3', 0);      % explain gratings - fixate
+    makeTexts(exper, p, 'Intro_3a', 0);     % show cross + gratings
+    makeTexts(exper, p, 'Intro_4', 0);      % intro eyetracker 
+    if p.useEyelink                         % calibration
         eyetrackerRoutine(p);
     end
-    makeTexts(exper, p, 'Intro_5', 0);  
-    makeTexts(exper, p, 'Intro_6', 0);  
-    makeTexts(exper, p, 'Intro_7', 0);  
-    makeTexts(exper, p, 'Intro_8', 0); % then localizer
+    makeTexts(exper, p, 'Intro_4a', 0);     
+    makeTexts(exper, p, 'Intro_5', 0);      % intro policing
+    makeTexts(exper, p, 'Intro_5a', 0);     %  policing
+    makeTexts(exper, p, 'Intro_6', 0);      % reminder don't move
+    %makeTexts(exper, p, 'Intro_7', 0);      % intro localizer
     
+   
     % BLOCK LEVEL
     for bl_i = 1 : p.blockNumber
         
         if p.localizer && ~localizerDone
             blName = sprintf('LR%d',bl_i);
             numSeries = 1;
-            makeTexts(exper, p, 'Intro_7', 0);
             
         elseif p.useStaircase && ~staircaseDone
              blName = sprintf('STR%d',bl_i); 
@@ -143,6 +144,7 @@ try
                 if sr_i >= numSeries
                     localizerDone = 1;
                 end
+                
                 % TEXT
                 makeTexts(exper, p, sr.type, sr);
                 [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
