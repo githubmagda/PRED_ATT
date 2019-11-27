@@ -14,83 +14,84 @@ calibrationSuccess  = 0;
 
 switch textName
     
-    case 'Intro_1'
-        exper.texts.Intro_1     = ['Welcome to the BCBL!!', '\n\n'];
-        exper.texts.Intro_1     = [exper.texts.Intro_1, 'Let''s get going', '\n\n'];
-        text2show               = exper.texts.Intro_1;
+    case 'welcome'
+        exper.texts.welcome     = ['Welcome to the BCBL!!', '\n\n'];
+        exper.texts.welcome     = [exper.texts.welcome, 'Let''s get going', '\n\n'];
+        text2show               = exper.texts.welcome;
 %         thisImageName           = strcat('LOAD/goldStarGreyBack','.png');   % strcat('LOAD/star',num2str(imNum),'.jpg');
 %         graphic = 1;
         
-    case 'Intro_2'
-        exper.texts.Intro_2     = ['In this experiment you will need to keep your eyes ', '\n\n'];
-        exper.texts.Intro_2     = [exper.texts.Intro_2, 'on the center of the fixation cross (shown below)'];
+    case 'cross_Intro'
+        exper.texts.cross_Intro     = ['In this experiment you will need to keep your eyes ', '\n\n'];
+        exper.texts.cross_Intro     = [exper.texts.cross_Intro, 'on the center of the fixation cross (shown below)'];
         
         % Draw  fixation cross without cue 
         Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
         
-        text2show               = exper.texts.Intro_2;
+        text2show               = exper.texts.cross_Intro;
         textCenter              = 0;
         
-    case 'Intro_3'
-        exper.texts.Intro_3     = ['It''s not always easy to fixate the cross','\n\n'];
-        exper.texts.Intro_3     = [exper.texts.Intro_3,'because there will be many ''gratings'' on screen', '\n\n\n\n'];
-        exper.texts.Intro_3     = [exper.texts.Intro_3, 'As you''re about to see now...'];
+    case 'cross_Intro_2'
+        exper.texts.cross_Intro_2     = ['It''s not always easy to fixate the cross','\n\n'];
+        exper.texts.cross_Intro_2     = [exper.texts.cross_Intro_2,'because there will be many ''gratings'' on screen', '\n\n\n\n'];
+        exper.texts.cross_Intro_2     = [exper.texts.cross_Intro_2, 'As you''re about to see now...'];
 
-        text2show               = exper.texts.Intro_3;
+        text2show               = exper.texts.cross_Intro_2;
         textCenter = 0;
         
-    case 'Intro_3a'
+    case 'cross_Intro_ex'
         text2show = [];
         displayGrat             = 1;
         numTimes                = 15;
         
-    case 'Intro_4'
-        exper.texts.Intro_4  = ['Your gaze will be monitored using an eyetracker', '\n\n'];
-        exper.texts.Intro_4  = [exper.texts.Intro_4, 'Let’s calibrate it now!!', '\n\n\n\n'];
-        exper.texts.Intro_4  = [exper.texts.Intro_4, 'Just look steadily at the center of each dot that appears', '\n\n'];
-        exper.texts.Intro_4  = [exper.texts.Intro_4, 'Ready?'];
+    case 'calibration_Intro'
+        exper.texts.calibration_Intro  = ['Your gaze will be monitored using an eyetracker', '\n\n'];
+        exper.texts.calibration_Intro  = [exper.texts.calibration_Intro, 'Let’s calibrate it now!!', '\n\n\n\n'];
+        exper.texts.calibration_Intro  = [exper.texts.calibration_Intro, 'Just look steadily at the center of each dot that appears', '\n\n'];
+        exper.texts.calibration_Intro  = [exper.texts.calibration_Intro, 'Ready?'];
         
-        text2show            = exper.texts.Intro_4;
+        text2show            = exper.texts.calibration_Intro;
         
-    case 'Intro_4a' 
+    case 'calibration_result' 
         
-        if p.useEyelink
+          if p.useEyelink
             % %         if calibrationSuccess  % sent back from eyetracker?
             % %
-            % %             exper.texts.Intro_4a  = ['YBLABLA', '\n\n'];
-            % %             exper.texts.Intro_4a  = [exper.texts.Intro_4a, 'YBLABLA', '\n\n'];
-            % %             exper.texts.Intro_4a  = [exper.texts.Intro_4a, 'YBLABLA', '\n\n'];
-            % %             exper.texts.Intro_4a  = [exper.texts.Intro_4a, 'Ready?', '\n\n'];
+            % %             exper.texts.calibration_result  = ['YBLABLA', '\n\n'];
+            % %             exper.texts.calibration_result  = [exper.texts.calibration_result, 'YBLABLA', '\n\n'];
+            % %             exper.texts.calibration_result  = [exper.texts.calibration_result, 'YBLABLA', '\n\n'];
+            % %             exper.texts.calibration_result  = [exper.texts.calibration_result, 'Ready?', '\n\n'];
             % %
-            % %             text2show            = exper.texts.Intro_4a;
+            % %             text2show            = exper.texts.calibration_result;
             % %         end
         else
             %%%
         end
         text2show            = [];
     
-    case 'Intro_5'
-        exper.texts.Intro_5     = ['Now, the computer knows where you are looking!!', '\n\n\n\n'];
-        exper.texts.Intro_5     = [exper.texts.Intro_5, 'During the experiment, if you fail to fixate the cross', '\n\n'];
-        exper.texts.Intro_5     = [exper.texts.Intro_5, 'it will turn red', '\n\n'];
-        exper.texts.Intro_5     = [exper.texts.Intro_5, 'and you will hear a beep', '\n\n'];
-        exper.texts.Intro_5     = [exper.texts.Intro_5, 'When you fixate again, the cross will turn white. ', '\n\n\n\n'];
-        exper.texts.Intro_5     = [exper.texts.Intro_5, 'Give it a try!!!', '\n\n'];
+    case 'police_Intro'
+        exper.texts.police_Intro     = ['Now, the computer knows where you are looking!!', '\n\n\n\n'];
+        exper.texts.police_Intro     = [exper.texts.police_Intro, 'During the experiment, if you fail to fixate the cross', '\n\n'];
+        exper.texts.police_Intro     = [exper.texts.police_Intro, 'it will turn red', '\n\n'];
+        exper.texts.police_Intro     = [exper.texts.police_Intro, 'and you will hear a beep', '\n\n'];
+        exper.texts.police_Intro     = [exper.texts.police_Intro, 'When you fixate again, the cross will turn white. ', '\n\n\n\n'];
+        exper.texts.police_Intro     = [exper.texts.police_Intro, 'Give it a try!!!', '\n\n'];
          
-        text2show               = exper.texts.Intro_5;
+        text2show               = exper.texts.police_Intro;
         
-    case 'Intro_5a'
+    case 'police_Intro_ex'
+        
         text2show = [];
         displayGrat             = 1;
         police                  = 1;
         numTimes                = 30;
         
-    case 'Intro_6'
-        exper.texts.Intro_6  = ['If you make even small head or body movements', '\n\n'];
-        exper.texts.Intro_6  = [exper.texts.Intro_6, 'the eyetracker can lose track of your eyes', '\n\n'];
-        exper.texts.Intro_6  = [exper.texts.Intro_6, 'Then the cross will stay red even when you fixate', '\n\n'];
-        exper.texts.Intro_6  = [exper.texts.Intro_6, 'and we''ll have to recalibrate', '\n\n\n\n'];
-        exper.texts.Intro_6  = [exper.texts.Intro_6, 'The secret is to stay still: You make more money and save time!'];
+    case 'police_reminder'
+        exper.texts.police_reminder     = ['If you make even small head or body movements', '\n\n'];
+        exper.texts.police_reminder     = [exper.texts.police_reminder, 'the eyetracker can lose track of your eyes', '\n\n'];
+        exper.texts.police_reminder     = [exper.texts.police_reminder, 'Then the cross will stay red even when you fixate', '\n\n'];
+        exper.texts.Intro_6             = [exper.texts.police_reminder, 'and we''ll have to recalibrate', '\n\n\n\n'];
+        exper.texts.police_reminder     = [exper.texts.police_reminder, 'The secret is to stay still: You make more money and save time!'];
         
         text2show = exper.texts.Intro_6 ;
                
@@ -125,7 +126,7 @@ switch textName
         dotSequence           = 1;
         numTimes              = 30;
         
-        case 'Intro_Question'
+    case 'Intro_Question'
         exper.texts.Intro_Question  = ['Once and while, the sequence will stop. You need to say which grating will rotate next', '\n\n\'];
         exper.texts.Intro_Question  = [exper.texts.Intro_Question, 'Just guess! Don’t worry about being correct; this doesn’t affect your winnings', '\n\n\'];
         exper.texts.Intro_Question  = [exper.texts.Intro_Question, 'it''s just a diagnostic component of the experiment', '\n\n\'];
@@ -135,8 +136,8 @@ switch textName
         displayGrat           = 1;
         dotSequence           = 1;
         displayQuestion       = 1;
-        numTimes              = 30;  
-               
+        numTimes              = 30;
+        
     case 'sr'
 
         exper.texts.sr  = ['In the real experiment, there are fewer dots and they may be harder to see', '\n\n\'];

@@ -98,21 +98,26 @@ try
         p.blockNumber = p.blockNumber + 1; % main blocks plus staircase block
     end
     
-    makeTexts(exper, p, 'Intro_1', 0);      % hello
-    makeTexts(exper, p, 'Intro_2', 0);      % show cross - fixate 
-    makeTexts(exper, p, 'Intro_3', 0);      % explain gratings - fixate
-    makeTexts(exper, p, 'Intro_3a', 0);     % show cross + gratings
-    makeTexts(exper, p, 'Intro_4', 0);      % intro eyetracker 
-    if p.useEyelink                         % calibration
+    % intro
+    makeTexts(exper, p, 'welcome', 0);              % hello
+    
+    % fixation
+    makeTexts(exper, p, 'cross_Intro', 0);          % show cross - fixate 
+    makeTexts(exper, p, 'cross_Intro_2', 0);        % explain gratings - fixate
+    makeTexts(exper, p, 'cross_Intro_ex', 0);       % show cross + gratings
+    
+    % calibration
+    makeTexts(exper, p, 'calibration_Intro', 0);  	% intro eyetracker 
+    if p.useEyelink                                 % calibration
         eyetrackerRoutine(p);
     end
-    makeTexts(exper, p, 'Intro_4a', 0);     
-    makeTexts(exper, p, 'Intro_5', 0);      % intro policing
-    makeTexts(exper, p, 'Intro_5a', 0);     %  policing
-    makeTexts(exper, p, 'Intro_6', 0);      % reminder don't move
-    %makeTexts(exper, p, 'Intro_7', 0);      % intro localizer
+    makeTexts(exper, p, 'calibration_result', 0); 
     
-   
+    % police
+    makeTexts(exper, p, 'police_Intro', 0);      % intro policing
+    makeTexts(exper, p, 'police_Intro_ex', 0);     %  policing
+    makeTexts(exper, p, 'police_reminder', 0);      % reminder don't move
+  
     % BLOCK LEVEL
     for bl_i = 1 : p.blockNumber
         
