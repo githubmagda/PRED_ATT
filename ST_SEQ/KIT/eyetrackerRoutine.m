@@ -1,5 +1,5 @@
 
-function[p] =  eyetrackerRoutine(p, sr)
+function[ p, result] =  eyetrackerRoutine(p, sr)
 
 if nargin > 1
     % if a file is still open from previous recording, close it
@@ -16,14 +16,13 @@ if nargin > 1
     else
         calText = 'subsequent';
     end
-    p = EL_calibration(p, calText);   %% CHECK 'main' vs. 'practice' or 'staircase'
+    [p, result] = EL_calibration(p, calText);   %% CHECK 'main' vs. 'practice' or 'staircase'
     % Do last check of eye position (does NOT recalibrate)
-    EyelinkDoDriftCorrection(p.el);
+    %EyelinkDoDriftCorrection(p.el);
     p.statusRecord = EL_startRecord(sr.number);
     
 else % just a trial run
-    p = EL_calibration(p);
-    EyelinkDoDriftCorrection(p.el);
+    [p, result] = EL_calibration(p);
+    % EyelinkDoDriftCorrection(p.el);
 end
-
 end

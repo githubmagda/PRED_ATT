@@ -8,7 +8,7 @@ p.scr.black                 = BlackIndex(p.scr.number);
 p.scr.grey                  = p.scr.white ./2; %p.scr.grey = GreyIndex(p.scr.number);
 p.scr.background            = p.scr.grey;
 
-%%% SCREEN TEXT
+% SCREEN TEXT
 p.scr.textType              = 'Helvetica';
 p.scr.textColor             = p.scr.white;
 
@@ -19,9 +19,10 @@ p.seriesPerBlock            = 1;
 p.seriesPerEdf              = 1; % how often data is output to edf file; safer to output each series in case participant quits
 
 % SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries      = 60;
+p.series.stimPerSeries      = 120;
 p.series.seqBasicSet        = [1,2,3,4]; % get this seq from block{j}.seqSet
-p.series.chunkRpts          = 10;
+p.series.chunkRptsMin       = 4;
+p.series.chunkRptsMax       = 10;
 p.series.chunkLength        = 4;
 
 % MONITOR SPECS in mm/cm
@@ -70,13 +71,13 @@ p.scr.frameDur              = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 
 % TEXTURES GRATINGS (for QUADRANTS)
 % calculate grating radius - based on degrees or on quadrant size 
-p.scr.gratRadiusDeg         = 1.0;                              % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
+p.scr.gratRadiusDeg         = 1.0;   % 3 (2*r = 6 (Hoogenboom, 2006?) )                          % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
 p.scr.gratRadius            = p.scr.gratRadiusDeg .*p.scr.pixPerDeg; 
 %p.scr.gratGrid              = 2 *p.scr.gratRadius +1;           % scaffolding for grating
 %%%p.scr.angleSet           = [15,105];     % Possible angles for grating       
 
 % calculate distance of grating center from screen center based on degrees or quadrant size 
-p.scr.gratPosDeg            = 2; % p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
+p.scr.gratPosDeg            = 2; % 4 (Hoogenboom, 2006?) p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
 p.scr.gratPos               = p.scr.gratPosDeg .* p.scr.pixPerDeg; %  
 p.scr.gratPosSide           = round( sqrt( p.scr.gratPos^2 /2));
 p.scr.gratPosCenterX        = [ (p.scr.centerX-p.scr.gratPosSide), (p.scr.centerX+p.scr.gratPosSide), (p.scr.centerX+p.scr.gratPosSide), (p.scr.centerX-p.scr.gratPosSide)];
@@ -100,9 +101,6 @@ p.dot.probStaircase         = .2;           % must be less than 1/3 because resp
 % main series dot specs
 p.dot.prob                  = .05;           % DEFAULT .03 = percent of dots per series
 p.dot.valid                 = .80;
-%%p.dot.minDist             = 3;            % e.g. every X trial can be a dot                    
-%%p.dotZeroPadding          = 0;            % number of non-dot trials at beginning and end of series
-%%p.scr.postFlashDur          = round2flips(p, .05); % from start of trial
 p.dot.dur                   = round2flips(p, 0.10);
 p.dot.payout                = .5;
 p.dot.zeroPad               = 2; % minumum number of zeros between dots
@@ -171,7 +169,7 @@ p.scr.fixCrossDiagonal      = 1; % if you want fixation cross to be an 'x' rathe
 p.scr.fixCrossLineWidth     = 5; % range (0.125000 to 7.000000)
 p.scr.fixCrossColor         = p.scr.background;
 p.scr.fixCrossColorRed      = [255, 0, 0]; % for e.g. red warning signal, check DrawTexture commands
-p.scr.fixCrossColorGreen    = [0, 0, 255]; % for e.g. red warning signal, check DrawTexture commands
+p.scr.fixCrossColorYellow    = [0, 255, 255]; % for e.g. 
 
 % length of 4 arms used for  cross
 ext         = 1.0; % stretches arms (to compensate for Gaussian dispersion)
@@ -196,7 +194,6 @@ p.scr.fixCoords4    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,ext,ext,extColor;
 w = p.scr.white; % 1.0; % p.scr.white; % off white?
 bEnd = p.scr.background;
 hilite = 1.0; 
-red = [255, 0, 0];
 % % % remove = 0.0;
 % % % alphO = 0.0; alphT = 1.0; % transparency O=opaque, T=transparent  - not currently set
 
@@ -204,32 +201,32 @@ red = [255, 0, 0];
 % no highlight - basic cross
 p.scr.attn0 = [ w bEnd w bEnd w bEnd w bEnd ; w bEnd w bEnd w bEnd w bEnd ; w bEnd w bEnd w bEnd w bEnd]; % no highlighted arm
 % attentional cue highlight
-p.scr.attn1 = [ w hilite w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphO alphT alphT]; % upper-left
-p.scr.attn2 = [ w bEnd w hilite w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphT alphT alphO]; % upper-right
-p.scr.attn3 = [ w bEnd w bEnd w hilite w bEnd; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphO alphT alphT alphT]; % lower-right
-p.scr.attn4 = [ w bEnd w bEnd w bEnd w hilite; w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w bEnd];% alphT alphT alphO alphT];
-p.scr.atttWarning = [ red bEnd red bEnd red bEnd red bEnd; red bEnd red bEnd red bEnd red bEnd; red bEnd red bEnd red bEnd red bEnd];% alphT alphT alphO alphT];
+p.scr.attn1 = [ w bEnd w bEnd w bEnd w bEnd; w hilite w bEnd w bEnd w bEnd; w hilite w bEnd w bEnd w bEnd];% alphT alphO alphT alphT]; % upper-left
+p.scr.attn2 = [ w bEnd w bEnd w bEnd w bEnd; w bEnd w hilite w bEnd w bEnd; w bEnd w hilite w bEnd w bEnd];% alphT alphT alphT alphO]; % upper-right
+p.scr.attn3 = [ w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w hilite w bEnd; w bEnd w bEnd w hilite w bEnd];% alphO alphT alphT alphT]; % lower-right
+p.scr.attn4 = [ w bEnd w bEnd w bEnd w bEnd; w bEnd w bEnd w bEnd w hilite; w bEnd w bEnd w bEnd w hilite];% alphT alphT alphO alphT];
+p.scr.attnWarning = [ hilite bEnd hilite bEnd hilite bEnd hilite bEnd; 0 bEnd 0 bEnd 0 bEnd 0 bEnd; 0 bEnd 0 bEnd 0 bEnd 0 bEnd];% alphT alphT alphO alphT];
 
 % % % p.scr.attn1 = [ b hilite b bEnd b bEnd b bEnd; b remove b b b b b b; b remove b b b b b b];% alphT alphO alphT alphT]; % upper-left
 % % % p.scr.attn2 = [ b bEnd b hilite b bEnd b bEnd; b bEnd b remove b b b b; b b b remove b b b b];% alphT alphT alphT alphO]; % upper-right
 % % % p.scr.attn3 = [ b b b b b hilite b b; b b b b b remove b b; b b b b b remove b b];% alphO alphT alphT alphT]; % lower-right
 % % % p.scr.attn4 = [ b b b b b b b hilite; b b b b b b b remove; b b b b b b b remove];% alphT alphT alphO alphT];
 
-%%% TEST
-% Screen('DrawLines', p.scr.window, p.scr.fixCoords4, p.scr.fixCrossLineWidth, p.scr.attn4, [ p.scr.centerX, p.scr.centerY ], 2);
+% % TEST
+% Screen('DrawLines', p.scr.window, p.scr.fixCoords4, p.scr.fixCrossLineWidth, p.scr.attnWarning, [ p.scr.centerX, p.scr.centerY ], 2);
 % Screen('Flip', p.scr.window);
-% % % end test
+% % end test
 
 % TEXT TIMING using frameRate
 p.scr.waitText = round(p.waitText ./p.scr.flipInterval) * p.scr.flipInterval; %% time for instruction delay
 p.scr.waitBlank = round(p.waitBlank ./ p.scr.flipInterval) * p.scr.flipInterval; %% time for blank screen intervals
 
 % POLICING 
-p.preSeriesFixTime      = round2flips (p, 5.0); 
-p.scr.fixMonitorX       = p.scr.centerX; 
-p.scr.fixMonitorY       = p.scr.centerY;
-p.scr.fixMonitorAng     = 4.0;
-p.scr.fixMonitorRadius  = round( p.scr.fixMonitorAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
+p.preSeriesFixTime      = round2flips (p, 2.5); 
+p.scr.fixPoliceX       = p.scr.centerX; 
+p.scr.fixPoliceY       = p.scr.centerY;
+p.scr.fixPoliceAng     = 4.0;
+p.scr.fixPoliceRadius  = round( p.scr.fixPoliceAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
 p.scr.maxPoliceErrorTime = round2flips (p, 0.01); % secs adjusted to refresh rates
 % % p.maxMonitorErrorTimeMovie = round2flips (p, 0.005); % secs adjusted to refresh rates
  

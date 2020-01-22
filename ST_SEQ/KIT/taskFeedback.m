@@ -5,7 +5,7 @@ win         = sr.dot.attnNum;                       % correct responses
 lose        = (sr.dot.UNAttnNum + sr.dot.FANum);    % incorrect responses
 
 text=['You got ', num2str(sr.dot.attnNum), ' out of ', num2str(sr.dot.validNum),'\n\n'];
-text=[text,'You win ', num2str(win *p.dotPayout) ' euros ', '\n\n\n'];
+text=[text,'You win ', num2str(win *p.dot.payout) ' euros ', '\n\n\n'];
 
 if lose > 0
     if sr.dot.UNAttnNum > 1
@@ -16,8 +16,8 @@ if lose > 0
         text=[text,'And clicked ', num2str(sr.dot.FANum), ' times, when there was no dot!','\n\n'];
     end
 
-    text=[text,'So you lose ', num2str(lose *p.dotPayout), ' euros','\n\n\n'];
-    text=[text,'This series you made ', num2str((win-lose) *p.dotPayout), ' euros','\n\n\n\n\n'];
+    text=[text,'So you lose ', num2str(lose *p.dot.payout), ' euros','\n\n\n'];
+    text=[text,'This series you made ', num2str((win-lose) *p.dot.payout), ' euros','\n\n\n\n\n'];
 end
 
 if  sr.dot.attnRate >= .80 && lose < 5   

@@ -3,7 +3,7 @@ function[exper] = presentQuadIntro() % (could ask for inputs, e.g. debug, useEye
 % DESCRIPTION
 % Main script for Predictive Attention presentations - presents localizer.m, then stimDisplay.m (first staircase, then regularSeries)
  
-% Clear the workspace and the screen
+% Clear the workspace and the screen  
 sca;
 close all;  
 clearvars;          
@@ -17,9 +17,13 @@ WaitSecs(0.1);
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug             = 1; % run with smaller window in debug mode                       
 p.testEdf           = 1; % eyelink will make file with this same name each tst run
-p.localizer         = 0; 
+
+p.intro             = 1;
+p.localizer         = 1; 
 p.useStaircase      = 1;
 p.useEyetracker     = 0;
+p.useAudio          = 0;
+p.english           = 1; % default castellano
 
 % SET PATHS - PSYCHTOOLBOX AND KIT (subscripts)
 p.main_path = pwd; % get current path
@@ -35,16 +39,19 @@ PsychDefaultSetup(2);    % set to: (0) calls AssertOpenGL (1) also calls KbName(
 % KEYBOARD 
 KbName('UnifyKeyNames');
 % specify key names of interest in the study N.B. PsychDefaultSetup(1+) already sets up KbName('UnifyKeyNames') using PsychDefaultSetup(1 or 2);
-p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape')]; % CHECK
+p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape'), KbName('q')]; % CHECK
 % restrict the keys for keyboard input to the keys we want
 RestrictKeysForKbCheck([p.activeKeys]);
+
 p.quitKey = KbName('Escape');
 p.calibKey = KbName('c');  % Key during breaks to call calibration
 p.validKey = KbName('v');  % Key during breaks to call validation of calibration
 p.quitKey = KbName('q');   % Key during breaks to stop eyetracking
 
 % INITIATE AUDIO
-p = audioOpen(p);    %openAudioPort(p);  
+if p.useAudio
+    p = audioOpen(p);    % openAudioPort(p);
+end
 
 % GET EYELINK DETAILS
 [p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
@@ -109,29 +116,44 @@ try
     % calibration
     makeTexts(exper, p, 'calibration_Intro', 0);  	% intro eyetracker 
     if p.useEyelink                                 % calibration
-        eyetrackerRoutine(p);
-    end
-    makeTexts(exper, p, 'calibration_result', 0); 
+        [p, result] = eyetrackerRoutine(p);
+        makeTexts(exper, p, 'calibration_result', 0, result);
+    end 
     
     % police
     makeTexts(exper, p, 'police_Intro', 0);      % intro policing
     makeTexts(exper, p, 'police_Intro_ex', 0);     %  policing
     makeTexts(exper, p, 'police_reminder', 0);      % reminder don't move
-  
+    
+%     if ~p.localizer % practice version of localizer for Introduction
+%         makeTexts(exper, p, 'LR_Intro', 0);
+%         makeTexts(exper, p, 'LR_Intro_ex', 0);
+%     end
+    
+%     % staircase
+%     if ~ p.staircase
+%         makeTexts(exper, p, 'staircase_Intro', 0);
+%         makeTexts(exper, p, 'staircase_Intro_ex', 0);
+%     end
+%     
+%     % question
+%     makeTexts(exper, p, 'question_Intro', 0);
+%     makeTexts(exper, p, 'question_Intro_ex', 0);
+    
+    
     % BLOCK LEVEL
     for bl_i = 1 : p.blockNumber
         
-        if p.localizer && ~localizerDone
+        if p.localizer && ~localizerDone            
             blName = sprintf('LR%d',bl_i);
             numSeries = 1;
-                     
+            
         elseif p.useStaircase && ~staircaseDone
              blName = sprintf('STR%d',bl_i); 
              numSeries = 1;
              
         else blName = sprintf('sr%d',bl_i); 
-            numSeries = p.seriesNumber;
-            
+            numSeries = p.seriesNumber;          
         end
         
         % SERIES LEVEL
@@ -142,7 +164,7 @@ try
             sr.number = sr_i;
             
             if p.localizer && ~localizerDone
-                
+                            
                 % make series specifying quadrants for localizer
                 sr.type = 'LR';
                 sr.series = pseudoRandListNoRpt(p); %% SUB-SCRIPT               
@@ -150,42 +172,49 @@ try
                     localizerDone = 1;
                 end
                 
-                % TEXT
-                makeTexts(exper, p, 'Intro_LR', 0);
+                % TEXTS
+                if sr_i ==1  % localizer intro - show only once
+                    makeTexts(exper, p, 'LR_Intro', 0);  
+                    makeTexts(exper, p, 'LR_Intro_ex', 0);
+                end
                 makeTexts(exper, p, sr.type, sr);
-                [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
                 
+                quitNow = 0;
+                [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT               
                 if quitNow
                     break; 
                 end
                 
             else % stairCase or main
-                                
-                [seriesPred, trackerByElement, trackerByChunk] = makePredSeriesReplaceNoRptEven(p); %% SUB-SCRIPT
+                [seriesPred, trackerByElement, trackerByChunk] = makePredSeries(p); %% SUB-SCRIPT              
+                %%[seriesPred, trackerByElement, trackerByChunk] = makePredSeriesReplaceNoRptEven(p); %% SUB-SCRIPT
                 sr.pred.series = seriesPred;
                 sr.pred.trackerByElement  = trackerByElement;
                 sr.pred.trackerByChunk  = trackerByChunk;
                 
                 if  p.useStaircase && ~staircaseDone
-                    
-                    makeTexts(exper, p, 'Intro_Staircase', 0);      % staircase
-                    makeTexts(exper, p, 'Intro_Staircase_ex', 0);     % questions
-                    
+                      
                     sr.type = 'STR';
                     % specify series
                     [ seriesDot] = makeDotSeries( p, p.dot.probStaircase); %% SUB-SCRIPT
                     sr.dot.series = seriesDot;
-                     
-                    if sr_i >= numSeries
-                        staircaseDone = 1;
+                    
+                    if sr_i ==1 % show intro and example only first time
+                        makeTexts(exper, p, 'staircase_Intro', 0);
+                        makeTexts(exper, p, 'staircase_Intro_ex', 0);
+                        makeTexts(exper, p, 'staircase_Intro2', 0);
+                        makeTexts(exper, p, 'staircase_Intro2_ex', 0);
+                        makeTexts(exper, p, 'question_Intro', 0);
+                        makeTexts(exper, p, 'question_Intro_ex', 0);    
                     end
                     
-                    % TEXTS
-                    makeTexts(exper, p, sr.type, sr);   
-                    [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT
+                    makeTexts(exper, p, sr.type, sr);      % staircase     
+                    [quitNow] = doKbCheck( p, 2);  %% SUB-SCRIPT                  
                     if quitNow
-                    break; end
-                
+                    break; end    
+                    if sr_i >= numSeries
+                        staircaseDone = 1;
+                    end             
                 else
                     sr.type = 'sr';
                     [seriesDot] = makeDotSeries(p, p.dot.prob); % SUB-SCRIPT

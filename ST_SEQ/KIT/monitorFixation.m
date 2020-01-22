@@ -30,8 +30,8 @@ while timePassed < thisWaitTime
         currentY = currentSample.gy(p.policeEye);                       % gy= gaze position for Y; same as above
         
         % test values to check if gaze is within policed fixation area
-        if (currentX < (p.fixPoliceX + p.fixPoliceRadius)) &&  (currentX > (p.fixPoliceX - p.fixPoliceRadius)) ... % it is within X boundaries
-                && (currentY < (p.fixPoliceY + p.fixPoliceRadius)) && (currentY > (p.fixPoliceY - p.fixPoliceRadius)) % it is within Y boundaries
+        if (currentX < (p.scr.fixPoliceX + p.scr.fixPoliceRadius)) &&  (currentX > (p.scr.fixPoliceX - p.scr.fixPoliceRadius)) ... % it is within X boundaries
+                && (currentY < (p.scr.fixPoliceY + p.scr.fixPoliceRadius)) && (currentY > (p.scr.fixPoliceY - p.scr.fixPoliceRadius)) % it is within Y boundaries
             
             if thisFixTime == 0                                         % if fixation counter has not yet started
                 thisErrorTime = 0;                                      % reset
@@ -56,17 +56,16 @@ while timePassed < thisWaitTime
                 thisErrorTime = GetSecs - errorStartTime;
                 totalErrorTime = totalErrorTime + thisErrorTime;
                 
-                if thisErrorTime >= p.maxPoliceErrorTime                % give participant a warning - duration = 'p.beepDur'set in SEQ_ParamsScr.m
+                if thisErrorTime >= p.scr.maxPoliceErrorTime                % give participant a warning - duration = 'p.beepDur'set in SEQ_ParamsScr.m
                     % check quad
                     [samples, events, drained] = Eyelink('command', 'GetQueuedData');
                     break;
-                end 
-                
+                end                
             end            
         end % fixation or error updates
         timePassed = GetSecs - startTime;        
     end % sample available / unavailable loop    
 end %
 
-%% display(num2str(totalErrorTime), 'totalErrorTime')
+% display(num2str(totalErrorTime), 'totalErrorTime')
 end

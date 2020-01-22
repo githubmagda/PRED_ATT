@@ -1,65 +1,106 @@
-function [p, sr] = makePredSeries(p, sr)
-% creates a stimulus series of length, Params.series.lengthInStim, based on number of sequence repeats, Params.series.seqRepeats, 
-%  based on a set of sequences in seqSet 
-% Params.series.seqBasicSet with random strings inserted every 
+function[result, trackerByElement, trackerByChunk] = makePredSeries(p)
+% makes a string including ordered/random chunks from a set of nElements 
 
-%% create series
-thisSeries = []; % intialize series to be built
+% rename variables for ease of use within script (see test_makePredSeriesReplaceNoRptEven.m)
+elements        = p.series.seqBasicSet; % numbers to select from  % e.g. = 4
+chunkLength     = p.series.chunkLength; % e.g. = 4
+nRpt            = randi( [ p.series.chunkRptsMin, p.series.chunkRptsMax], 1,1) ; % how many times chunk will be repeated % e.g. = 5
+numStim         = p.series.stimPerSeries; % e.g. = 120
 
-% average random chunk size & pseudo-random jitter (average random chunk is
-% set by randomStimTotal
-p.series.randomStimTotalEl = p.series.chunkSize; %% use one chunks-worth for random elements
-p.series.randomStimChunkNum = p.series.chunksPerSeries - 1;
-p.series.randomChunkSize = p.series.randomStimTotalEl ./ p.series.seqRepeats;
+% get first elements
+result = randperm(length(elements),2);
+avoidEl = [result(end-1),result(end)]; % avoid repeating last 2 elements in substrings
 
-% initialize using max possible randomChunkSize
-%trial.series.randChunkList = zeros(Params.series.chunksPerSeries-1, Params.series.randomStimChunkNum * (Params.series.randomChunkSize + Params.series.randomChunkJitter +1));
-sr.seqUsed = zeros(p.series.chunksPerSeries, size(sr.seqSet,2));
+% trackers - keeps track of # of elements / chunks in ordered sections
+trackerByElement = zeros(1,numStim);
+trackerByChunk = zeros(1,numStim);
 
-for ch_i = 1 : p.series.chunksPerSeries
+% LOOP - build series from chunks inserting random chunk (size 1-2 chunks) between nRpts of ordered chunks;
+while length(result) < numStim
+       
+    % start with random string of random length e.g. between 1 element to 2*chunk lengths
+    lenRandomBit = randi( length( elements)*2, 1, 1 );
+    randomBit = makeChunk( elements, lenRandomBit, avoidEl, 'random');  % makeChunk([elements, lengthChunk, );
+    result = [result, randomBit];
     
-    thisSeq = sr.seqSet( ch_i,:);
-    sr.seqUsed( ch_i,: ) = thisSeq; % save seq details to block or series level (basic sequences used to make series)
-    nextSeq = sr.seqSet( ch_i+1, : ); %used to ensure final random element insertion does not use first element of following chunk
-    repSeq = repmat( thisSeq,1, p.series.seqRepeats ); % repeat basic seq 
-    thisSeries = cat( 2,thisSeries,repSeq ); % build up series
+    % next make ordered chunk and repeat nRpt times to create section
+    avoidEl = [result(end-1),result(end)]; % avoid repeating last 2 elements in substrings
+    nextChunk = makeChunk( elements, chunkLength, avoidEl, 'order');
     
-    % prepare to add random chunks to n-1 chunks, adjusted by selection from randomChunkJitterSet    
-    if ch_i <= (p.series.randomStimChunkNum)
-        % set of jitters to be added to random chunks across series mean=0
-        ser.randomChunkJitterSet = Shuffle( - p.series.randomChunkJitter : p.series.randomChunkJitter);
-        randomJitter = ser.randomChunkJitterSet(ch_i);
-        numRandEl = p.series.randomChunkSize + randomJitter;  % to be subtracted from previous string in series
+    nextSection = repmat( nextChunk, 1, nRpt );
+    % clip random # elements from last chunk
+    nextSection = nextSection ( 1: (length(nextSection) - ( randi( p.series.chunkLength,1,1))));
+    
+    % tracker loop to update ordered section by #elements
+    lenResult = length(result); % just easier to read!    
+    trackerByElement( ( lenResult + 1) : ( lenResult+( length( nextSection)))) = 1: length( nextSection);
+    %trackerByElement( ( lenResult + 1) : ( lenResult+( nRpt*chunkLength))) = 1:( nRpt*chunkLength);
+    
+    
+    % tracker loop to update ordered section by #chunks
+    counter = 1;
+    for i = 1: nRpt
+        chunkPos = lenResult + ( chunkLength*counter);
+        trackerByChunk( chunkPos) = counter;
+        counter = counter + 1;
+    end % tracker loop to update tracker #chunks
+    
+    % add ORDERED chunk
+    result = [result, nextSection];
+end
+
+% trim series
+result = result( 1:numStim );           
+trackerByElement = trackerByElement( 1:numStim );
+trackerByChunk = trackerByChunk(  1:numStim );
+end
+
+function [thisChunk] = makeChunk(elements, len, avoidEl, type)
+% make chunk: start off with one random number,  add till length='len'
+
+% first part of chunk should not be same as last two elements of 'result' (avoidEl)  
+selectFrom = elements;
+selectFrom( avoidEl) = [];   
+selectFrom = Shuffle( selectFrom);
+thisChunk = selectFrom(1:2);       % starting 2 elements
+elementCount = length(thisChunk);
+
+firstEl = thisChunk( 1, 1); % store to ensure isn't same as last element in chunk for ordered sections
+
+while elementCount < len
+    
+    avoidEl = thisChunk( end-1:end);
+    selectFrom = elements;
+    selectFrom( avoidEl) = [];
+    selectFrom = Shuffle( selectFrom);
+    nextElement = selectFrom(1);
+    
+    testChunk = [thisChunk, nextElement];
+    lenTest = length(testChunk); % easier to name
+    
+    % ensure first and last element of chunk are not the same
+    if strcmp( type, 'order') 
         
-        thisSeries = thisSeries(1 : ((length(thisSeries) - numRandEl)));
-        
-        % create random elements ensuring no repetitions
-        randChunk = []; %initialize for randChunk
-        % create set from which to draw random elements 
-        tempSet = thisSeries(end-3:end-1); % exclude last element in series to avoid repetition in selection of first random element
-        lengthV = 1; %initialize count of random elements
-        
-        while length(randChunk) < (numRandEl-1) % last element checked separately to not repeat; % will not add random segment to final sequences
+        % final test for possible repetitions of multiple elements e.g. 1-2-1-2 or 1-3-2-1-3-2
+        if lenTest > 3 && mod( lenTest,2) == 0 % testChunk has even number of elements;
             
-            pos = randi(length(tempSet));
-            selectEl = tempSet(pos);
-            randChunk = cat(2,randChunk, selectEl);
+            if strcmp( num2str( testChunk( 1 : lenTest/2)), num2str( testChunk( lenTest/2+1 : lenTest)))
+                %testElement = testChunk( 1,end);
+                selectFrom( selectFrom == nextElement) = []; % remove problematic last element from set
+                nextElement = selectFrom(1); % change nextElement
+            end 
             
-            % create next element pool without repetition
-            tempSet = p.series.seqBasicSet;
-            tempSet = tempSet(tempSet ~= selectEl);
         end
         
-        nextEl = nextSeq(1,1);
-        tempSet = tempSet(tempSet ~= nextEl);
-        pos = randi(length(tempSet));
-        selectEl = tempSet(pos);
-        randChunk = cat(2,randChunk, selectEl);
+        % ensure first and last elements of ordered chunk are not the same
+        % (otherwise will result in repetitions)
+        if ( lenTest - len) == 0 && ( firstEl == nextElement) % last element in ordered chunk and same first/last elements
+            selectFrom( selectFrom == firstEl) = [];
+            nextElement = selectFrom( 1); % change nextElement
+        end
         
-        % add random chunk to end of series 
-        thisSeries  = cat(2,thisSeries,randChunk); % add randChunk to series
-    end         
+    end
+    thisChunk = [thisChunk, nextElement];
+    elementCount = elementCount +1;
 end
-sr.predSeries = thisSeries;
-sr.seqUsed
 end

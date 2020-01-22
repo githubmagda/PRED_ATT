@@ -4,7 +4,7 @@ function[p] = makeTextures(p)
 % GAUSSIAN DOT
 dotGridRadius           = 3.0 * p.dot.radius;
 [ dotX, dotY ]          = meshgrid( -dotGridRadius:dotGridRadius, -dotGridRadius:dotGridRadius );    % CHECK - visual angle?
-p.dot.len            = size(dotX,1);
+p.dot.len               = size(dotX,1);
 
 % create gaussian
 alph = exp(-( dotX.^2 / (2* (p.dot.radius) .^2) ) - ( dotY.^2 / (2* (p.dot.radius) .^2 )));% .* ( p.scr.intDot); % CHECK was dotX / Z sets dot size
@@ -20,18 +20,18 @@ p.scr.dotTex = dotTex;
 % SQUARE WAVE GRATING
 p.scr.backgroundColorOffsetGrat   = [0,0,0,1];
 p.scr.phaseGrat                   = 0;
-p.scr.freqGrat                    = 3.2 / p.scr.pixPerDeg;      % Landau & Fries, 2015 3.2    % see paper by Ayelet, Fries 2015 : 3.2 20; Martin Vinck - .11?
+p.scr.freqGrat                    = 3.2 / p.scr.pixPerDeg;      % Landau & Fries, 2015 3.2    % see paper by Ayelet, Fries 2015 : 3.2 20; Martin Vinck - .11; Hoogenboom, 2006 3 cycles per degree)?
 p.scr.contrastGrat                = 1.0;
 
 % basic grating size
-virtualSizeGrat             = p.scr.gratRadius *2;
+virtualSizeGrat                 = p.scr.gratRadius *2;
 
 % MAKE TEXTURES
-[sineTex, sineTexRect]  = CreateProceduralSquareWaveGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat,...
+[sineTex, sineTexRect]          = CreateProceduralSquareWaveGrating(p.scr.window, virtualSizeGrat, virtualSizeGrat,...
     p.scr.backgroundColorOffsetGrat, p.scr.gratRadius, 1);
 % save
-p.scr.sineTex          = sineTex;
-p.scr.sineTexRect      = sineTexRect;
+p.scr.sineTex                   = sineTex;
+p.scr.sineTexRect               = sineTexRect;
 
 % DEFINE GRATING LOCATIONS
 % CALCULATE GRATING QUAD POSITIONS (centered on point p.scr.gratPos from center)

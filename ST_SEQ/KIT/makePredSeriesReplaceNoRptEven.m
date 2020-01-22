@@ -15,7 +15,6 @@ avoidEl = [result(end-1),result(end)]; % avoid repeating last 2 elements in subs
 trackerByElement = zeros(1,numStim);
 trackerByChunk = zeros(1,numStim);
 
-
 % LOOP - build series from chunks inserting random chunk (size 1-2 chunks) between nRpts of ordered chunks;
 while length(result) < numStim
        

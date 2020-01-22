@@ -1,8 +1,9 @@
-function[sr] = questionRoutine(p, sr, f, useText, angleSet)
+function[sr] = questionRoutine(p, sr, f, useText)
 
 if useText    
     textQuestion = [ 'Make a guess:' , '\n\n'];
-    textQuestion = [ textQuestion, 'What will the next screen look like?' , '\n'];
+    textQuestion = [ textQuestion, 'Which grating will change next?' , '\n'];
+    
     sr.question.textPre = textQuestion;
     moveForward = [ 'Press the spacebar TWICE when you are ready to continue...'];
     
@@ -19,7 +20,7 @@ end
 % possible next-screens
 rotationSet = 0:3;
 
-% % % grating angles
+% grating angles
 % % angleSet = [30, 60, 90, 120];
 
 % initialize
@@ -28,9 +29,10 @@ rot_i = 0; % index for rotation
 
 % stop to signal upcoming question
 WaitSecs(0.7);
+counter =0;
 
 while ~found
-    
+    counter = counter +1;
     circleTime = GetSecs;
     
     KbQueueCreate();
@@ -39,13 +41,12 @@ while ~found
     % Draw  fixation cross without cue and Gratings
     Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
 
-    if test
-        angleSet = 
+    if useText
         Screen('DrawTextures', p.scr.window, p.scr.sineTex, p.scr.sineTexRect, p.scr.dstRectGrats, sr.angleSet, [], 0, ...
-            [0,0,0,1], [], [], paramsGrats);
+            [0,0,0,1], [], [], p.scr.paramsGrats);
     else
         Screen('DrawTextures', p.scr.window, p.scr.sineTex, p.scr.sineTexRect, p.scr.dstRectGrats, sr.angleSet(f), [], 0, ...
-            [0,0,0,1], [], [], paramsGrats);
+            [0,0,0,1], [], [], p.scr.paramsGrats);
     end
     
     % which quad should circle appear in - adjust thisRect
@@ -53,13 +54,9 @@ while ~found
     thisRect = p.scr.dstRectGrats(:,thisQuad)';
     Screen('FrameOval', p.scr.window, [255,0,0], thisRect, 1.8,[]);
     
-    Screen('Flip', p.scr.window);
-    WaitSecs(0.3)   
-    
-    if useText
+    if useText && counter ==1
         textInstructions = [ 'Use spacebar to move circle around; Use RETURN to select'];
-        sr.question.textInstructions = textInstructions;
-        
+        sr.question.textInstructions = textInstructions;        
         Screen('TextSize',p.scr.window, p.scr.textSize);
         DrawFormattedText(p.scr.window, textInstructions, 'center', p.scr.basicSquare - 35, p.scr.textColor);
     end
@@ -68,24 +65,28 @@ while ~found
     WaitSecs(0.3)  
     
     [event, ~] = KbEventGet( [], 0.001); % CHECK how to suppress output ([device], [wait time])
+    
     if  ~isempty(event) && event.Pressed == 1 && found == 0 % there was a keyPress and this is the downPress
         
         if strcmp( KbName(event.Keycode), 'Return')
-            
-            sr.question.responseQuad(f) = thisQuad;
-            sr.question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
-            
-            if sr.question.responseCorrect(f) == 1
-                display('Correct');
-            else
-                display('Not correct, Should be:');
-                sr.pred.series(f-(p.series.chunkLength-1))
-            end
-            
-            sr.question.RT(f) = event.Time - circleTime; % minus stim onset
-            sr.question.chunkNum(f) = sr.pred.trackerByChunk(f);
-            sr.question.elementNum(f) = sr.pred.trackerByElement (f);
+             
             found = 1; % get out of loop
+            if ~useText
+                sr.question.responseQuad(f) = thisQuad;
+                sr.question.responseCorrect(f) = ( thisQuad == sr.pred.series(f-(p.series.chunkLength-1)) );
+                
+                if sr.question.responseCorrect(f) == 1
+                    display('Correct');
+                else
+                    display('Not correct, Should be:');
+                    sr.pred.series(f-(p.series.chunkLength-1))
+                end
+                
+                sr.question.RT(f) = event.Time - circleTime; % minus stim onset
+                sr.question.chunkNum(f) = sr.pred.trackerByChunk(f);
+                sr.question.elementNum(f) = sr.pred.trackerByElement (f);
+                
+            end
             
         elseif strcmp( KbName(event.Keycode), 'space')
             rot_i = rot_i+1;
@@ -95,8 +96,8 @@ while ~found
         KbEventFlush(); % nflushed = KbEventFlush([deviceIndex]) %%CHECK
         KbQueueFlush(); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
     end
-    
-    if useText
+end    
+if useText
     % thanks screen
     textQuestion2 = [ 'Thanks for your guess!' , '\n\n'];
     sr.question.textPost = textQuestion2;
@@ -105,9 +106,10 @@ while ~found
     DrawFormattedText(p.scr.window, moveForward, 'center', p.scr.basicSquare - 100, p.scr.textColor);
     Screen('Flip', p.scr.window);
     
-    KbPressWait; KbPressWait;
-    end
+    doKbCheck( p, 2)
+    %KbPressWait; KbPressWait;
 end
+
 end % question routine
 
 

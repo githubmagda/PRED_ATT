@@ -3,10 +3,10 @@ function[quitNow] = doKbCheck(p, numPress)
 quitNow = 0;
 
 for i = 1: numPress
+   
+    [~, keyCode, ~] = KbPressWait();  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  % 
     
-    [~, keyCode, ~] = KbPressWait();
-    
-    if keyCode == p.quitKey
+    if find(keyCode, 1) == p.quitKey
         quitNow = 1;
         return;
     end    

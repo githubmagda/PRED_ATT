@@ -1,4 +1,4 @@
-function[p, sr] = stimDisplayProc(p, sr)
+function[p, sr] = stimDisplayProcOld(p, sr)
 
 % This script displays stimulus sequence for 'type', e.g. localizer, or main
 % experiment; localizer flashes grid in 1 of 4 quadrrants; the staircase determines 75% detection based on luminance? of the attentional dot;
@@ -16,7 +16,7 @@ sineTexRect     = p.scr.sineTexRect;
 % being the same across quads
 if ~strcmp(sr.type, 'LR')
     angleSet                  = Shuffle([15, 30, 45, 60] +7);% Shuffle([7.5, 15, 22.5, 30]); %Shuffle([3.5, 7, 10.5, 15]);  %= datasample( 1:length( angleSet), 4, 'Replace', false);
-    angleIncrement            = 20; % e.g. 60 degrees of predictive degrees-jump
+    angleIncrement            = 20; % degrees of predictive degrees-jump
 else
     angleSetLR                = 3:3:180;
     rptX                      = ceil( p.series.stimPerSeries ./ length(angleSetLR));
@@ -77,6 +77,46 @@ if ~strcmp(sr.type, 'LR') %     staircase or main
             fixCoords = p.scr.fixCoords4;
     end
 end
+% END STAIRCASE & MAIN
+
+% DRAW PRE-SERIES FIXATION GUASSIAN w or w/out ATTENTION CUE
+if strcmp(sr.type, 'LR')
+    
+    % Draw  fixation cross without cue : dark cross two nested white gaussians
+    Screen('DrawLines', p.scr.window, p.scr.fixCoords0, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+    %     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, paramsGauss');
+else
+    % Draw cue fixation cross with attentional pointer 'attn' (set above)
+    Screen('DrawLines', p.scr.window, fixCoords, p.scr.fixCrossLineWidth, attn, [ p.scr.centerX, p.scr.centerY ], 2);
+    %     Screen('DrawTextures', p.scr.window, gaussTex, gaussTexRect, [dstRectFix;dstRectFixInner]', [], [], [], [], [], kPsychDontDoRotation, [contrastFix, scFix, aspectRatio, 1; contrastFixInner, scFixInner, aspectRatio, 1]');
+end
+
+% test
+% dstRectDot                  = OffsetRect([0,0, p.dot.len,p.dot.len], 200-p.dot.radius, 200-p.dot.radius);
+% Screen('DrawTexture', p.scr.window, p.scr.dotTex, [], dstRectDot , [], [], [], [0,1,0,0.5]); % [1,0,0, thisProbe], [], kPsychDontDoRotation, [1,15,1,1]');
+% % end test
+
+Screen('DrawingFinished', p.scr.window);
+
+% FLIP
+[vbl] = Screen('Flip', p.scr.window, 0);
+thisWaitTime = p.preSeriesFixTime - (.9 *p.scr.flipInterval);
+
+% END DRAW PRE-SERIES FIXATION GUASSIAN
+
+% SEND MESSAGE to EYETRACKER .edf file
+if p.useEyelink
+    messageText = strcat( sr.type, '_BL_', num2str(bl.number), '_SR_', num2str(sr.number), '_PRE-SERIES FIXATION');
+    Eyelink( 'Message', messageText);
+end
+
+% START POLICING FIXATION
+if p.useEyelink == 1
+    monitorFixation( p, sr, thisWaitTime);
+else
+    WaitSecs( thisWaitTime); % cue w/without attentional cross
+end
+% END POLICING FIXATION
 
 % DISPLAY SEQUENCE
 % initialize timing and response vectors
@@ -539,7 +579,6 @@ if strcmp(sr.type, 'STR') % staircase
 end
 
 if ~strcmp(sr.type, 'LR') % staircase or main
-    
     % CALCULATE Attn/UNAtnn clicks, misses, FAs for report
     sr.dot.totalNum     = numel( sr.dot.series( sr.dot.series ==1));
     sr.dot.validNum     = numel( sr.dot.valid(  sr.dot.valid ==1));
