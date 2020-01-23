@@ -1,4 +1,3 @@
-
 function [p] = openWindowKit(p)
 % Prep visual dispay by opening window
 

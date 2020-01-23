@@ -6,9 +6,9 @@ function[exper] = presentQuadIntro() % (could ask for inputs, e.g. debug, useEye
 % Clear the workspace and the screen
 sca;
 close all;
-clearvars;
 
 rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTANT
+p.randstate = rng; % allows for recreation of sequence
 
 % Force GetSecs and WaitSecs into memory to avoid latency later on:
 GetSecs;
@@ -16,6 +16,8 @@ WaitSecs(0.1);
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug             = 1; % run with smaller window in debug mode
+% Note if running in debug mode, this is a helpful way to run: eval('presentQuadIntro','clear screen;error(''error in presentQuadIntro'')')
+
 p.testEdf           = 1; % eyelink will make file with this same name each tst run
 
 p.intro             = 1;
