@@ -18,8 +18,7 @@ while timePassed < thisWaitTime
     New = Eyelink('newfloatsampleavailable');
     
     if ~New                                                         % checks if new (float) sample is available: returns -1 if none or error, 0 if old, 1 if 'yes' new sample
-        WaitSecs(0.001);                                                % if not a new sample, try again in 1 ms
-        
+        WaitSecs(0.001);                                                % if not a new sample, try again in 1 ms        
     else
         currentSample = Eyelink('newestfloatsample');
 %         disp('NEW SAMPLE!')                                             % - CHECK only for debugging

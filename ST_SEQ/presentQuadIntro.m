@@ -28,7 +28,7 @@ p.english           = 1; % default castellano
 % SET PATHS - PSYCHTOOLBOX AND KIT (subscripts)
 p.main_path = pwd; % get current path
     
-if IsOSX
+if IsOSX || IsLinux
     addpath(genpath([p.main_path, '/KIT/']));   % add functions folder
 else
     addpath([p.main_path, '\KIT\']);            % add functions folder PC style
@@ -43,7 +43,7 @@ p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbNam
 % restrict the keys for keyboard input to the keys we want
 RestrictKeysForKbCheck([p.activeKeys]);
 
-p.quitKey = KbName('Escape');
+p.killKey = KbName('Escape'); % exit program and execute cleanup
 p.calibKey = KbName('c');  % Key during breaks to call calibration
 p.validKey = KbName('v');  % Key during breaks to call validation of calibration
 p.quitKey = KbName('q');   % Key during breaks to stop eyetracking

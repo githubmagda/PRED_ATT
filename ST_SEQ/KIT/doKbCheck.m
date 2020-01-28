@@ -2,13 +2,35 @@ function[quitNow] = doKbCheck(p, numPress)
 
 quitNow = 0;
 
-for i = 1: numPress
+% START KEYBOARD QUEUE 
+KbQueueCreate();  %% PsychHID('KbQueueCreate', [deviceNumber][, keyFlags=all][, numValuators=0][, numSlots=10000][, flags=0][, windowHandle=0])
+KbQueueStart();   %% KbQueueStart([deviceIndex])
+
+press = 0; 
+
+while press < numPress
    
-    [~, keyCode, ~] = KbPressWait();  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  % 
+    WaitSecs(0.01);
+    %[~, keyCode, ~] = KbPressWait();  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  % 
+    [event] = KbEventGet;  %%      [pressed, firstPress, firstRelease, lastPress, lastRelease] = KbQueueCheck(); %% KbQueueCheck([deviceIndex])            
     
-    if find(keyCode, 1) == p.quitKey
-        quitNow = 1;
-        return;
+    if  ~isempty(event)  && event.Pressed ==1
+        
+        key = event.Keycode;
+        
+        switch key
+            case KbName('space') 
+                press = press +1;
+%             case p.quitKey
+%                 quitNow = 1;
+%                 return;
+            case p.killKey
+                cleanup(p)
+                msg = 'Experiment aborted by operator';
+                error(msg)
+        end
+        KbQueueRelease();   %KbQueueFlush([],3); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
+        event = [];
     end    
 end
 
