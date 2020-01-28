@@ -29,11 +29,7 @@ p.english           = 1; % default castellano
 
 % SET PATHS - PSYCHTOOLBOX AND KIT (subscripts)
 p.main_path = pwd; % get current path
-<<<<<<< HEAD
-    
-=======
 
->>>>>>> 0d027f760a2648713e42416b9603a7e4e8ddecd9
 if IsOSX || IsLinux
     addpath(genpath([p.main_path, '/KIT/']));   % add functions folder
 else
@@ -51,11 +47,7 @@ p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbNam
 RestrictKeysForKbCheck([p.activeKeys]);
 ListenChar(2); % suppress input to command window
 
-<<<<<<< HEAD
-p.killKey = KbName('Escape'); % exit program and execute cleanup
-=======
 p.killKey = KbName('Escape'); % Key to terminate the experiment at any time
->>>>>>> 0d027f760a2648713e42416b9603a7e4e8ddecd9
 p.calibKey = KbName('c');  % Key during breaks to call calibration
 p.validKey = KbName('v');  % Key during breaks to call validation of calibration
 p.quitKey = KbName('q');   % Key during breaks to stop eyetracking
