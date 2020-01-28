@@ -1,5 +1,6 @@
-function[quitNow] = doKbCheck(p, numPress)
+function doKbCheck(p, numPress)
 
+<<<<<<< HEAD
 quitNow = 0;
 
 % START KEYBOARD QUEUE 
@@ -32,9 +33,13 @@ while press < numPress
         KbQueueRelease();   %KbQueueFlush([],3); % nflushed = KbQueueFlush([deviceIndex][flushType=1])
         event = [];
     end    
+=======
+for i = 1: numPress  
+    [~, keyCode, ~] = KbPressWait();  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  %  
+>>>>>>> 0d027f760a2648713e42416b9603a7e4e8ddecd9
 end
 
-WaitSecs(p.scr.waitBlank);
+WaitSecs(p.text.waitBlank);
 end
 
 % % NOTES ON KBWAIT

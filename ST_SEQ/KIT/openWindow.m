@@ -1,4 +1,5 @@
-function [p] = openWindowKit(p)
+function p = openWindow(p)
+
 % Prep visual dispay by opening window
 
 % Open a double buffered fullscreen window.

@@ -1,4 +1,3 @@
-
 function [p, pix] = deg2pix(p, deg)
 
 % pix = deg2pix(p.scr, deg = sizeof angle in degrees)
