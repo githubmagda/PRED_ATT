@@ -1,18 +1,10 @@
-function[quitNow] = doKbCheck(p, numPress)
+function doKbCheck(p, numPress)
 
-quitNow = 0;
-
-for i = 1: numPress
-   
-    [~, keyCode, ~] = KbPressWait();  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  % 
-    
-    if find(keyCode, 1) == p.quitKey
-        quitNow = 1;
-        return;
-    end    
+for i = 1: numPress  
+    [~, keyCode, ~] = KbPressWait();  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  %  
 end
 
-WaitSecs(p.scr.waitBlank);
+WaitSecs(p.text.waitBlank);
 end
 
 % % NOTES ON KBWAIT

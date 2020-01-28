@@ -45,6 +45,7 @@ KbName('UnifyKeyNames');
 p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape'), KbName('q')]; % CHECK
 % restrict the keys for keyboard input to the keys we want
 RestrictKeysForKbCheck([p.activeKeys]);
+ListenChar(2); % suppress input to command window
 
 p.killKey = KbName('Escape'); % Key to terminate the experiment at any time
 p.calibKey = KbName('c');  % Key during breaks to call calibration
@@ -57,7 +58,7 @@ if p.useAudio
 end
 
 % GET EYELINK DETAILS
-[p] = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
+p = askEyelink(p); % determine whether eyetracker is used, which eye is 'policed' and whether 'dummy' mode is used %% SUB-SCRIPT
 
 % CHECK THESE VARIABLES BEFORE STARTING!!!
 % WINDOW DIMENSIONS

@@ -1,4 +1,4 @@
-function[p] = SEQ_ParamsScr(p)
+function [p] = SEQ_ParamsScr(p)
 
 % This file contains the post-PTB-window-open experimental parameters
 

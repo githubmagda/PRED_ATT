@@ -1,5 +1,5 @@
 function[result, trackerByElement, trackerByChunk] = makePredSeries(p)
-% makes a string including ordered/random chunks from a set of nElements 
+% makes a string including ordered/random chunks from a set of nElements
 
 % rename variables for ease of use within script (see test_makePredSeriesReplaceNoRptEven.m)
 elements        = p.series.seqBasicSet; % numbers to select from  % e.g. = 4
@@ -17,7 +17,7 @@ trackerByChunk = zeros(1,numStim);
 
 % LOOP - build series from chunks inserting random chunk (size 1-2 chunks) between nRpts of ordered chunks;
 while length(result) < numStim
-       
+    
     % start with random string of random length e.g. between 1 element to 2*chunk lengths
     lenRandomBit = randi( length( elements)*2, 1, 1 );
     randomBit = makeChunk( elements, lenRandomBit, avoidEl, 'random');  % makeChunk([elements, lengthChunk, );
@@ -32,7 +32,7 @@ while length(result) < numStim
     nextSection = nextSection ( 1: (length(nextSection) - ( randi( p.series.chunkLength,1,1))));
     
     % tracker loop to update ordered section by #elements
-    lenResult = length(result); % just easier to read!    
+    lenResult = length(result); % just easier to read!
     trackerByElement( ( lenResult + 1) : ( lenResult+( length( nextSection)))) = 1: length( nextSection);
     %trackerByElement( ( lenResult + 1) : ( lenResult+( nRpt*chunkLength))) = 1:( nRpt*chunkLength);
     
@@ -50,7 +50,7 @@ while length(result) < numStim
 end
 
 % trim series
-result = result( 1:numStim );           
+result = result( 1:numStim );
 trackerByElement = trackerByElement( 1:numStim );
 trackerByChunk = trackerByChunk(  1:numStim );
 end
@@ -58,9 +58,9 @@ end
 function [thisChunk] = makeChunk(elements, len, avoidEl, type)
 % make chunk: start off with one random number,  add till length='len'
 
-% first part of chunk should not be same as last two elements of 'result' (avoidEl)  
+% first part of chunk should not be same as last two elements of 'result' (avoidEl)
 selectFrom = elements;
-selectFrom( avoidEl) = [];   
+selectFrom( avoidEl) = [];
 selectFrom = Shuffle( selectFrom);
 thisChunk = selectFrom(1:2);       % starting 2 elements
 elementCount = length(thisChunk);
@@ -79,7 +79,7 @@ while elementCount < len
     lenTest = length(testChunk); % easier to name
     
     % ensure first and last element of chunk are not the same
-    if strcmp( type, 'order') 
+    if strcmp( type, 'order')
         
         % final test for possible repetitions of multiple elements e.g. 1-2-1-2 or 1-3-2-1-3-2
         if lenTest > 3 && mod( lenTest,2) == 0 % testChunk has even number of elements;
@@ -88,7 +88,7 @@ while elementCount < len
                 %testElement = testChunk( 1,end);
                 selectFrom( selectFrom == nextElement) = []; % remove problematic last element from set
                 nextElement = selectFrom(1); % change nextElement
-            end 
+            end
             
         end
         

@@ -1,4 +1,4 @@
-function [] = cleanup(p)
+function cleanup(p)
 
 Screen('CloseAll');
 PsychPortAudio('Close');
