@@ -2,7 +2,8 @@ function cleanup(p)
 
 Screen('CloseAll');
 PsychPortAudio('Close');
-KbQueueRelease();           
+KbQueueRelease(); 
+ListenChar(2);
 RestrictKeysForKbCheck([]);
 ShowCursor;
 Priority(0);

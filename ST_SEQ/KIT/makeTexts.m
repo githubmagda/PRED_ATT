@@ -390,7 +390,7 @@ else
 end
 
 % DISPLAY TEXTS
-Screen('TextSize',p.scr.window, p.scr.textSize);
+Screen('TextSize',p.scr.window, p.text.textSize);
 
 if graphic    
     %load image

@@ -1,4 +1,4 @@
-function [p, tex] = makeTextures(p)
+function tex = makeTextures(p)
 
 % make attention gaussian
 [dotX, dotY]    = meshgrid(-p.dot.radius:p.dot.radius,-p.dot.radius:p.dot.radius);    
@@ -16,10 +16,10 @@ tex.dot         = Screen('MakeTexture', p.scr.window, gausFix);
 
 % calculate grating rect positions (centered on point p.scr.gratPos from center)
 %p.grat.sineTexRect      = [0, 0, 2 * p.grat.radius, 2 * p.grat.radius];
-p.grat.left             = p.scr.centerX  -p.grat.posSide*2 -tex.sineRect(3); %/2;
-p.grat.right            = p.scr.centerX  +p.grat.posSide*2 -tex.sineRect(3); %/2;
-p.grat.top              = p.scr.centerY  -p.grat.posSide*2 -tex.sineRect(4); %/2;
-p.grat.bottom           = p.scr.centerY  +p.grat.posSide*2 -tex.sineRect(4); %/2;
+p.grat.left             = p.scr.centerX -tex.sineRect(3)/2 -p.grat.posSide;
+p.grat.right            = p.scr.centerX -tex.sineRect(3)/2 +p.grat.posSide;
+p.grat.top              = p.scr.centerY -tex.sineRect(4)/2 -p.grat.posSide;
+p.grat.bottom           = p.scr.centerY -tex.sineRect(4)/2 +p.grat.posSide;
 p.grat.offsetXSet        = [ p.grat.left, p.grat.right, p.grat.right, p.grat.left];
 p.grat.offsetYSet        = [ p.grat.top, p.grat.top, p.grat.bottom, p.grat.bottom];
 

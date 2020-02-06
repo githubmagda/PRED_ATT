@@ -72,7 +72,7 @@ if p.useEyelink               % check if optional use of Eyelink has been specif
 end
 
 % Setup the textures
-[p, tex] = makeTextures(p);     % textures for gratings (also display coordinates) , fixation and attention dots
+tex = makeTextures(p);
 
 %  experiment level structure (to include all other variables); save to subject folder
 exper = [];

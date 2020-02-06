@@ -3,7 +3,7 @@ function draw_text(p,x,y,text2show)
 % draws text on screen x and y measured in percentage of screen from
 % top-left, or as special string
 
-if ~ischar(x)
+if ~ischar(x) % e.g. not 'center'
     x = round(x * p.scr.rectPixelX);
 end
 

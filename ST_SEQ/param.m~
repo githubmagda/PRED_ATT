@@ -90,7 +90,7 @@ p.grat.radius            = p.grat.radiusDeg .* p.scr.pixPerDeg;
 %%%p.scr.angleSet           = [15,105];     % Possible angles for grating       
 
 % calculate distance of grating center from screen center based on degrees or quadrant size 
-p.grat.posDeg            = 0.5; % 4 (Hoogenboom, 2006?) p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
+p.grat.posDeg            = 1; % 4 (Hoogenboom, 2006?) p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
 p.grat.pos               = p.grat.posDeg .* p.scr.pixPerDeg; %  
 p.grat.posSide           = round( sqrt( p.grat.pos^2 /2));
 p.grat.posCenterX        = [ (p.scr.centerX-p.grat.posSide), (p.scr.centerX+p.grat.posSide), (p.scr.centerX+p.grat.posSide), (p.scr.centerX-p.grat.posSide)];
@@ -203,10 +203,25 @@ p.dot.setX3 = p.dot.ringX( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
 p.dot.setY3 = p.dot.ringY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
 
 % SQUARE WAVE GRATING
-p.grat.backgroundColorOffsetGrat    = [0,0,0,1];
-p.grat.phase                        = 0;
-p.grat.freq                         = 3.2 / p.scr.pixPerDeg;      % Landau & Fries, 2015 3.2    % see paper by Ayelet, Fries 2015 : 3.2 20; Martin Vinck - .11; Hoogenboom, 2006 3 cycles per degree)?
-p.grat.contrast                     = 1.0;
+p.grat.backgroundColorOffsetGrat   = [0,0,0,1];
+p.grat.phaseGrat                   = 0;
+p.grat.freqGrat                    = 3.2 / p.scr.pixPerDeg;      % Landau & Fries, 2015 3.2    % see paper by Ayelet, Fries 2015 : 3.2 20; Martin Vinck - .11; Hoogenboom, 2006 3 cycles per degree)?
+p.grat.contrastGrat                = 1.0;
+
+% DEFINE GRATING LOCATIONS
+% CALCULATE GRATING QUAD POSITIONS (centered on point p.scr.gratPos from center)
+p.grat.sineTexRect       = [0, 0, 2 * p.grat.radius, 2 * p.grat.radius];
+p.grat.leftGrat          = p.scr.centerX -p.grat.sineRect(3)/2 -p.grat.posSide;
+p.grat.rightGrat         = p.scr.centerX -p.grat.sineRect(3)/2 +p.grat.posSide;
+p.grat.topGrat           = p.scr.centerY -p.grat.sineRect(4)/2 -p.grat.posSide;
+p.grat.bottomGrat        = p.scr.centerY -p.grat.sineRect(4)/2 +p.grat.posSide;
+p.grat.offsetXSet        = [ p.grat.leftGrat, p.grat.rightGrat, p.grat.rightGrat, p.grat.leftGrat];
+p.grat.offsetYSet        = [ p.grat.topGrat, p.grat.topGrat, p.grat.bottomGrat, p.grat.bottomGrat];
+
+% setup destination rects for gratings
+% make destination rects for gratings
+p.grat.dstRects        = OffsetRect( 2 * p.grat.sineTexRect, p.grat.offsetXSet', p.grat.offsetYSet')';
+p.grat.params         = repmat([p.grat.phaseGrat, p.grat.freqGrat, p.grat.contrastGrat, 0], 4, 1)';
 
 % TEXT PARAMETERS
 

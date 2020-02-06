@@ -1,7 +1,7 @@
 function doKbCheck(p, numPress)
 
 for i = 1: numPress  
-    [~, keyCode, ~] = KbPressWait();  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  %  
+    [~, keyCode, ~] = KbPressWait(); %( p.keyboardIndex );  % [ keyIsDown,secs,keyCode]=PsychHID('KbCheck');  %  
 end
 
 WaitSecs(p.text.waitBlank);

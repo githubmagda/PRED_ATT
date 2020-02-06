@@ -6,6 +6,7 @@ function[exper] = presentQuadIntro() % (could ask for inputs, e.g. debug, useEye
 % Clear the workspace and the screen
 sca;
 close all;
+clear PsychHID; 
 
 rng('shuffle') % ensure random generator does not repeat on startup VERY IMPORTANT
 p.randstate = rng; % allows for recreation of sequence
@@ -13,6 +14,9 @@ p.randstate = rng; % allows for recreation of sequence
 % Force GetSecs and WaitSecs into memory to avoid latency later on:
 GetSecs;
 WaitSecs(0.1);
+ListenChar(2); 
+[keyboardIndices, ~, ~] = GetKeyboardIndices(); % GetKeypadIndices() 
+p.keyboardIndex = keyboardIndices(1);
 
 % SET  DEBUG, INCLUDE STAIRCASE / PRACTICE
 p.debug             = 1; % run with smaller window in debug mode
@@ -42,10 +46,10 @@ PsychDefaultSetup(2);    % set to: (0) calls AssertOpenGL (1) also calls KbName(
 % KEYBOARD
 KbName('UnifyKeyNames');
 % specify key names of interest in the study N.B. PsychDefaultSetup(1+) already sets up KbName('UnifyKeyNames') using PsychDefaultSetup(1 or 2);
-p.activeKeys = [KbName('space'), KbName('Return'), KbName('C'),KbName('V'),KbName('O'), KbName('Escape'), KbName('q')]; % CHECK
+returnKey = KbName('Return');
+p.activeKeys = [KbName('space'), returnKey(1), KbName('C'),KbName('V'),KbName('O'), KbName('Escape'), KbName('q')]; % CHECK
 % restrict the keys for keyboard input to the keys we want
-RestrictKeysForKbCheck([p.activeKeys]);
-ListenChar(2); % suppress input to command window
+RestrictKeysForKbCheck(p.activeKeys);
 
 p.killKey = KbName('Escape'); % Key to terminate the experiment at any time
 p.calibKey = KbName('c');  % Key during breaks to call calibration

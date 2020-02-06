@@ -7,6 +7,9 @@ function[p, sr] = stimDisplayProc(p, sr)
 % Inputs include the predictive and attn series included in series
 % structure
 
+% TURN OFF keyboard output to screen
+ListenChar(2); % suppress input to command window
+
 % get textures made in makeTextures.m
 dotTex          = p.scr.dotTex;
 sineTex         = p.scr.sineTex;
