@@ -6,12 +6,12 @@ function[p, sr] = draw_grat(p, tex, sr)
 p.grat.rects    = CenterRectOnPointd(tex.sineRect, p.grat.posCenterX', p.grat.posCenterY');
 p.grat.params   = repmat([p.grat.phase, p.grat.freq, p.grat.contrast, 0], 4, 1)';
     
+% 
 % % destination rects for gratings
 % dstRectGrats        = p.scr.rectGrats;
 % paramsGrats         = p.scr.paramsGrats;
  
 % REGULAR SERIES
-
 if ~strcmp(sr.type, 'LR') %     staircase or main
     
     % determine x/y positions for red circle for question re predictions

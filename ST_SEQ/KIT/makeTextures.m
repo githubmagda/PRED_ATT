@@ -15,8 +15,8 @@ tex.dot         = Screen('MakeTexture', p.scr.window, gausFix);
     p.grat.backgroundColorOffsetGrat, p.grat.radius, 1);
 
 % grating positions and paramaters
-p.grat.rects = CenterRectOnPointd(tex.sineRect, p.grat.posCenterX', p.grat.posCenterY');
-p.grat.params         = repmat([p.grat.phase, p.grat.freq, p.grat.contrast, 0], 4, 1)';
+p.grat.rects    = CenterRectOnPointd(tex.sineRect, p.grat.posCenterX', p.grat.posCenterY');
+p.grat.params   = repmat([p.grat.phase, p.grat.freq, p.grat.contrast, 0], 4, 1)';
     
 % make fixation gaussian
 [dotX, dotY]    = meshgrid(-5*p.fix.radius:5*p.fix.radius,-5*p.fix.radius:5*p.fix.radius);    

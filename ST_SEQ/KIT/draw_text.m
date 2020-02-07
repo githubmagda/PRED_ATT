@@ -13,6 +13,6 @@ end
     
 Screen('TextSize',p.scr.window, p.text.textSize);
 Screen('TextFont', p.scr.window ,p.text.font,p.text.style);
-DrawFormattedText( p.scr.window, text2show , x, y, p.text.textColor,p.text.wrap);
+DrawFormattedText( p.scr.window, text2show , x, y, p.text.textColor, p.text.wrap, [], [], 1.5);
 Screen('Flip',p.scr.window,[],1);
 
