@@ -44,6 +44,7 @@ p.series.chunkLength        = 4;
 p.monitor.distance          = 57; % cm
 p.monitor.struct            = Screen('Version');
 [ p.monitor.mmX, p.monitor.mmY] = Screen('DisplaySize', p.scr.number);  % full display size: X and Y size in mm
+
 p.monitor.cmX               = p.monitor.mmX ./10;
 p.monitor.cmY               = p.monitor.mmY ./10;
 p.monitor.maxLum            = Screen('ColorRange', p.scr.window);
@@ -54,7 +55,7 @@ p.monitor.pixelY            = monitorSpecs.height;
 % WINDOW SPECS
 p.scr.rectPixelX            = p.scr.windowRect(3); % number of pixels 
 p.scr.rectPixelY            = p.scr.windowRect(4);
-p.scr.basicSquare           = min( nonzeros( p.scr.windowRect )); % size of square inset where stimuli are shown
+p.scr.basicSquare           = round( min( nonzeros( p.scr.windowRect ))); % size of square inset where stimuli are shown
 p.scr.quadDim               = p.scr.basicSquare ./2;
 %p.scr.pixelsXY = mean (p.scr.pixelsX, p.scr.pixelsY); %
 [p.scr.centerX, p.scr.centerY] = WindowCenter(p.scr.window);
@@ -84,17 +85,28 @@ p.scr.frameDur              = (p.scr.Hz ./ p.scr.framesHz) * p.scr.flipInterval;
 
 % TEXTURES GRATINGS (for QUADRANTS)
 % calculate grating radius - based on degrees or on quadrant size 
-p.grat.radiusDeg         = 0.25;   % 3 (2*r = 6 (Hoogenboom, 2006?) )                          % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
+p.grat.radiusDeg         = 0.50;   % 3 (2*r = 6 (Hoogenboom, 2006?) )                          % p.scr.degPerPix .* round( p.scr.pixelsXY/8.2 ); % = 2; % grating radius (deg) 
 p.grat.radius            = p.grat.radiusDeg .* p.scr.pixPerDeg; 
-%p.scr.gratGrid              = 2 *p.scr.gratRadius +1;           % scaffolding for grating
-%%%p.scr.angleSet           = [15,105];     % Possible angles for grating       
 
 % calculate distance of grating center from screen center based on degrees or quadrant size 
-p.grat.posDeg            = 0.5; % 4 (Hoogenboom, 2006?) p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
+p.grat.posDeg            = 1.0; % 4 (Hoogenboom, 2006?) p.scr.degPerPix .* round( p.scr.pixelsXY/4.1 ); % =6; % center position of grating from window center (deg)
 p.grat.pos               = p.grat.posDeg .* p.scr.pixPerDeg; %  
 p.grat.posSide           = round( sqrt( p.grat.pos^2 /2));
 p.grat.posCenterX        = [ (p.scr.centerX-p.grat.posSide), (p.scr.centerX+p.grat.posSide), (p.scr.centerX+p.grat.posSide), (p.scr.centerX-p.grat.posSide)];
 p.grat.posCenterY        = [ (p.scr.centerY-p.grat.posSide), (p.scr.centerY-p.grat.posSide), (p.scr.centerY+p.grat.posSide), (p.scr.centerY+p.grat.posSide)];
+
+% % calculate grating rect positions (centered on point p.scr.gratPos from center)
+% %p.grat.sineTexRect      = [0, 0, 2 * p.grat.radius, 2 * p.grat.radius];
+% p.grat.left             = p.scr.centerX  -p.grat.posSide -tex.sineRect(3)/2;
+% p.grat.right            = p.scr.centerX  +p.grat.posSide -tex.sineRect(3)/2;
+% p.grat.top              = p.scr.centerY  -p.grat.posSide -tex.sineRect(4)/2;
+% p.grat.bottom           = p.scr.centerY  +p.grat.posSide -tex.sineRect(4)/2;
+% p.grat.offsetXSet        = [ p.grat.left, p.grat.right, p.grat.right, p.grat.left];
+% p.grat.offsetYSet        = [ p.grat.top, p.grat.top, p.grat.bottom, p.grat.bottom];
+% 
+% % make destination rects for gratings
+% %p.grat.dstRects        = OffsetRect( tex.sineRect, p.grat.posCenterX-tex.sineRect(3), p.grat.posCenterY-tex.sineRect(4));
+% p.grat.dstRects         = [ ( p.grat.posCenterX -( tex.sineRect(3)/2)); ( p.grat.posCenterY -( tex.sineRect(4)/2)); (p.grat.posCenterX +( tex.sineRect(3)/2)); (p.grat.posCenterY +( tex.sineRect(4)/2))];
 
 % % PARAMETERS FOR PROCEDURAL GRATING
 % % p.scr.backgroundColorOffsetGrat             = [ 2, 2, 2, 0]; 
@@ -108,7 +120,7 @@ p.grat.posCenterY        = [ (p.scr.centerY-p.grat.posSide), (p.scr.centerY-p.gr
 % timing of predictive texture in ms  
 %p.scr.flashDur          = round2flips( p, .05);    % duration of predictive flash in 
 
-% % masks % for older version
+% % masks %  older version
 % p.scr.maskBorder            = 15;                               % so as to make the gradient mask for dot presentation smaller than gradient 
 % p.scr.outerDotMaskRadius    = p.scr.gratPos - p.scr.maskBorder;     % hypot( p.scr.quadDim/2-10, p.scr.quadDimY/2-10 ); % CHECK - base on visual angle?
 % p.scr.innerDotMaskRadius    = p.scr.gratPos - p.scr.gratRadius + p.scr.maskBorder;   % hypot( p.scr.quadDim/2 - p.scr.quadGratRad, p.scr.quadDim/2 - p.scr.quadGratRad);
