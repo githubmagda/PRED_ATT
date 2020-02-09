@@ -96,7 +96,7 @@ fix_and_grat(p, tex);
 % intro_eyetracker(p);
 
 % intro and run localizer
-localizerNew( p, tex)
+exp = localizerNew( p, tex);
 
 
 

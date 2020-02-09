@@ -1,4 +1,4 @@
-function localizerNew( p, tex)
+function [exp] = localizerNew( p, tex)
 
 text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Fix & Gratings'),p.text.language + 1)); % + 1 for correct column in texts.xlsx
 draw_text(p,'center','center',text2show);
@@ -22,7 +22,7 @@ thisWaitTime    = p.scr.stimDur;
 reloop          = 0;
 startTime       = GetSecs;
 lr.times.series(1,1) = startTime;
-
+lr.angles       = p.grat.angleSet;
 
 % run localizer
 while lr.numTrial < p.series.stimPerSeries || reloop
@@ -30,7 +30,8 @@ while lr.numTrial < p.series.stimPerSeries || reloop
     lr.numTrial                 = lr.numTrial +1;
     lr.timesTrial(lr.numTrial)  = GetSecs-startTime;
     lr.quads                    = lr.series (lr.numTrial);
-    lr.angles                   = mod(p.grat.angleSet(lr.quads) + p.grat.angleIncrement, 180);  % set grating angle
+    lr.angles                   = lr.angles + p.grat.angleIncrement;
+    %lr.angles                   = mod(p.grat.angleSet(lr.quads) + p.grat.angleIncrement, 180);  % set grating angle
     
     [ p, lr]                    = draw_grat( p, tex, lr, stayOn);
     
@@ -52,7 +53,9 @@ end
 lr.times.series(1,2) = GetSecs;
 % save series data to exp structure
 nameSeries          = sprintf('LR%d',lr.numSeries);
-exp.(nameSeries)    = sr;
+exp.(nameSeries)    = lr;
+
+% ask about repeating?
 lr.numSeries        = lr.numSeries +1;
 
 % end localizer
