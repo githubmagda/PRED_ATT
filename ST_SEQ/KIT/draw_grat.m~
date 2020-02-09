@@ -2,7 +2,7 @@ function[p, sr] = draw_grat(p, tex, sr, stayOn)
 
 % Draws quadrant gratings, dot, fixation
 
-Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects( sr.quads,:)', sr.angles( sr.quads), [], 0, ...
+Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects( sr.quads,:)', sr.angles, [], 0, ...
                 [0,0,0,1], [], [], p.grat.params( :, sr.quads));            
 Screen('DrawTexture', p.scr.window, tex.fix); 
 

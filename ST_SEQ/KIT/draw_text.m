@@ -1,4 +1,4 @@
-function draw_text(p,x,y,text2show)
+function draw_text(p, x, y, text2show)
 
 % draws text on screen x and y measured in percentage of screen from
 % top-left, or as special string
@@ -12,7 +12,7 @@ if ~ischar(y)
 end
     
 Screen('TextSize',p.scr.window, p.text.textSize);
-Screen('TextFont', p.scr.window ,p.text.font,p.text.style);
+Screen('TextFont', p.scr.window, p.text.font, p.text.style);
 DrawFormattedText( p.scr.window, text2show , x, y, p.text.textColor, p.text.wrap, [], [], p.text.lineSpace);
 Screen('Flip',p.scr.window,[],1);
 

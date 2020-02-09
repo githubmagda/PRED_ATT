@@ -22,7 +22,7 @@ thisWaitTime    = p.scr.stimDur;
 reloop          = 0;
 startTime       = GetSecs;
 lr.times.series(1,1) = startTime;
-
+lr.angles       = angleSet;
 
 % run localizer
 while lr.numTrial < p.series.stimPerSeries || reloop
@@ -30,7 +30,8 @@ while lr.numTrial < p.series.stimPerSeries || reloop
     lr.numTrial                 = lr.numTrial +1;
     lr.timesTrial(lr.numTrial)  = GetSecs-startTime;
     lr.quads                    = lr.series (lr.numTrial);
-    lr.angles                   = mod(p.grat.angleSet(lr.quads) + p.grat.angleIncrement, 180);  % set grating angle
+    lr.angles                   = lr.angles + angleIncrement;
+    %lr.angles                   = mod(p.grat.angleSet(lr.quads) + p.grat.angleIncrement, 180);  % set grating angle
     
     [ p, lr]                    = draw_grat( p, tex, lr, stayOn);
     
