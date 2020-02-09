@@ -34,7 +34,7 @@ p.seriesPerBlock    = 1;
 p.seriesPerEdf      = 1; % how often data is output to edf file; safer to output each series in case participant quits
 
 % SERIES (predictive) sent to makePredSeriesReplace.m (or variant)
-p.series.stimPerSeries      = 120;
+p.series.stimPerSeries      = 20;  %120
 p.series.seqBasicSet        = [1,2,3,4]; % get this seq from block{j}.seqSet
 p.series.chunkRptsMin       = 4;
 p.series.chunkRptsMax       = 10;
@@ -94,6 +94,8 @@ p.grat.pos               = p.grat.posDeg .* p.scr.pixPerDeg; %
 p.grat.posSide           = round( sqrt( p.grat.pos^2 /2));
 p.grat.posCenterX        = [ (p.scr.centerX-p.grat.posSide), (p.scr.centerX+p.grat.posSide), (p.scr.centerX+p.grat.posSide), (p.scr.centerX-p.grat.posSide)];
 p.grat.posCenterY        = [ (p.scr.centerY-p.grat.posSide), (p.scr.centerY-p.grat.posSide), (p.scr.centerY+p.grat.posSide), (p.scr.centerY+p.grat.posSide)];
+p.grat.angleSet          = Shuffle([15, 30, 45, 60] +7);  % Shuffle([7.5, 15, 22.5, 30]); %Shuffle([3.5, 7, 10.5, 15]);  %= datasample( 1:length( angleSet), 4, 'Replace', false);
+p.grat.angleIncrement    = 20;
 
 % % calculate grating rect positions (centered on point p.scr.gratPos from center)
 % %p.grat.sineTexRect      = [0, 0, 2 * p.grat.radius, 2 * p.grat.radius];
@@ -156,15 +158,15 @@ p.fix.color                      = p.scr.white;
 
 
 % POLICING 
-p.policeEye = 2; % 1 for left, 2 for right
-p.EyelinkMouse = 0; % not sure what this does
-p.dummyMode = 0; % 0 for record, 1 for dummy
+p.policeEye             = 2; % 1 for left, 2 for right
+p.EyelinkMouse          = 0; % not sure what this does
+p.dummyMode             = 0; % 0 for record, 1 for dummy
 p.preSeriesFixTime      = round2flips (p, 2.5); 
-p.scr.fixPoliceX       = p.scr.centerX; 
-p.scr.fixPoliceY       = p.scr.centerY;
-p.scr.fixPoliceAng     = 4.0;
-p.scr.fixPoliceRadius  = round( p.scr.fixPoliceAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
-p.scr.maxPoliceErrorTime = round2flips (p, 0.01); % secs adjusted to refresh rates
+p.scr.fixPoliceX        = p.scr.centerX; 
+p.scr.fixPoliceY        = p.scr.centerY;
+p.scr.fixPoliceAng      = 4.0;
+p.scr.fixPoliceRadius   = round( p.scr.fixPoliceAng * p.scr.pixPerDeg ); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
+p.scr.maxOutofBounds    = round2flips (p, 0.01); % secs adjusted to refresh rates
 % % p.maxMonitorErrorTimeMovie = round2flips (p, 0.005); % secs adjusted to refresh rates
  
 % % % p.fixMonitorSize=angle2pix(p.Display,1.5); % fixation center +/- # (in pixels) THE ACTUAL POLICING VALUES THAT ARE USED TO START THE TRIAL
@@ -230,7 +232,8 @@ p.text.waitText         = round(p.text.waitText ./p.scr.flipInterval) * p.scr.fl
 p.text.waitBlank        = round(p.text.waitBlank ./ p.scr.flipInterval) * p.scr.flipInterval; %% time for blank screen intervals
 p.text.font             = 'Helvetica';
 p.text.style            = [];
-p.text.textColor         = p.scr.white;
+p.text.lineSpace        = 1.5;
+p.text.textColor        = p.scr.white;
 p.text.wrap             = 75; % number of charachters before wrap to next line
 if p.debug
     p.text.textSize     = 16;

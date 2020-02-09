@@ -1,12 +1,12 @@
-function [thisErrorTime, totalFixTime, totalErrorTime] = monitorFixation(p, thisWaitTime)
+function [thisOutofBounds, totalFixTime, totalOutofBounds] = monitorFixation(p, thisWaitTime)
 
 % Checks for fixation within specified area set by p.fixMonitorX +/- p.fixMonitorRadius
 % If gaze strays outside of area, beep or visual warning is given
 
 thisFixTime = 0;
 totalFixTime = 0; %
-thisErrorTime = 0;
-totalErrorTime = 0;
+thisOutofBounds = 0;
+totalOutofBounds = 0;
 timePassed = 0;
 
 startTime = GetSecs;
@@ -33,7 +33,7 @@ while timePassed < thisWaitTime
                 && (currentY < (p.scr.fixPoliceY + p.scr.fixPoliceRadius)) && (currentY > (p.scr.fixPoliceY - p.scr.fixPoliceRadius)) % it is within Y boundaries
             
             if thisFixTime == 0                                         % if fixation counter has not yet started
-                thisErrorTime = 0;                                      % reset
+                thisOutofBounds = 0;                                      % reset
                 fixationStartTime = GetSecs(); % get the time
                 Eyelink('message','fixStart');
                 thisFixTime = GetSecs - fixationStartTime;
@@ -47,15 +47,15 @@ while timePassed < thisWaitTime
             
             thisFixTime = 0;                                            % reset since gaze has left fixation
             
-            if thisErrorTime == 0
+            if thisOutofBounds == 0
                 errorStartTime = GetSecs; % get time
-                thisErrorTime = GetSecs - errorStartTime;               % small but less than zero
-                totalErrorTime = totalErrorTime + thisErrorTime;         % add to total
+                thisOutofBounds = GetSecs - errorStartTime;               % small but less than zero
+                totalOutofBounds = totalOutofBounds + thisOutofBounds;         % add to total
             else                                                        % if the error timing has already started
-                thisErrorTime = GetSecs - errorStartTime;
-                totalErrorTime = totalErrorTime + thisErrorTime;
+                thisOutofBounds = GetSecs - errorStartTime;
+                totalOutofBounds = totalOutofBounds + thisOutofBounds;
                 
-                if thisErrorTime >= p.scr.maxPoliceErrorTime                % give participant a warning - duration = 'p.beepDur'set in SEQ_ParamsScr.m
+                if thisOutofBounds >= p.scr.maxPoliceErrorTime                % give participant a warning - duration = 'p.beepDur'set in SEQ_ParamsScr.m
                     % check quad
                     [samples, events, drained] = Eyelink('command', 'GetQueuedData');
                     break;

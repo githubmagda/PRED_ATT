@@ -16,28 +16,26 @@ Screen('DrawTexture', p.scr.window, tex.fix);
 Screen('Flip',p.scr.window,[],1);               % set to '1' for don't clear, but why?
 
 % Get response
-
-  doKbCheck(p, 2);
-  Screen('Flip',p.scr.window);
+doKbCheck(p, 2);
+Screen('Flip',p.scr.window, 0);
 
 % introduce gratings
 
 text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Intro Gratings'),p.text.language + 1));
+draw_text(p,'center',0.10,text2show);
 
-draw_text(p,'center',0.05,text2show);
-
-text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1));
-
+text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1))
 draw_text(p,'center',0.95,text2show);
 
 % should instead call draw_grat ???
-Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects', [15, 30, 45, 60], [], 0, ...
-                [0,0,0,1], [], [], p.grat.params);
-            
-Screen('DrawTexture', p.scr.window, tex.fix); 
-Screen('Flip',p.scr.window,[],1);
+sr.numGrat = 4;
+draw_grat( p, tex, sr)
+% Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects', [15, 30, 45, 60], [], 0, ...
+%                 [0,0,0,1], [], [], p.grat.params);            
+% Screen('DrawTexture', p.scr.window, tex.fix); 
+% Screen('Flip',p.scr.window,[],1);
 
 % Get response
 
 doKbCheck(p, 2);
-
+Screen('Flip',p.scr.window, 0);

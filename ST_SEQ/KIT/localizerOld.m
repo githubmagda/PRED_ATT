@@ -1,4 +1,4 @@
-function[p, lr] = localizer(p, lr)
+function[p, lr] = localizerOld(p, lr)
 
 % This script displays the localizer in the 4 quadrant gratings,
 

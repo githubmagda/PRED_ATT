@@ -14,7 +14,7 @@ draw_text(p,'center',0.95,text2show);
 
 doKbCheck(p, 2);
 
-Screen('Flip',p.scr.window);
+Screen('Flip',p.scr.window, 0);
 
 
 
