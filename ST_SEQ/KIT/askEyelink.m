@@ -2,9 +2,6 @@ function [ p ] = askEyelink( p )
 % check whether eyetracker is used 
 % and whether dummy mode is used
 
-%% eyetracker parameters and question 
-%p.location = 'dev'; % 'dev'/'meg'    % Where we are - set for display parameters
-
 button = questdlg('Use eyetracking?','Eyetracking','Yes','No','No');
 
 switch button

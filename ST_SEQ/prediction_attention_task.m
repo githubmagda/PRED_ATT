@@ -92,12 +92,14 @@ intro(p);
 
 fix_and_grat(p, tex);
 
-%% eyetracker training
+% eyetracker training
 % intro_eyetracker(p);
 
 % intro and run localizer
-exp = localizerNew( p, tex);
+exp = localizerNew( p, tex, exp);
 
+%% staircase
+exp = staircase( p, tex, exp);
 
 
 % % lr.series       = pseudoRandListNoRpt(p);
@@ -125,7 +127,7 @@ exp = localizerNew( p, tex);
 
 % staircase
 
-rr.angleSet = mod(p.grat.angleSet(thisPred) + p.grat.angleIncrement, 180);
+str.angleSet = mod(p.grat.angleSet(thisPred) + p.grat.angleIncrement, 180);
 
 
 
