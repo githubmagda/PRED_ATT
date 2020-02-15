@@ -17,12 +17,13 @@ Screen('Flip',p.scr.window, 0);
 % setup
 sr.numSeries    = 0;
 repeat          = 1; % chosen at end of loop by participant
+sr.dot =[];
 
 while repeat
     
+    sr.dot.series                        = makeDotSeries(  p, p.dot.probStaircase);
     sr.dot.onset                         = zeros( 1,length(sr.dot.series));
     sr.dot.offset                        = zeros( 1,length(sr.dot.series));
-    sr.dot.series                        = makeDotSeries(  p, p.dot.probStaircase);
     temp                                 = repmat( Shuffle( p.scr.flipInterval : p.scr.flipInterval : (p.scr.stimDur-p.scr.flipInterval)), 1, 10); 
     sr.dot.onset( sr.dot.series == 1)    = temp( sr.dot.series == 1);
     sr.dot.offset( sr.dot.series == 1)   = sr.dot.onset( sr.dot.series == 1) + p.dot.dur;
@@ -46,14 +47,17 @@ while repeat
     % run loop
     while sr.numTrial < p.series.stimPerSeries && inBounds
         
-        sr.numTrial                     = sr.numTrial +1;
-        sr.quads                        = sr.series (sr.numTrial);
-        angles                          = mod( angles + p.grat.angleIncrement, 180);
-        sr.angles                       = angles;
+        sr.numTrial                             = sr.numTrial +1;
+        angles(sr.pred.series( sr.numTrial))    = angles(sr.pred.series( sr.numTrial)) + p.grat.angleIncrement;
+        angles                                  = mod( angles, 180);
+        dot                                     = sr.dot.series( sr.numTrial);
+        % save variables for this trial
+        sr.pred.angles(sr.numTrial,:)           = angles;
         
-        [ p, sr]                        = draw_grat( p, tex, sr, 1);
-        [ p, sr]                        = draw_dot( p, tex, sr, 0);
-        sr.times.trials(sr.numTrial)    = GetSecs-startTime;
+        % p, tex, sr, dot, cue)
+        [ p, sr]                                = draw_grat( p, tex, sr, 1);
+        [ p, sr]                                = draw_dot( p, tex, sr, 0);
+        sr.times.trials(sr.numTrial)            = GetSecs-startTime;
         
         if p.useEyelink
             
