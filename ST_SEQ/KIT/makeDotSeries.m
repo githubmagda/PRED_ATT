@@ -1,4 +1,4 @@
-function [ dotSeries ] = makeDotSeries( p, dotProb, sr)
+function [ dotSeries ] = makeDotSeries( p, dotProb)
 
 % Generates a simple series of length p.series.stimPerSeries and sets catch trials using random selection
 % from distribution based on dotProb of staircase or main exp series

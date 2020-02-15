@@ -10,12 +10,12 @@
 
 p = [];
 % set debug state
-p.debug             = 1; % run with smaller window in debug mode
+p.debug                 = 1; % run with smaller window in debug mode
 % Note if running in debug mode, this is a helpful way to run: eval('prediction_attention_task','clear screen;error(''prediction_attention_task'')')
 % use eyelink
-debug_screen_x = 600;
-p.scr.testDimensions = [0, 0, round(debug_screen_x), debug_screen_x/1.33];  %% 1024 x 768 ratio
-p.useEyelink = 0; % 1 or 0 to track right eye or not to track
+debug_screen_x          = 600;
+p.scr.testDimensions    = [0, 0, round(debug_screen_x), debug_screen_x/1.33];  %% 1024 x 768 ratio
+p.useEyelink            = 0; % 1 or 0 to track right eye or not to track
 
 % setup paths
 
