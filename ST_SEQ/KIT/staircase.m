@@ -1,65 +1,85 @@
-% template for an example experiment
-% clc;clear;close all; 
+function [exp] = localizerNew( p, tex, exp)
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
 
-%% NOTES see Shen et al. 2015
-% weibull: p = gamma + (1-gamma-lambda) * ( 1 + exp( -1* (x/alpha)^ beta ) )
-% alpha = threshold parameter; 
-% beta = slope/spread; 
-% gamma = proportion correct at chance, e.g. 0.5 in 2afc experiments
-% lambda ('lapse rate') - upper bound of psychometric function
+text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Staircase'),p.text.language + 1)); % + 1 for correct column in texts.xlsx
+draw_text(p,'center','center',text2show);
 
-% step 1, configure experiment parameters, e.g., 
-par = staircase_exp_config();
+text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1));
+draw_text(p,'center',0.95,text2show);
 
-% step 2, create a track object
-uml = staircase_UML(par);
+% Get response
+doKbCheck(p, 2);
+Screen('Flip',p.scr.window, 0);
 
-% step 3, create an experimental loop (one trial per loop), and update
-% signal level using the update method.
-% ntrials = p.series.lengthInStim;
-ntrials = 50;
+% run series
+lr.series       = pseudoRandListNoRpt(p);
+lr.numSeries    = 1;
+lr.numTrial     = 0;
+stayOn          = 0;            % Flip and 1 = stay on screen
 
-% p.catchTrialProbStaircase = .5 % to calculate percentage of catch trials
+thisWaitTime    = p.scr.stimDur;
+reloop          = 0;            % in case eyes go out of bounds during series
+startTime               = GetSecs;
+lr.times.series(1,1)    = startTime;
+angles                  = p.grat.angleSet;
 
-for i = 1:ntrials
+repeat = 1;
+
+while repeat
     
-    % present the stimulus and collect the observer's response r in in
-    % terms of correct (1) or incorrect (0).
+    % run localizer
+    while lr.numTrial < p.series.stimPerSeries || reloop
+        
+        lr.numTrial          = lr.numTrial +1;
+        lr.quads             = lr.series (lr.numTrial);
+        angles               = mod( angles + p.grat.angleIncrement, 180);
+        lr.angles            = angles;
+        
+        [ p, lr]                        = draw_grat( p, tex, lr, stayOn);
+        lr.times.trials(lr.numTrial)    = GetSecs-startTime;
+        
+        if p.useEyelink
+            
+            %send message to edf file
+            thisMessage = ['LR_series', num2str( lr.numSeries), '_trial', mum2str( lr.numTrial), 'START_TRIAL'];
+            Eyelink('message',thisMessage);
+            
+            [outofBounds]   = monitorFixation( p, thisWaitTime);
+            
+            if outofBounds > p.scr.maxOutofBounds            % save series; re-record
+                reloop = 1;
+                break; % or return
+            else
+                reloop = 0;
+            end
+        else
+            WaitSecs( thisWaitTime - ( 0.5*p.scr.flipInterval));
+        end
+    end
     
-    %------------------------------------------------
-    % your own function here, e.g., 
-    % r = User_Function(uml.xnext);    
-    % where x is the signal strength and r is the response in terms of
-    % correctness.
-
-    %------------------------------------------------
+    lr.times.series(1,2) = GetSecs;
     
-    % for simulated responses
-    uml.setPhi0([80 1 0.1 0.05]);    %([5 2 0.5 0.05]);
-    r = uml.simulateResponse(uml.xnext);
-    % update the signal level
-    uml.update(r);
+    % flip
+    Screen('Flip',p.scr.window,[],0);       % clear screen
+    
+    % save series data to exp structure
+    nameSeries          = sprintf('lr%d',lr.numSeries);
+    exp.(nameSeries)    = lr;
+    
+    % ask about repeating??
+    button = questdlg('Run the localizer again?','Repeat','Yes','No','No');
+    
+    switch button
+        case 'Yes'
+            repeat              = 1;
+            lr.numSeries        = lr.numSeries +1;
+        case 'No'
+            repeat              = 0;
+            break;
+    end
 end
 
-% step 4, collect and save the results
-% The easiest way to save the data from this track is simply save the 
-% entire "uml" object.
+% end staircase
+end
 
-% the parameter estimates are stored in
-uml.phi;
-% the signal strengths are stored in
-uml.x;
-% the responses (in terms of correctness) are stored in
-uml.r;
-% the sweet points are stored in
-uml.swpts;
-% the posterior parameter distribution (log probability) is stored in
-uml.p;
-% to visulize the posterior distribution, use
-figure;
-uml.plotP();
-% to get the confidence limits (credible limits) for the parameter 
-% estimates, use, e.g., 
-uml.getConf([0.25 .5 .75])
-
-% eof

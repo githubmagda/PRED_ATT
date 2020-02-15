@@ -1,4 +1,4 @@
-function [exp] = localizerNew( p, tex, exp)
+function [exper] = localizerNew( p, tex, exper)
 
 text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Fix & Gratings'),p.text.language + 1)); % + 1 for correct column in texts.xlsx
 draw_text(p,'center','center',text2show);
@@ -6,35 +6,34 @@ draw_text(p,'center','center',text2show);
 text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1));
 draw_text(p,'center',0.95,text2show);
 
-%Screen('Flip',p.scr.window,[],1);
-
 % Get response
 doKbCheck(p, 2);
 Screen('Flip',p.scr.window, 0);
 
-% run series
-lr.series       = pseudoRandListNoRpt(p);
-lr.numSeries    = 1;
-lr.numTrial     = 0;
-stayOn          = 0;            % Flip and 1 = stay on screen
+repeat          = 1;
+lr.numSeries    = 0;
 
-thisWaitTime    = p.scr.stimDur;
-reloop          = 0;            % in case eyes go out of bounds during series
-startTime               = GetSecs;
-lr.times.series(1,1)    = startTime;
-angles                  = p.grat.angleSet;
+while repeat   % chosen by user
 
-repeat = 1;
-
-while repeat
+    lr.numSeries            = lr.numSeries +1;
+    % run series
+    lr.series               = pseudoRandListNoRpt(p);
+    
+    lr.numTrial             = 0;
+    stayOn                  = 0;            % Flip and 1 = stay on screen; 0 = clear screen
+    
+    thisWaitTime            = p.scr.stimDur;
+    reloop                  = 0;            % if eyes go out of bounds during series
+    startTime               = GetSecs;
+    lr.times.series(1,1)    = startTime;
+    angles                  = p.grat.angleSet;
     
     % run localizer
     while lr.numTrial < p.series.stimPerSeries || reloop
         
-        lr.numTrial          = lr.numTrial +1;
-        lr.quads             = lr.series (lr.numTrial);
-        angles               = mod( angles + p.grat.angleIncrement, 180);
-        lr.angles            = angles;
+        lr.numTrial                     = lr.numTrial +1;
+        lr.quads                        = lr.series (lr.numTrial);
+        lr.angles                       = mod( angles + p.grat.angleIncrement, 180);
         
         [ p, lr]                        = draw_grat( p, tex, lr, stayOn);
         lr.times.trials(lr.numTrial)    = GetSecs-startTime;
@@ -65,7 +64,7 @@ while repeat
     
     % save series data to exp structure
     nameSeries          = sprintf('lr%d',lr.numSeries);
-    exp.(nameSeries)    = lr;
+    exper.(nameSeries)    = lr;
     
     % ask about repeating??
     button = questdlg('Run the localizer again?','Repeat','Yes','No','No');
@@ -73,7 +72,6 @@ while repeat
     switch button
         case 'Yes'
             repeat              = 1;
-            lr.numSeries        = lr.numSeries +1;
         case 'No'
             repeat              = 0;
             break;

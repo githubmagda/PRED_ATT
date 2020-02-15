@@ -1,4 +1,4 @@
-  %% DESCRIPTION : Experimental procedure for an investigation of visual covert
+%% DESCRIPTION : Experimental procedure for an investigation of visual covert
 % spatial attention and procesing of predictive spatial sequences
 
 % Made with love and frustration 2018-2020 by Magda Altman, BCBL
@@ -96,10 +96,10 @@ fix_and_grat(p, tex);
 % intro_eyetracker(p);
 
 % intro and run localizer
-exp = localizerNew( p, tex, exp);
+exper = localizerNew( p, tex, exper);
 
 %% staircase
-exp = staircase( p, tex, exp);
+exper = staircase( p, tex, exper);
 
 
 % % lr.series       = pseudoRandListNoRpt(p);
