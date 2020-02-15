@@ -8,40 +8,43 @@ draw_text(p,'center','center',text2show);
 text2show       = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1));
 draw_text(p,'center',0.95,text2show);
 
+Screen('Flip',p.scr.window, 0);
+
 % Get response
 doKbCheck(p, 2);
 Screen('Flip',p.scr.window, 0);
 
+% setup
 sr.numSeries    = 0;
 repeat          = 1; % chosen at end of loop by participant
 
 while repeat
-
-% dot  - calculated in screen refresh times
-sr.dot.series               = makeDotSeries(  p, p.dot.probStaircase);
-temp                        = Shuffle( 0 : p.scr.flipInterval : (p.scr.stimDur-p.scr.flipInterval));
-sr.dot.onset                = temp( 1: p.series.stimPerSeries);
-sr.dot.offset               = sr.dot.onset + p.dot.dur;
-
-% run series
-[result, trackElements, trackChunks] = makePredSeries(p);
-sr.pred.series              = result;
-sr.pred.seriesTrackElements = trackElements;
-sr.pred.seriesTrackChunks   = trackChunks;
-
-sr.numSeries                = sr.numSeries +1;
-sr.numTrial                 = 0;
-
-thisWaitTime            = p.scr.stimDur;
-outofBounds                  = 0;                % in case eyes go out of bounds during series
-startTime               = GetSecs;
-sr.times.series(1,1)    = startTime;
-angles                  = p.grat.angleSet;
-
-
+    
+    sr.dot.onset                         = zeros( 1,length(sr.dot.series));
+    sr.dot.offset                        = zeros( 1,length(sr.dot.series));
+    sr.dot.series                        = makeDotSeries(  p, p.dot.probStaircase);
+    temp                                 = repmat( Shuffle( p.scr.flipInterval : p.scr.flipInterval : (p.scr.stimDur-p.scr.flipInterval)), 1, 10); 
+    sr.dot.onset( sr.dot.series == 1)    = temp( sr.dot.series == 1);
+    sr.dot.offset( sr.dot.series == 1)   = sr.dot.onset( sr.dot.series == 1) + p.dot.dur;
+    
+    % run series
+    [result, trackElements, trackChunks] = makePredSeries(p);
+    sr.pred.series              = result;
+    sr.pred.seriesTrackElements = trackElements;
+    sr.pred.seriesTrackChunks   = trackChunks;
+    
+    % setup
+    sr.numSeries                = sr.numSeries +1;
+    sr.numTrial                 = 0;
+    
+    thisWaitTime                = p.scr.stimDur;
+    inBounds                    = 1;                % in case eyes go out of bounds during series
+    startTime                   = GetSecs;
+    sr.times.series(1,1)        = startTime;
+    angles                      = p.grat.angleSet;
     
     % run loop
-    while sr.numTrial < p.series.stimPerSeries && ~outofBounds
+    while sr.numTrial < p.series.stimPerSeries && inBounds
         
         sr.numTrial                     = sr.numTrial +1;
         sr.quads                        = sr.series (sr.numTrial);
@@ -61,10 +64,10 @@ angles                  = p.grat.angleSet;
             [outofBounds]   = monitorFixation( p, thisWaitTime);
             
             if outofBounds > p.scr.maxOutofBounds            % save series; re-record
-               
+                inBounds = 0;
                 break; % or return
-%             else
-%                 outofBounds = 0;
+                %             else
+                %                 outofBounds = 0;
             end
         else
             WaitSecs( thisWaitTime - ( 0.5*p.scr.flipInterval));
@@ -92,6 +95,6 @@ angles                  = p.grat.angleSet;
             break;
     end
 end
-end
+
 % end staircase
 

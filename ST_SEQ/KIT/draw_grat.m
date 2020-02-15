@@ -1,4 +1,4 @@
-function[p, sr] = draw_grat(p, tex, sr, cue, dot)
+function[p, sr] = draw_grat(p, tex, sr, dot, cue)
 
 % Draws quadrant gratings, dot, fixation
 % gratings

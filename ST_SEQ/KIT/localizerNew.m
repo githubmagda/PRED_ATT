@@ -23,7 +23,7 @@ while repeat   % chosen by user
     inBounds                = 1;
     
     thisWaitTime            = p.scr.stimDur;
-    reloop                  = 0;            % if eyes go out of bounds during series
+    %reloop                  = 0;            % if eyes go out of bounds during series
     startTime               = GetSecs;
     lr.times.series(1,1)    = startTime;
     angles                  = p.grat.angleSet;
@@ -36,7 +36,7 @@ while repeat   % chosen by user
         lr.quads                        = lr.series (lr.numTrial);
         lr.angles                       = mod( angles + p.grat.angleIncrement, 180);
         
-        [ p, lr]                        = draw_grat( p, tex, lr, dot); % don't save prior flip
+        [ p, lr]                        = draw_grat( p, tex, lr, 0, 0); % don't save prior flip
         lr.times.trials(lr.numTrial)    = GetSecs-startTime;
         
         if p.useEyelink

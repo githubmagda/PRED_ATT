@@ -31,8 +31,7 @@ draw_text(p,'center',0.95,text2show);
 sr.quads        = [ 1:4];
 sr.angles       = p.grat.angleSet ;
 
-stayOn          = 0;  % keep on screen
-draw_grat( p, tex, sr, stayOn);
+draw_grat( p, tex, sr, 0, 0);
 
 % Get response
 
