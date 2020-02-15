@@ -1,4 +1,4 @@
-function[result, trackerByElement, trackerByChunk] = makePredSeries(p)
+function[result, trackElements, trackChunks] = makePredSeries(p)
 % makes a string including ordered/random chunks from a set of nElements
 
 % rename variables for ease of use within script (see test_makePredSeriesReplaceNoRptEven.m)
@@ -12,8 +12,8 @@ result = randperm(length(elements),2);
 avoidEl = [result(end-1),result(end)]; % avoid repeating last 2 elements in substrings
 
 % trackers - keeps track of # of elements / chunks in ordered sections
-trackerByElement = zeros(1,numStim);
-trackerByChunk = zeros(1,numStim);
+trackElements = zeros(1,numStim);
+trackChunks = zeros(1,numStim);
 
 % LOOP - build series from chunks inserting random chunk (size 1-2 chunks) between nRpts of ordered chunks;
 while length(result) < numStim
@@ -33,7 +33,7 @@ while length(result) < numStim
     
     % tracker loop to update ordered section by #elements
     lenResult = length(result); % just easier to read!
-    trackerByElement( ( lenResult + 1) : ( lenResult+( length( nextSection)))) = 1: length( nextSection);
+    trackElements( ( lenResult + 1) : ( lenResult+( length( nextSection)))) = 1: length( nextSection);
     %trackerByElement( ( lenResult + 1) : ( lenResult+( nRpt*chunkLength))) = 1:( nRpt*chunkLength);
     
     
@@ -41,7 +41,7 @@ while length(result) < numStim
     counter = 1;
     for i = 1: nRpt
         chunkPos = lenResult + ( chunkLength*counter);
-        trackerByChunk( chunkPos) = counter;
+        trackChunks( chunkPos) = counter;
         counter = counter + 1;
     end % tracker loop to update tracker #chunks
     
@@ -51,8 +51,8 @@ end
 
 % trim series
 result = result( 1:numStim );
-trackerByElement = trackerByElement( 1:numStim );
-trackerByChunk = trackerByChunk(  1:numStim );
+trackElements = trackElements( 1:numStim );
+trackChunks = trackChunks(  1:numStim );
 end
 
 function [thisChunk] = makeChunk(elements, len, avoidEl, type)

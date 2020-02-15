@@ -102,33 +102,10 @@ exper = localizerNew( p, tex, exper);
 exper = staircase( p, tex, exper);
 
 
-% % lr.series       = pseudoRandListNoRpt(p);
-% % lr.numSeries    = 1;
-% % lr.numTrial     = 0;
-% % lr.numGrat      = 1;
-% % thisOutofBound  = 0;        
-% % 
-% % % run localizer
-% % while lr.numTrial < p.series.stimPerSeries 
-% %     lr.numTrial     = lr.numTrial +1;
-% %     lr.quad         = lr.series (lr.numTrial);
-% %     lr.angleSet = mod(p.grat.angleSet(lr.numTrial) + p.grat.angleIncrement, 180);  % set grating angle
-% %     
-% %     [ p, thisOutofBounds] = draw_grat( p, tex, lr); 
-% %     
-% %     if thisOutofBound > p.scr.maxOutofBound
-% %        nameSeries = sprintf('LR%d',lr.numSeries);                   % save series; repeat
-% %        exp.(nameSeries) = sr;
-% %        lr.numSeries = lr.numSeries +1;
-% %     end 
-% % end
-% % % end localizer
-
-
-% staircase
-
-str.angleSet = mod(p.grat.angleSet(thisPred) + p.grat.angleIncrement, 180);
-
+% % staircase
+% 
+% str.angleSet = mod(p.grat.angleSet(thisPred) + p.grat.angleIncrement, 180);
+% 
 
 
 

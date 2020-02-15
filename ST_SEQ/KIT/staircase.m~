@@ -1,8 +1,8 @@
-function [exp] = staircase( p, tex, exper)
+stfunction [exp] = staircase( p, tex, exp)
 % UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
 
-text2show       = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Staircase'),p.text.language + 1)); % + 1 for correct column in texts.xlsx
+text2show = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Staircase'),p.text.language + 1)); % + 1 for correct column in texts.xlsx
 draw_text(p,'center','center',text2show);
 
 text2show       = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1));
@@ -12,36 +12,37 @@ draw_text(p,'center',0.95,text2show);
 doKbCheck(p, 2);
 Screen('Flip',p.scr.window, 0);
 
-sr.numSeries    = 0;
-repeat          = 1; % chosen at end of loop by participant
+sr.numSeries = 0;
+
+repeat      = 1;
 
 while repeat
 
 % dot  - calculated in screen refresh times
-sr.dot.series               = makeDotSeries(  p, p.dot.probStaircase);
-temp                        = Shuffle( 0 : p.scr.flipInterval : (p.scr.stimDur-p.scr.flipInterval));
-sr.dot.onset                = temp( 1: p.series.stimPerSeries);
-sr.dot.offset               = sr.dot.onset + p.dot.dur;
+sr.dot.series           = makeDotSeries(  p, p.dot.probStaircase);
+temp                    = Shuffle( 0 : p.scr.flipInterval : (p.scr.stimDur-p.scr.flipInterval));
+sr.dot.onset            = temp( 1: p.series.stimPerSeries);
+sr.dot.offset           = sr.dot.onset + p.dot.dur;
 
 % run series
 [result, trackElements, trackChunks] = makePredSeries(p);
-sr.pred.series              = result;
+sr.pred.series  = result;
 sr.pred.seriesTrackElements = trackElements;
 sr.pred.seriesTrackChunks   = trackChunks;
 
-sr.numSeries                = sr.numSeries +1;
-sr.numTrial                 = 0;
+sr.numSeries            = sr.numSeries +1;
+sr.numTrial             = 0;
 
 thisWaitTime            = p.scr.stimDur;
-outofBounds                  = 0;                % in case eyes go out of bounds during series
+reloop                  = 0;                % in case eyes go out of bounds during series
 startTime               = GetSecs;
 sr.times.series(1,1)    = startTime;
 angles                  = p.grat.angleSet;
 
 
     
-    % run loop
-    while sr.numTrial < p.series.stimPerSeries && ~outofBounds
+    % run staircase
+    while sr.numTrial < p.series.stimPerSeries && ~reloop
         
         sr.numTrial                     = sr.numTrial +1;
         sr.quads                        = sr.series (sr.numTrial);
@@ -61,10 +62,10 @@ angles                  = p.grat.angleSet;
             [outofBounds]   = monitorFixation( p, thisWaitTime);
             
             if outofBounds > p.scr.maxOutofBounds            % save series; re-record
-               
+                reloop = 1;
                 break; % or return
-%             else
-%                 outofBounds = 0;
+            else
+                reloop = 0;
             end
         else
             WaitSecs( thisWaitTime - ( 0.5*p.scr.flipInterval));
@@ -92,6 +93,6 @@ angles                  = p.grat.angleSet;
             break;
     end
 end
-end
+
 % end staircase
 

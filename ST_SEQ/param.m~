@@ -198,24 +198,57 @@ p.dot.radiusDeg          = 0.10;
 p.dot.radius             = p.dot.radiusDeg * p.scr.pixPerDeg;  % angle2pix(p, p.scr.dotRad);
 p.dot.thisProbe          = 1.0 ; % will be adjusted by staircase
 
-numDot = 360;
-dotAngles = linspace(0, 2*pi, numDot); 
-dotRingRadius = p.grat.pos-25;
-p.dot.ringX = dotRingRadius * cos(dotAngles) + p.scr.centerX;  %+p.scr.dotRadius/2; 
-p.dot.ringY = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY); % +p.scr.dotRadius/2);
+numDot              = 360;
+dotAngles           = linspace(0, 2*pi, numDot); 
+dotRingRadius       = p.grat.pos-25;
+p.dot.ringX         = dotRingRadius * cos(dotAngles) + p.scr.centerX;  %+p.scr.dotRadius/2; 
+p.dot.ringY         = fliplr( dotRingRadius * sin(dotAngles) + p.scr.centerY); % +p.scr.dotRadius/2);
 
-% get locations for dots in quads (very confusing cause x/y grids are
+% get locations for dots in quads in x/y cols for 4 quads (very confusing cause x/y grids are
 % different for dotRing and Psychotoolbox)
-thisMargin = 30;
-p.dot.setX(1,2) = p.dot.ringX( thisMargin : numDot/4-thisMargin);
-p.dot.setY(2,2) = p.dot.ringY( thisMargin : numDot/4-thisMargin);
-p.dot.setX(1,1) = p.dot.ringX( numDot/4+thisMargin :numDot/2-thisMargin);
-p.dot.setY(2,2) = p.dot.ringY( numDot/4+thisMargin :numDot/2-thisMargin);
-p.dot.setX(1,4) = p.dot.ringX( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
-p.dot.setY(2,4) = p.dot.ringY( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
-p.dot.setX(1,3) = p.dot.ringX( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
-p.dot.setY(2,3) = p.dot.ringY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
+thisMargin          = 30;            % distance within edge of grid
+p.dot.set           = NaN(numDot,2,4);
+set2                = [ p.dot.ringX( thisMargin : numDot/4-thisMargin)', p.dot.ringY( thisMargin : numDot/4-thisMargin)'];
+set1                = [ p.dot.ringX( numDot/4+thisMargin :numDot/2-thisMargin)', p.dot.ringY( numDot/4+thisMargin :numDot/2-thisMargin)'];
+set4                = [ p.dot.ringX( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin)', p.dot.ringY( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin)'];
+set3                = [ p.dot.ringX( numDot-(numDot/4)+thisMargin :numDot-thisMargin)', p.dot.ringY( numDot-(numDot/4)+thisMargin :numDot-thisMargin)'];
+p.dot.set( 1:size(set2,1), 1:size(set2,2), 2)    = set2;
+p.dot.set( 1:size(set1,1), 1:size(set1,2), 1)    = set1;
+p.dot.set( 1:size(set4,1), 1:size(set4,2), 4)    = set4;
+p.dot.set( 1:size(set3,1), 1:size(set3,2), 3)    = set3;
 
+% % % p.dot.set(:,:,2)    = p.dot.ringX( thisMargin : numDot/4-thisMargin)';
+% % % p.dot.set(:,2,2)    = p.dot.ringY( thisMargin : numDot/4-thisMargin)';
+% % % p.dot.set(:,1,1)    = p.dot.ringX( numDot/4+thisMargin :numDot/2-thisMargin)';
+% % % p.dot.set(:,2,1)    = p.dot.ringY( numDot/4+thisMargin :numDot/2-thisMargin)';
+% % % p.dot.set(:,1,4)    = p.dot.ringX( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
+% % % p.dot.set(:,2,4)    = p.dot.ringY( numDot/2+thisMargin :numDot-(numDot/4)-thisMargin);
+% % % p.dot.set(:,1,3)    = p.dot.ringX( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
+% % % p.dot.set(:,2,3)    = p.dot.ringY( numDot-(numDot/4)+thisMargin :numDot-thisMargin);
+
+% FIXATION CROSS
+p.scr.fixCrossX             = 20; %round( p.scr.fixRadius ./ sqrt(2) ); 
+p.scr.fixCrossY             = p.scr.fixCrossX; % equal size
+p.scr.fixCrossDiagonal      = 1; % if you want fixation cross to be an 'x' rather than a '+'
+p.scr.fixCrossLineWidth     = 5; % range (0.125000 to 7.000000)
+p.scr.fixCrossColor         = p.scr.background;
+p.scr.fixCrossColorRed      = [255, 0, 0]; % for e.g. red warning signal, check DrawTexture commands
+p.scr.fixCrossColorYellow    = [0, 255, 255]; % for e.g. 
+
+% length of 4 arms used for  cross
+ext         = 1.0; % stretches arms (to compensate for Gaussian dispersion)
+extColor    = 1.0; % adjustt stretch on colored arm
+xCoords     = [ 0, -p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, p.scr.fixCrossX, 0, -p.scr.fixCrossX];
+yCoords     = [ 0, -p.scr.fixCrossY, 0, -p.scr.fixCrossY, 0, p.scr.fixCrossY, 0, p.scr.fixCrossY];
+
+% fixation cross - dimensions 
+p.scr.fixCoords0    = [xCoords .* ext; yCoords .* ext]; % no attentional cue
+% dimensions with attentional cue (shorter due to color contrast)
+p.scr.fixCoords1    = p.scr.fixCoords0 .* [ext,extColor,ext,ext,ext,ext,ext,ext; ext,extColor,ext,ext,ext,ext,ext,ext];
+p.scr.fixCoords2    = p.scr.fixCoords0 .* [ext,ext,ext,extColor,ext,ext,ext,ext; ext,ext,ext,extColor,ext,ext,ext,ext];
+p.scr.fixCoords3    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,extColor,ext,ext; ext,ext,ext,ext,ext,extColor,ext,ext];
+p.scr.fixCoords4    = p.scr.fixCoords0 .* [ext,ext,ext,ext,ext,ext,ext,extColor; ext,ext,ext,ext,ext,ext,ext,extColor];
+ 
 % SQUARE WAVE GRATING
 p.grat.backgroundColorOffsetGrat    = [0,0,0,1];
 p.grat.phase                        = 0;

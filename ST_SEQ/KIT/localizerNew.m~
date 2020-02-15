@@ -12,7 +12,6 @@ Screen('Flip',p.scr.window, 0);
 
 repeat          = 1;
 lr.numSeries    = 0;
-dot             = 0;
 
 while repeat   % chosen by user
 
@@ -36,7 +35,7 @@ while repeat   % chosen by user
         lr.quads                        = lr.series (lr.numTrial);
         lr.angles                       = mod( angles + p.grat.angleIncrement, 180);
         
-        [ p, lr]                        = draw_grat( p, tex, lr, dot); % don't save prior flip
+        [ p, lr]                        = draw_grat( p, tex, lr, 1);
         lr.times.trials(lr.numTrial)    = GetSecs-startTime;
         
         if p.useEyelink

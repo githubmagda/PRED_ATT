@@ -1,11 +1,13 @@
 function [p, tex] = makeTextures(p)
 
 % make attention gaussian
+
 [dotX, dotY]    = meshgrid(-p.dot.radius:p.dot.radius,-p.dot.radius:p.dot.radius);    
 alph            = exp(-( dotX.^2 / (2* (p.dot.radius) .^2) ) - ( dotY.^2 / (2* (p.dot.radius) .^2 )));% .* ( p.scr.intDot); % CHECK was dotX / Z sets dot size
 color           = 0.5; 
 gausFix         = cat(3, color .* ones( (2 * p.dot.radius)+1, (2 * p.dot.radius)+1, 3), alph);   % default: gaus = ones(101,101,1) creates white box
 tex.dot         = Screen('MakeTexture', p.scr.window, gausFix);
+tex.dotRect     = [1, length( -p.dot.radius:p.dot.radius), 1, length( -p.dot.radius:p.dot.radius)] -1;
 
 % make grating texture
 % [tex.sine, ~] = CreateProceduralSquareWaveGrating(p.scr.window, p.grat.Radius *2, p.grat.Radius *2,...
