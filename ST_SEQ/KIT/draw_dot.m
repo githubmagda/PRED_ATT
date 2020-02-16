@@ -1,30 +1,36 @@
-function[p, sr] = draw_grat(p, tex, sr, cue, dot)
+function[p, sr, vbl] = draw_grat(p, tex, sr, dot, cue)
 
 % Draws quadrant gratings, dot, fixation
-% gratings
 
+% gratings
 Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects( sr.quads,:)', sr.angles( sr.quads), [], 0, ...
-                [0,0,0,1], [], [], p.grat.params( :, sr.quads)); 
-            
-            if cue
-                
-            end
+    [0,0,0,1], [], [], p.grat.params( :, sr.quads));
+
 % dot
 if dot
 
     randSelect = randi([ 1, size(sr.dot.set)], 1, 1);    
-    dotPos = sr.dot.set(randSelect,:, sr.dot.cue);
+    dotPos = sr.dot.set(randSelect,:, cue);
     
     p.dot.rects    = CenterRectOnPointd(tex.sineRect, dotPos(1), dotPos(2));
     
-    Screen('DrawTexture', p.scr.window, tex.dot, tex.dotRect, p.dot.rects( sr.dot.set(:,:, sr.dot.cue)', [], [], 0, ...
-        [0,0,0,1], [], [], p.grat.params( :, sr.quads))
+    Screen('DrawTexture', p.scr.window, tex.dot, tex.dotRect, p.dot.rect)
     
 end
+
+% fixation
 Screen('DrawTexture', p.scr.window, tex.fix); 
 
+% cue
+if cue
+    crossPos = sprintf( 'p.scr.fixCoords%d', cue);
+    crossColor = sprintf( 'p.scr.attn%d', cue);
+    Screen('DrawLines', p.scr.window, crossPos, p.scr.fixCrossLineWidth, p.scr.attn0, [ p.scr.centerX, p.scr.centerY ], 2);
+    
+end
+
 % flip
-Screen('Flip',p.scr.window,[],0);
+[vbl] = Screen('Flip',p.scr.window,[],0);
 
 
 % % REGULAR SERIES

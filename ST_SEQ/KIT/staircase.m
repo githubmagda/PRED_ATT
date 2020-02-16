@@ -37,12 +37,14 @@ while repeat
     % setup
     sr.numSeries                = sr.numSeries +1;
     sr.numTrial                 = 0;
+    sr.quads                    = 1:4;
     
     thisWaitTime                = p.scr.stimDur;
     inBounds                    = 1;                % in case eyes go out of bounds during series
     startTime                   = GetSecs;
     sr.times.series(1,1)        = startTime;
     angles                      = p.grat.angleSet;
+    
     
     % run loop
     while sr.numTrial < p.series.stimPerSeries && inBounds
@@ -55,9 +57,10 @@ while repeat
         sr.pred.angles(sr.numTrial,:)           = angles;
         
         % p, tex, sr, dot, cue)
-        [ p, sr]                                = draw_grat( p, tex, sr, 1);
+        [ p, sr, vbl]                           = draw_grat( p, tex, sr, 1);
         [ p, sr]                                = draw_dot( p, tex, sr, 0);
-        sr.times.trials(sr.numTrial)            = GetSecs-startTime;
+        lr.times.trials(lr.numTrial)    = vbl;
+        
         
         if p.useEyelink
             

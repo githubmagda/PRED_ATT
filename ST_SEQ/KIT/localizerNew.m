@@ -12,7 +12,6 @@ Screen('Flip',p.scr.window, 0);
 
 repeat          = 1;
 lr.numSeries    = 0;
-dot             = 0;
 
 while repeat   % chosen by user
 
@@ -28,6 +27,7 @@ while repeat   % chosen by user
     lr.times.series(1,1)    = startTime;
     angles                  = p.grat.angleSet;
     
+    draw_fix( p, tex);    
     
     % run localizer
     while lr.numTrial < p.series.stimPerSeries && inBounds
@@ -36,8 +36,10 @@ while repeat   % chosen by user
         lr.quads                        = lr.series (lr.numTrial);
         lr.angles                       = mod( angles + p.grat.angleIncrement, 180);
         
-        [ p, lr]                        = draw_grat( p, tex, lr, 0, 0); % don't save prior flip
-        lr.times.trials(lr.numTrial)    = GetSecs-startTime;
+        % draw
+        draw_fix(p, tex)
+        [ p, lr, vbl]                   = draw_grat( p, tex, lr); % (p, tex, sr, dot, cue)
+        lr.times.trials(lr.numTrial)    = vbl - startTime;
         
         if p.useEyelink
             

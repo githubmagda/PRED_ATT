@@ -90,7 +90,7 @@ intro(p);
 
 % fixation and grating training
 
-fix_and_grat(p, tex);
+intro_fix_and_grat(p, tex);
 
 % eyetracker training
 % intro_eyetracker(p);
