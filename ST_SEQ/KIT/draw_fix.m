@@ -1,7 +1,6 @@
 function[vbl] = draw_fix(p, tex)
 
-% Draws fixation
-
+% Draw fixation gaussian
 Screen('DrawTexture', p.scr.window, tex.fix); 
 
 % flip - leave on screen

@@ -22,23 +22,25 @@ while repeat   % chosen by user
     inBounds                = 1;
     
     thisWaitTime            = p.scr.stimDur;
-    %reloop                  = 0;            % if eyes go out of bounds during series
+    angles                  = mod( p.grat.angleSet +  ( randi(180/p.grat.angleIncrement-1, 1) *p.grat.angleIncrement), 180);
+          
+    draw_fix( p, tex);
+    
     startTime               = GetSecs;
     lr.times.series(1,1)    = startTime;
-    angles                  = p.grat.angleSet;
-    
-    draw_fix( p, tex);    
     
     % run localizer
     while lr.numTrial < p.series.stimPerSeries && inBounds
         
-        lr.numTrial                     = lr.numTrial +1;
-        lr.quads                        = lr.series (lr.numTrial);
-        lr.angles                       = mod( angles + p.grat.angleIncrement, 180);
+        lr.numTrial                             = lr.numTrial +1;
+        lr.grat.quads (lr.numTrial,:)           = lr.series (lr.numTrial);
+        angles                                  = mod( angles + ( randi(180/p.grat.angleIncrement-1, 1) *p.grat.angleIncrement), 180);
+        lr.grat.angles(lr.numTrial,:)           = angles;
         
         % draw
-        draw_fix(p, tex)
-        [ p, lr, vbl]                   = draw_grat( p, tex, lr); % (p, tex, sr, dot, cue)
+        draw_fix(p, tex);
+        
+        [ p, lr, vbl]                   = draw_grat( p, tex, lr, 0); % (p, tex, sr, dot, cue)
         lr.times.trials(lr.numTrial)    = vbl - startTime;
         
         if p.useEyelink

@@ -19,18 +19,19 @@ Screen('Flip',p.scr.window, 0);
 
 % introduce gratings
 
-text2show       = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Intro Gratings'),p.text.language + 1));
+text2show                       = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Intro Gratings'),p.text.language + 1));
 draw_text(p,'center',0.10,text2show);
 
-text2show       = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1));
+text2show                       = cell2mat(p.text.texts(strcmp(p.text.texts(:,1),'Next/Previous'),p.text.language + 1));
 draw_text(p,'center',0.95,text2show);
 
 % setup for draw_grat
-sr.quads        = 1:4;
-sr.angles       = p.grat.angleSet ;
+sr.numTrial                          = 1;   % only one
+sr.grat.quads(sr.numTrial, :)        = 1:4;
+sr.grat.angles(sr.numTrial, :)       = p.grat.angleSet;
 
-draw_fix( p, tex)
-draw_grat( p, tex, sr); 
+draw_fix( p, tex);
+draw_grat( p, tex, sr, 1); 
 
 % Get response
 

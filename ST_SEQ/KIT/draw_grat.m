@@ -1,10 +1,12 @@
-function[p, sr, vbl] = draw_grat(p, tex, sr) %, dot, cue)
+function[p, sr, vbl] = draw_grat(p, tex, sr, stayOn) 
 
-% Draws quadrant gratings, dot, fixation
+% Draws quadrant gratings
 
-% gratings
-Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects( sr.quads,:)', sr.angles( sr.quads), [], 0, ...
-    [0,0,0,1], [], [], p.grat.params( :, sr.quads));
+Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects(sr.grat.quads( sr.numTrial,:), :)', sr.grat.angles(sr.grat.quads ( sr.numTrial,:)), [], 0, ...
+    [0,0,0,1], [], [], p.grat.params( :, sr.grat.quads( sr.numTrial, :)));
+
+[vbl] = Screen('Flip',p.scr.window,[],stayOn);
+
 
 % % dot
 % if dot
@@ -30,5 +32,5 @@ Screen('DrawTextures', p.scr.window, tex.sine, [], p.grat.rects( sr.quads,:)', s
 % end
 
 % flip
-[vbl] = Screen('Flip',p.scr.window,[],0);
+% [vbl] = Screen('Flip',p.scr.window,[],stayOn);
 
